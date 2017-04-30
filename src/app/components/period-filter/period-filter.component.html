@@ -1,0 +1,61 @@
+<div class="panel panel-default" style="border-style: none; margin-bottom: 0px; margin-top: 0px; border-bottom: solid 1px #eee;">
+  <div class="panel-heading" style="background-color: #ffffff;padding-bottom: 2px;padding-top: 5px">
+    Period
+  </div>
+  <div class="panel-body" style="padding: 3px;" [ngClass]="{'hiddenTree':showPerTree}">
+    <div class="">
+      <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+        <select id="periodType" [(ngModel)]="period_type" class="form-control input-sm" style="height: 25px " (change)="changePeriodType()">
+          <option value="" disabled="disabled" selected="selected">Select period type</option>
+          <option  [value]="'Monthly'" [hidden]="hideMonth">Monthly</option>
+          <option  [value]="'Quarterly'" [hidden]="hideQuarter">Quarterly</option>
+          <option  [value]="'Yearly'" >Yearly</option>
+          <option  [value]="'FinancialJuly'" >Financial-July</option>
+        </select>
+      </div>
+      <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+        <div class="btn-group btn-group-sm pull-right">
+          <button type="button" class="btn btn-default btn-sm" (click)="pushPeriodBackward()" style="height: 25px;font-size: 10px">Prev Year</button>
+          <button type="button" class="btn btn-default btn-sm" (click)="pushPeriodForward()" style="height: 25px;font-size: 10px">Pext Year</button>
+        </div>
+      </div>
+
+      <div class="search-area">
+        <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+          <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
+
+        </form>
+      </div>
+      <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
+      <div class="" *ngIf="!period_tree_config.loading"  style="border-top: solid 1px blanchedalmond;">
+        <div class="container-fluid" style="border-bottom: solid 1px blanchedalmond;padding: 4px 0px;margin-bottom: 3px">
+          <div class="col-sm-6" style="border-right: 1px solid rgba(0,0,0,0.1); text-align: left;font-size: 11px">Available</div>
+          <div class="col-sm-6" style="text-align: right;font-size: 11px">Selected</div>
+        </div>
+        <div class="col-sm-6 tree-area1" style="border-right: 1px solid rgba(0,0,0,0.1)">
+          <ul class="nav nav-pills nav-stacked">
+            <li *ngFor="let period of periods"
+                class="period" (click)="activatePer(period)"
+                [ngClass]="{'hiddenTree': checkPeriodAvailabilty(period,selected_periods)}"
+                title="Click to select"
+            >
+              {{ period.name }}
+            </li>
+          </ul>
+        </div>
+        <div class="col-sm-6 tree-area1">
+          <ul class="nav nav-pills nav-stacked">
+            <li *ngFor="let period of selected_periods"
+                class="period" (click)="deactivatePer(period)"
+                title="Click to deselect"
+                dnd-droppable (onDropSuccess)="transferDataSuccess($event,period)"
+            >
+              <div dnd-draggable [dragEnabled]="true" [dragData]="period">{{ period.name }}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
