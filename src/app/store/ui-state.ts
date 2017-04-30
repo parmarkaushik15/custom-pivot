@@ -1,13 +1,16 @@
 
-
 export interface UiState {
-    userId:number;
-    currentThreadId: number;
+    loadingOrganisationUnit:boolean;
+    loadingData: boolean;
+    loadingDataElements:boolean;
+    layoutOpened:boolean;
     currentError?: string;
 }
 
 
 export const INITIAL_UI_STATE: UiState = {
-    userId: undefined,
-    currentThreadId: undefined
+  loadingOrganisationUnit: false,
+  loadingDataElements: false,
+  layoutOpened: false,
+  loadingData: false
 };

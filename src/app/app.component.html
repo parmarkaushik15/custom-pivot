@@ -1,3 +1,61 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container-fluid" style="border: 1px solid rgba(0,0,0,0.2); padding-left: 3px;padding-right: 3px">
+    <div class="data-filter  left-block">
+      <nav class="navbar navbar-default top-bar" style="margin-bottom: 5px">
+        <div class="container-fluid" style="padding-left: 3px;padding-right: 3px">
+          <div class="col-sm-10" style="padding: 0px">
+              <h4>Pivot tables</h4>
+          </div>
+          <div class="col-sm-2" style="padding: 0px">
+            <a class="pull-right close-right-area" title="close data selection area"><h4><<<</h4></a>
+          </div>
+
+        </div>
+      </nav>
+      <div class="container-fluid" style="padding-left: 0px; padding-right: 0px">
+        <div class="col-sm-12" style="padding: 0px">
+          <!--data-->
+          <div class="panel panel-default data-component-area">
+            <div class="panel-body" >
+              <app-data-filter
+                [dataGroups]="currentGroupList$ | async"
+                [listItems]="currentDataItemList$ | async"
+                [dataOptions]="dataOptions$ | async"
+              ></app-data-filter>
+            </div>
+          </div>
+
+          <!--period-->
+          <div app-period-filter></div>
+
+          <!--organisation unit-->
+          <div app-org-unit-filter></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-view right-block">
+      <nav class="navbar navbar-default top-bar">
+        <div class="container-fluid" style="padding-top: 4px;padding-left: 3px;padding-right: 3px">
+          <div class="navbar-header">
+            <a class="btn btn-sm btn-default" >Update</a>
+            <a class="btn btn-sm btn-default" >Layout</a>
+          </div>
+          <ul class="nav navbar-nav navbar-right top-bar-link">
+            <li><a href="../../../"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="container-fluid">
+        <div class="col-md-12">
+        </div>
+      </div>
+      <div class="container-fluid">
+        <div class="col-md-12" style="padding: 20px;">
+          <data-area
+            [dataItems]="dataItems$ | async"
+          ></data-area>
+        </div>
+      </div>
+    </div>
+  </div>
+

@@ -1,0 +1,77 @@
+<ul class="list-inline" *ngIf="dataOptions.length != 0">
+  <li *ngFor="let option of dataOptions" style="padding-right: 0px">
+    <a (click)="toggleDataOption(option.prefix)"
+       class="btn btn-sm {{option.selected ? 'btn-info' : 'btn-default'}}"
+       style="height: 25px;"
+       title="Click to see {{option.name}}"
+    >
+      {{option.name}}
+    </a>
+  </li>
+</ul>
+<button class="btn btn-default btn-sm btn-block" (click)="showGroups = !showGroups">
+  <span class="pull-left">{{ selectedGroup?.name || 'Select Table'}}</span>
+  <span class="pull-right">
+    <i class="fa fa-caret-down"></i>
+  </span>
+</button>
+<div *ngIf="showGroups" class="panel panel-default" style="margin-top: 4px;position: absolute;z-index: 999;width: 90%">
+  <div class="panel-body" style="padding: 5px;">
+    <input type="search" class="form-control input-sm" placeholder="Search" style="margin-bottom: 5px;" [(ngModel)]="querystring">
+    <ul class="list-unstyled metadata-list  tree-area1">
+      <li *ngFor="let item of getList() | filterByName:querystring" (click)="showItems(item)">{{ item.name }}</li>
+    </ul>
+  </div>
+</div>
+<input type="text" class="form-control input-sm" *ngIf="listItems.length != 0" (focus)="showBody = true" placeholder="Search" style="margin-top: 4px;" [(ngModel)]="listchanges">
+<div class="row" style="margin-top:2px;padding-left: 15px; padding-right: 15px;max-height: 160px">
+  <table class="table table-bordered" >
+    <tbody>
+      <tr>
+        <th width="50%">
+          <ul class="list-inline data-header-list">
+            <li>Available</li>
+            <li class="pull-right"><a href=""><i class="fa fa-angle-double-right"></i></a></li>
+            <li class="pull-right"><a href=""><i class="fa fa-angle-right"></i></a></li>
+          </ul>
+        </th>
+        <th width="50%">
+          <ul class="list-inline data-header-list">
+            <li class="pull-right">Selected</li>
+            <li class="pull-left"><a href=""><i class="fa fa-angle-double-left"></i></a></li>
+            <li class="pull-left"><a href=""><i class="fa fa-angle-left"></i></a></li>
+          </ul>
+        </th>
+      </tr>
+      <tr>
+        <td width="50%" style="height: 90%">
+          <ul class="list-unstyled metadata-list scrollable">
+            <li *ngFor="let item of listItems | filterByName:listchanges" (click)="addSelected(item)" [ngClass]="{'hiddenTree': inSelected(item)}" title="Click to select item"> {{ item.name }}</li>
+          </ul>
+        </td>
+        <td width="50%">
+          <ul class="list-unstyled metadata-list scrollable">
+            <li *ngFor="let item of selectedItems"
+                (click)="removeSelected(item)"
+                style="cursor: move"
+                dnd-droppable (onDropSuccess)="transferDataSuccess($event,item)"
+                title="click to unselect item"
+            >
+              <div dnd-draggable [dragEnabled]="true" [dragData]="item"> {{ item.name }} </div>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!--<div class="col-md-6" style="border: solid 1px #eee; height: 100px;">-->
+    <!--&lt;!&ndash;<div class="panel panel-default" style="height: 100px;">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+  <!--</div>-->
+  <!--<div class="col-md-6" style="border: solid 1px #eee; height: 100px;">-->
+    <!--&lt;!&ndash;<div class="panel panel-default" style="height: 100px;">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+  <!--</div>-->
+</div>

@@ -181,30 +181,6 @@ export class OrgUnitFilterComponent implements OnInit {
             )
           }
         );
-    // }
-    // else {
-    //
-    //   this.orgunitService.getAllOrgunitsForTree1().subscribe(
-    //     (data) => {
-    //       this.organisationunits = data;
-    //     }
-    //   );
-    //
-    //   this.orgunit_model.orgunit_levels = this.orgunitService.orgunit_levels;
-    //   this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
-    //   this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
-    //   this.orgunit_tree_config.loading = false;
-    //   //activate organisation units
-    //   if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
-    //     this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
-    //     for( let active_orgunit of this.orgunit_model.selected_orgunits ){
-    //       this.activateNode(active_orgunit.id, this.orgtree);
-    //     }
-    //   }
-    //
-    //   // this will pass through the tree and sort items
-    //   this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
-    // }
   }
 
   // display Orgunit Tree

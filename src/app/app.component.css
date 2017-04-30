@@ -1,0 +1,121 @@
+.data-filter {
+  float: left;
+  width: 28%;
+  position: relative;
+}
+
+.data-view {
+  float: left;
+  width: 72%;
+  position: relative;
+}
+
+.top-bar {
+  min-height: 40px;
+  height: 40px;
+  border-radius: 0px;
+  border-left-style: none;
+  border-right-style: none;
+  background-color: #ffffff;
+}
+.data-component-area {
+  border-style: none;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  border-bottom: solid 1px #eee;
+}
+
+.top-bar-link > li > a {
+  padding-top: 8px;
+  /*height: 40px;*/
+}
+
+.top-bar-link > li > a:hover {
+  /*background-color: #f5f5f5;*/
+}
+
+.left-block {
+  border: solid 1px #eee;
+  /*border-left-style: none;*/
+  border-bottom-style: none;
+  height: 100vh;
+  padding: 0;
+}
+
+.right-block {
+  border: solid 1px #eee;
+  border-left-style: none;
+  border-bottom-style: none;
+  height: 100vh;
+  padding: 0;
+  /*background-color: #f5f5f5;*/
+}
+
+.new-favorite-link {
+  padding: 3px !important;
+  /*padding-top: 0px !important;*/
+  margin-top: 5px;
+  color: #ffffff !important;
+}
+
+.new-favorite-link:hover {
+  color: #fff !important;
+  background-color: #286090 !important;
+  border-color: #204d74 !important;
+}
+
+.favorite-input {
+  border-style: none;
+  margin-top: 4px;
+  padding: 3px;
+  font-size: 15px;
+  border: solid 1px #f5f5f5;
+}
+
+.favorite-input:focus {
+  outline: none;
+}
+
+.favorite-input:hover {
+  /*padding: 3px;*/
+}
+
+.favorite-list {
+  position: absolute;
+  left: 5px;
+  top: 40px;
+  /*border-radius: 0px;*/
+  /*height: 100px;*/
+  width: 400px;
+  /*border: solid 1px #eee;*/
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  /*display: none;*/
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.favorite-list .panel-heading,
+.favorite-list .panel-footer {
+  height: 30px;
+  background-color: #ffffff;
+}
+
+.close-right-area {
+  color: #000;
+}

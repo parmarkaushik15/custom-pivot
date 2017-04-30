@@ -1,10 +1,10 @@
 <div class="panel panel-default" style="border-style: none; margin-bottom: 0px; margin-top: 0px; border-bottom: solid 1px #eee;">
-  <div class="panel-heading" style="background-color: #ffffff;padding-bottom: 2px;padding-top: 5px">
+  <div class="panel-heading" style="background-color: #ffffff;padding-bottom: 5px;padding-top: 5px;padding-left: 3px">
     <div class="" (click)="displayOrgTree()">
           <span *ngIf="!orgunit_tree_config.loading">
               {{ getProperPreOrgunitName() }}
           </span>
-      <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+      <span *ngIf="orgunit_model.selected_orgunits.length > 10 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[0].name }}
               <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit" >x</a>
@@ -17,14 +17,14 @@
               &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
             </span>
           </span>
-      <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+      <span *ngIf="orgunit_model.selected_orgunits.length <= 10 && orgunit_model.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
                <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit" *ngIf="orgunit_model.selected_orgunits.length > 1">x</a>
             </span>
           </span>
       <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
-      <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
+      <!--<span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>-->
       <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
     </div>
   </div>
@@ -81,9 +81,9 @@
         (onActivate)="activateOrg($event)"
         (onDeactivate)="deactivateOrg($event)"
       >
-        <template #treeNodeTemplate let-node>
+        <ng-template #treeNodeTemplate let-node>
           <span (click)="updateModelOnSelect(node.data)">{{ node.data.name }}</span>
-        </template>
+        </ng-template>
       </tree-root>
     </div>
 
