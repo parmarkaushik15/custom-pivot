@@ -1,4 +1,9 @@
-import {Component, OnInit, Output, Input, EventEmitter, ViewChild, AfterViewInit} from '@angular/core';
+import {
+  Component, OnInit, Output, Input, EventEmitter, ViewChild, AfterViewInit,
+  ChangeDetectionStrategy, OnChanges, SimpleChanges
+} from '@angular/core';
+import {Http} from "@angular/http";
+import {_keyValueDiffersFactory} from "@angular/core/src/application_module";
 
 
 const PERIOD_TYPE: Array<any> = [
@@ -11,6 +16,10 @@ const PERIOD_TYPE: Array<any> = [
   {value:'FinancialApril', name: 'Financial-April', shown: false},
   {value:'FinancialJuly', name: 'Financial-July', shown: true},
   {value:'FinancialOct', name: 'Financial-Oct', shown: false},
+  {value:'RelativeMonth', name: 'Relative Month', shown: true},
+  {value:'RelativeQuarter', name: 'Relative Quarter', shown: true},
+  {value:'RelativeYear', name: 'Relative Year', shown: true},
+  {value:'RelativeFinancialYear', name: 'Relative Financial Year', shown: true},
 ];
 
 
@@ -19,8 +28,7 @@ const PERIOD_TYPE: Array<any> = [
   templateUrl: './period-filter.component.html',
   styleUrls: ['./period-filter.component.css']
 })
-export class PeriodFilterComponent implements OnInit, AfterViewInit {
-
+export class PeriodFilterComponent implements OnInit {
 
   @Input() period_tree_config: any = {
     show_search : false,
@@ -47,7 +55,9 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
   customTemplateStringOrgunitOptions: any;
   period_type_config: Array<any>;
 
-  constructor() {
+  constructor(
+    private http: Http
+  ) {
     let date = new Date();
     date.setDate(0);
     this.period_tree_config.starting_year = date.getFullYear();
@@ -57,8 +67,16 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
     if(!this.period_tree_config.hasOwnProperty("multiple_key")){
       this.period_tree_config.multiple_key = "none";
     }
+
+    this.getSystemSettings().subscribe((value) => {
+      this.activatePer({ id:value.keyAnalysisRelativePeriod, name:value.keyAnalysisRelativePeriod })
+    })
   }
 
+  getSystemSettings(){
+    return this.http.get("../../../api/25/systemSettings")
+      .map(res => res.json() || {})
+  }
 
   ngOnInit() {
     this.period_type_config = PERIOD_TYPE;
@@ -67,9 +85,6 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(){
-
-  }
 
   transferDataSuccess(data,current){
     if(data.dragData.id == current.id){
@@ -110,26 +125,6 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
     });
   }
 
-  activateNode(nodeId:any, nodes){
-    setTimeout(() => {
-      let node = nodes.treeModel.getNodeById(nodeId);
-      if (node)
-        node.setIsActive(true, true);
-    }, 0);
-  }
-
-  // a method to activate the model
-  deActivateNode(nodeId:any, nodes, event){
-    setTimeout(() => {
-      let node = nodes.treeModel.getNodeById(nodeId);
-      if (node)
-        node.setIsActive(false, true);
-    }, 0);
-    if( event != null){
-      event.stopPropagation();
-    }
-  }
-
   pushPeriodForward(){
     this.year += 1;
     this.periods = this.getPeriodArray(this.period_type,this.year);
@@ -144,26 +139,14 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
     this.periods = this.getPeriodArray(this.period_type,this.year);
   }
 
-  // get the name of period to be used in a tittle
-  getPeriodName(id){
-    for ( let period of this.getPeriodArray(this.period_type, this.getLastPeriod(id,this.period_type).substr(0,4))){
-      if( this.getLastPeriod(id,this.period_type) == period.id){
-        return period.name;
-      }
-    }
-  }
-
-
-  // display period Tree
-  displayPerTree(){
-    // this.showPerTree = !this.showPerTree;
-  }
-
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-    this.selected_periods.splice(this.selected_periods.indexOf($event),1)
+    this.selected_periods.splice(this.selected_periods.indexOf($event),1);
     //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
-    this.onPeriodUpdate.emit({name: 'pe', value: this.getPeriodsForAnalytics(this.selected_periods)});
+    this.onPeriodUpdate.emit({
+      items: this.selected_periods,
+      name: 'pe',
+      value: this.getPeriodsForAnalytics(this.selected_periods)});
   };
 
   // add item to array of selected items when item is selected
@@ -171,14 +154,13 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
     if(!this.checkPeriodAvailabilty($event,this.selected_periods)){
       this.selected_periods.push($event);
       //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
-      this.onPeriodUpdate.emit({name: 'pe', value: this.getPeriodsForAnalytics(this.selected_periods)});
+      this.onPeriodUpdate.emit({
+        items: this.selected_periods,
+        name: 'pe',
+        value: this.getPeriodsForAnalytics(this.selected_periods)});
     }
   };
 
-  updatePeriodModel() {
-    this.displayPerTree();
-    this.onPeriodUpdate.emit({name: 'pe', value: this.getPeriodsForAnalytics(this.selected_periods)});
-  }
 
   getPeriodsForAnalytics(selectedPeriod) {
     let periodForAnalytics = "";
@@ -199,65 +181,74 @@ export class PeriodFilterComponent implements OnInit, AfterViewInit {
     return checker;
   }
 
-  resetSelection(){
-    this.period_type = "";
-    this.selected_periods = [];
-    this.periods = [];
+  resetSelection(hideMonth,hideQuarter){
+    if( !hideMonth && !hideQuarter && this.period_type != "Quarterly" && this.period_type != "FinancialJuly" && this.period_type != "Yearly"){
+      this.period_type = "Monthly";
+    }else if( hideMonth && !hideQuarter && this.period_type != "FinancialJuly" && this.period_type != "Yearly" ){
+      this.period_type = "Quarterly";
+    }else{
+      this.period_type = "FinancialJuly";
+    }
+
+
+    this.periods = this.getPeriodArray(this.period_type,this.year);
   }
+
+
 
   getPeriodArray(type,year){
     let periods = [];
     if(type == "Weekly"){
       periods.push({id:'',name:''})
     }else if(type == "Monthly"){
-      periods.push({id:year+'01',name:'January '+year,selected:true},{id:year+'02',name:'February '+year},{id:year+'03',name:'March '+year},{id:year+'04',name:'April '+year},{id:year+'05',name:'May '+year},{id:year+'06',name:'June '+year},{id:year+'07',name:'July '+year},{id:year+'08',name:'August '+year},{id:year+'09',name:'September '+year},{id:year+'10',name:'October '+year},{id:year+'11',name:'November '+year},{id:year+'12',name:'December '+year})
+      periods.push({id:year+'12',name:'December '+year},{id:year+'11',name:'November '+year},{id:year+'10',name:'October '+year},{id:year+'09',name:'September '+year},{id:year+'08',name:'August '+year},{id:year+'07',name:'July '+year},{id:year+'06',name:'June '+year},{id:year+'05',name:'May '+year},{id:year+'04',name:'April '+year},{id:year+'03',name:'March '+year},{id:year+'02',name:'February '+year},{id:year+'01',name:'January '+year,selected:true})
     }else if(type == "BiMonthly"){
       periods.push({id:year+'01B',name:'January - February '+year,selected:true},{id:year+'02B',name:'March - April '+year},{id:year+'03B',name:'May - June '+year},{id:year+'04B',name:'July - August '+year},{id:year+'05B',name:'September - October '+year},{id:year+'06B',name:'November - December '+year})
     }else if(type == "Quarterly"){
-      periods.push({id:year+'Q1',name:'January - March '+year,selected:true},{id:year+'Q2',name:'April - June '+year},{id:year+'Q3',name:'July - September '+year},{id:year+'Q4',name:'October - December '+year})
+      periods.push({id:year+'Q4',name:'October - December '+year},{id:year+'Q3',name:'July - September '+year},{id:year+'Q2',name:'April - June '+year},{id:year+'Q1',name:'January - March '+year,selected:true})
     }else if(type == "SixMonthly"){
       periods.push({id:year+'S1',name:'January - June '+year,selected:true},{id:year+'S2',name:'July - December '+year})
     }else if(type == "SixMonthlyApril"){
       let useYear = parseInt(year) + 1;
       periods.push({id:year+'AprilS2',name:'October '+year+' - March '+useYear,selected:true},{id:year+'AprilS1',name:'April - September '+year})
     }else if(type == "FinancialOct"){
-      for (var i = 0; i <= 10; i++) {
+      for (let i = 0; i <= 10; i++) {
         let useYear = parseInt(year) - i;
         let currentYear = useYear + 1;
         periods.push({id:useYear+'Oct',name:'October '+useYear+' - September '+ currentYear})
       }
     }else if(type == "Yearly"){
-      for (var i = 0; i <= 10; i++) {
+      for (let i = 0; i <= 10; i++) {
         let useYear = parseInt(year) - i;
         periods.push({id:useYear,name:useYear})
 
       }
     }else if(type == "FinancialJuly"){
-      for (var i = 0; i <= 10; i++) {
+      for (let i = 0; i <= 10; i++) {
         let useYear = parseInt(year) - i;
         let currentYear = useYear + 1;
         periods.push({id:useYear+'July',name:'July '+useYear+' - June '+ currentYear})
       }
     }else if(type == "FinancialApril"){
-      for (var i = 0; i <= 10; i++) {
+      for (let i = 0; i <= 10; i++) {
         let useYear = parseInt(year) - i;
         let currentYear = useYear + 1;
         periods.push({ id:useYear+'April',name:'April '+useYear+' - March '+ currentYear })
       }
     }else if(type == "Relative Weeks"){
       periods.push({id:'THIS_WEEK',name:'This Week'},{id:'LAST_WEEK',name:'Last Week'},{id:'LAST_4_WEEK',name:'Last 4 Weeks',selected:true},{id:'LAST_12_WEEK',name:'last 12 Weeks'},{id:'LAST_52_WEEK',name:'Last 52 weeks'});
-    }else if(type == "Relative Month"){
+    }else if(type == "RelativeMonth"){
       periods.push({id:'THIS_MONTH',name:'This Month'},{id:'LAST_MONTH',name:'Last Month'},{id:'LAST_3_MONTHS',name:'Last 3 Month'},{id:'LAST_6_MONTHS',name:'Last 6 Month'},{id:'LAST_12_MONTHS',name:'Last 12 Month',selected:true});
     }else if(type == "Relative Bi-Month"){
       periods.push({id:'THIS_BIMONTH',name:'This Bi-month'},{id:'LAST_BIMONTH',name:'Last Bi-month'},{id:'LAST_6_BIMONTHS',name:'Last 6 bi-month',selected:true});
-    }else if(type == "Relative Quarter"){
+    }else if(type == "RelativeQuarter"){
       periods.push({id:'THIS_QUARTER',name:'This Quarter'},{id:'LAST_QUARTER',name:'Last Quarter'},{id:'LAST_4_QUARTERS',name:'Last 4 Quarters',selected:true});
-    }else if(type == "Relative Six Monthly"){
+    }else if(type == "RelativeSixMonthly"){
       periods.push({id:'THIS_SIX_MONTH',name:'This Six-month'},{id:'LAST_SIX_MONTH',name:'Last Six-month'},{id:'LAST_2_SIXMONTHS',name:'Last 2 Six-month',selected:true});
-    }else if(type == "Relative Year"){
-      periods.push({id:'THIS_FINANCIAL_YEAR',name:'This Year'},{id:'LAST_FINANCIAL_YEAR',name:'Last Year',selected:true},{id:'LAST_5_FINANCIAL_YEARS',name:'Last 5 Years'});
-    }else if(type == "Relative Financial Year"){
-      periods.push({id:'THIS_YEAR',name:'This Financial Year'},{id:'LAST_YEAR',name:'Last Financial Year',selected:true},{id:'LAST_5_YEARS',name:'Last 5 Five financial years'});
+    }else if(type == "RelativeFinancialYear"){
+      periods.push({id:'THIS_FINANCIAL_YEAR',name:'This Financial Year'},{id:'LAST_FINANCIAL_YEAR',name:'Last Financial Year',selected:true},{id:'LAST_5_FINANCIAL_YEARS',name:'Last 5 Financial Years'});
+    }else if(type == "RelativeYear"){
+      periods.push({id:'THIS_YEAR',name:'This Year'},{id:'LAST_YEAR',name:'Last Year',selected:true},{id:'LAST_5_YEARS',name:'Last 5 Five Years'});
     }
     return periods;
   }

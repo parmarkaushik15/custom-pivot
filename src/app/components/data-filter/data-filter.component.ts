@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input} from '@angular/core';
+import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input, ChangeDetectionStrategy} from '@angular/core';
 
 export const DATA_OPTIONS = [
   {
@@ -24,7 +24,8 @@ export const DATA_OPTIONS = [
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
-  styleUrls: ['./data-filter.component.css']
+  styleUrls: ['./data-filter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataFilterComponent implements OnInit, AfterViewInit {
 
@@ -32,18 +33,20 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   @Input() listItems:any[] = [];
   @Input() dataGroups: any[] = [];
   @Input() dataOptions: any[] = [];
+  @Input() selectedGroup:any;
+
+  @Output() selected_data_option: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selected_group: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onDataUpdate: EventEmitter<any> = new EventEmitter<any>();
   selectedItems:any[] = [];
   querystring: string = null;
   listchanges: string = null;
   showGroups:boolean = false;
   showBody:boolean = false;
-  selectedGroup:any;
-  @Output() onDataUpdate: EventEmitter<any> = new EventEmitter<any>();
   constructor(  ) { }
 
   ngOnInit() {
-   this.getDataGroups(this.getDataGroupArray(this.dataOptions));
-    this.getAllItems(null);
+
   }
 
   ngAfterViewInit() {
@@ -51,15 +54,12 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   }
 
   toggleDataOption(optionPrefix) {
-    for(let option of this.dataOptions) {
-      if(option.prefix == optionPrefix) {
-        option.selected = !option.selected;
-        break;
-      }
-    }
+    this.selected_data_option.emit(optionPrefix);
+  }
 
-    //update data group
-    this.getDataGroups(this.getDataGroupArray(this.dataOptions));
+  setSelectedGroup(group) {
+    this.selected_group.emit(group);
+    this.showGroups = false;
   }
 
   getList(){
@@ -143,6 +143,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.selectedItems.push(item);
     this.getSelectedPeriods();
     this.onDataUpdate.emit({
+        itemList:this.selectedItems,
         selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
         hideQuarter:this.hideQuarter,
         hideMonth:this.hideMonth
@@ -153,14 +154,21 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.selectedItems.splice(this.selectedItems.indexOf(item),1);
     this.getSelectedPeriods();
     this.onDataUpdate.emit({
+      itemList:this.selectedItems,
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
       hideMonth:this.hideMonth
     });
   }
 
-  inSelected(item){
-    return this.selectedItems.indexOf(item) != -1;
+  inSelected(item,list){
+    let checker = false;
+    for( let per of list ){
+      if( per.id == item.id){
+        checker =true;
+      }
+    }
+    return checker;
   }
 
   transferDataSuccess(data,current){

@@ -2,7 +2,7 @@
   <div class="panel-heading" style="background-color: #ffffff;padding-bottom: 5px;padding-top: 5px;padding-left: 3px">
     <div class="" (click)="displayOrgTree()">
           <span *ngIf="!orgunit_tree_config.loading">
-              {{ getProperPreOrgunitName() }}
+              <!--{{  getProperPreOrgunitName() }}-->
           </span>
       <span *ngIf="orgunit_model.selected_orgunits.length > 10 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
@@ -37,34 +37,27 @@
           <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-          <li><a (click)="orgunit_model.selection_mode = 'Usr_orgUnit'">User orgUnit</a></li>
-          <li><a (click)="orgunit_model.selection_mode = 'orgUnit'">Select Organisation Unit</a></li>
-          <li><a (click)="orgunit_model.selection_mode = 'Level'">Select Level</a></li>
-          <li><a (click)="orgunit_model.selection_mode = 'Group'">Select Group</a></li>
+          <li><a (click)="setType('Usr_orgUnit')">User orgUnit</a></li>
+          <li><a (click)="setType('orgUnit')">Select Organisation Unit</a></li>
+          <li><a (click)="setType('Level')">Select Level</a></li>
+          <li><a (click)="setType('Group')">Select Group</a></li>
         </ul>
       </div>
     </div>
     <!--org_unit_groups-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
-      <select id="groupSelection" [(ngModel)]="orgunit_model.selected_group" class="form-control" style="height: 30px ">
-        <option value="">Select Group</option>
-        <option *ngFor="let group of orgunit_model.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
-      </select>
+      <app-multiselect [placeholder]="'Select organisation units group'" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
+
     </div>
-    <!--org_unit_groups-->
+    <!--user_org_unit-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Usr_orgUnit'">
-      <select id="userOrgSelection" [(ngModel)]="orgunit_model.selected_user_orgunit" class="form-control" style="height: 30px ">
-        <option value="USER_ORGUNIT">User org unit</option>
-        <option value="USER_ORGUNIT_CHILDREN">User sub-units</option>
-        <option value="USER_ORGUNIT_GRANDCHILDREN">User sub-x2-units</option>
-      </select>
+      <app-multiselect [starting_items]="[{id:'USER_ORGUNIT', name: 'User org unit'}]" [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
+
     </div>
     <!--org_unit_levels-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
-      <select id="levelSelection" [(ngModel)]="orgunit_model.selected_level" class="form-control" style="height: 30px ">
-        <option value="">Select Level</option>
-        <option *ngFor="let single_level of orgunit_model.orgunit_levels"  value="LEVEL-{{single_level.level}}">{{ single_level.name }}</option>
-      </select>
+      <app-multiselect [placeholder]="'Select organisation units levels'" [items]="orgunit_model.orgunit_levels" (onSelected)="setSelectedLevels($event)"></app-multiselect>
+
     </div>
     <!--<div class="search-area">-->
       <!--<form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search && orgunit_model.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">-->

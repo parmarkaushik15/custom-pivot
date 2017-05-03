@@ -21,6 +21,8 @@ import {INITIAL_APPLICATION_STATE} from "./store/application.state";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {DataFilterComponent} from "./components/data-filter/data-filter.component";
 import {FilterByNamePipe} from "./shared/pipes/filter-by-name.pipe";
+import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
+import {ClickOutsideDirective} from "./components/org-unit-filter/click-outside.directive";
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import {FilterByNamePipe} from "./shared/pipes/filter-by-name.pipe";
     PeriodFilterComponent,
     DataAreaComponent,
     DataFilterComponent,
-    FilterByNamePipe
+    FilterByNamePipe,
+    MultiselectComponent,
+    ClickOutsideDirective
   ],
   imports: [
     BrowserModule,

@@ -8,10 +8,11 @@ import {CategoryCombo} from "../model/category-combo";
 import {OrganisationUnit} from "../model/organisation-unit";
 import {
   LocalStorageService, DATAELEMENT_KEY, INDICATOR_KEY,
-  ORGANISATION_UNIT_KEY, CATEGORY_COMBOS_KEY, INDICATOR_GROUP_KEY, DATAELEMENT_GROUP_KEY
+  ORGANISATION_UNIT_KEY, CATEGORY_COMBOS_KEY, INDICATOR_GROUP_KEY, DATAELEMENT_GROUP_KEY, DATASET_KEY
 } from "./local-storage.service";
 import {DataelementGroup} from "../model/dataelement-group";
 import {IndicatorGroup} from "../model/indicator-group";
+import {DataSet} from "../model/dataset";
 
 @Injectable()
 export class DataService {
@@ -19,13 +20,18 @@ export class DataService {
   constructor(private http: Http, private localDbService: LocalStorageService ) { }
 
   getIndicators(): Observable<Indicator[]>{
-    return this.http.get("../../../api/indicators.json?fields=id,name&paging=false")
+    return this.http.get("../../../api/indicators.json?fields=id,name,dataSets[periodType]&paging=false")
       .map(res => res.json().indicators || [])
   }
 
   getDataElements(): Observable<DataElement[]>{
-    return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo&paging=false")
+    return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo,dataSetElements[dataSet[periodType]&paging=false")
       .map(res => res.json().dataElements || [])
+  }
+
+  getDataSets(): Observable<DataSet[]>{
+    return this.http.get("../../../api/dataSets.json?paging=false&fields=id,name")
+      .map(res => res.json().dataSets || [])
   }
 
   getCategoryCombos(): Observable<CategoryCombo[]>{
@@ -66,6 +72,9 @@ export class DataService {
             switch (key){
               case DATAELEMENT_KEY:
                 dataStream$ = this.getDataElements();
+                break;
+              case DATASET_KEY:
+                dataStream$ = this.getDataSets();
                 break;
               case ORGANISATION_UNIT_KEY:
                 dataStream$ = this.getOrganisationUnits();

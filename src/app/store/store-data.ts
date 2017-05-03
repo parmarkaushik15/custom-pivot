@@ -7,6 +7,7 @@ import {Indicator} from "../model/indicator";
 import {DataelementGroup} from "../model/dataelement-group";
 import {IndicatorGroup} from "../model/indicator-group";
 import {CategoryCombo} from "../model/category-combo";
+import {DataSet} from "../model/dataset";
 export interface StoreData {
 
     organisationUnits: OrganisationUnit[];
@@ -15,11 +16,22 @@ export interface StoreData {
     dataElementGroups: DataelementGroup[];
     indicatorGroups: IndicatorGroup[];
     categoryOptions: CategoryCombo[];
-    selectedOrgUnits:string;
-    selectedPeriod: string;
-    selectedData: string[];
+    dataSets: DataSet[];
+    dataSetGroups:any;
+    selectedOrgUnits:any;
+    selectedPeriod: {
+      items: any,
+      name: string,
+      value:string},
+    selectedData: {
+      itemList:any[],
+      selectedData:any,
+      hideQuarter:boolean,
+      hideMonth:boolean
+    };
     selectedDataType: string[];
-    selectedGroup: string;
+    selectedGroup: any;
+    tableObject:any;
     currentAnalytics: any;
     selectedPeriodType: string;
     currentGroupList:any[];
@@ -36,18 +48,25 @@ export const INITIAL_STORE_DATA: StoreData = {
   dataElementGroups: [],
   indicatorGroups: [],
   categoryOptions: [],
+  dataSets: [],
   selectedOrgUnits: null,
   selectedPeriod: null,
-  selectedData: [],
+  selectedData: {
+    itemList:[],
+    selectedData:null,
+    hideQuarter:false,
+    hideMonth:false
+  },
   selectedDataType: [],
-  selectedGroup: "all",
+  selectedGroup: {id:'all',name:'all'},
+  tableObject:null,
   currentAnalytics: null,
   selectedPeriodType: "Monthly",
   currentGroupList:[],
   currentDataItemList:[],
   dataOptions: [
     {
-      name: 'All',
+      name: 'All Data',
       prefix: 'all',
       selected: true},
     {
@@ -65,5 +84,12 @@ export const INITIAL_STORE_DATA: StoreData = {
       prefix: 'cv',
       selected: false
     }
+  ],
+  dataSetGroups: [
+    {id:'', name: "Reporting Rate"},
+    {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
+    {id:'.ACTUAL_REPORTS', name: "Actual Reports Submitted"},
+    {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
+    {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
   ]
 };

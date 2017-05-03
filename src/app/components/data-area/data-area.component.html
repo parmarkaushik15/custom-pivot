@@ -1,20 +1,14 @@
-organisationUnits
-<p>
-
-  {{ dataItems.organisationUnits.length }}
-</p>indicatorGroups
-<p>
-  {{ dataItems.indicatorGroups.length }}
-</p>indicators
-<p>
-  {{ dataItems.indicators.length }}
-</p>dataElements
-<p>
-  {{ dataItems.dataElements.length }}
-</p>dataElementGroups
-<p>
-  {{ dataItems.dataElementGroups.length }}
-</p>categoryOptions
-<p>
-  {{ dataItems.categoryOptions.length  }}
-</p>
+<div *ngIf="!dataItems" class="col-md-12" style="padding-left: 30px;">
+  <h6>Creating Pivot table</h6>
+  <ul class="list-unstyled">
+    <li><small>- Select items from any dimension of the left menu</small></li>
+    <li><small>- Click Layout to arrange your dimensions on table rows and columns</small></li>
+    <li><small>- Click Update to create your table</small></li>
+  </ul>
+  <h6>Working with a pivot table</h6>
+  <ul class="list-unstyled">
+    <li><small>- Click Options to hide sub-totals or empty rows, adjust font size and more</small></li>
+    <li><small>- Click Favorites to save your table for later use</small></li>
+    <li><small>- Click Download to save table data to your computer</small></li>
+  </ul>
+</div>

@@ -13,15 +13,15 @@ export class OrgUnitFilterComponent implements OnInit {
   // the object that will carry the output value you can send one from outside to config start values
   @Input() orgunit_model: any =  {
     selection_mode: "Usr_orgUnit",
-    selected_level: "",
+    selected_levels: [],
     show_update_button:true,
-    selected_group: "",
+    selected_groups: [],
     orgunit_levels: [],
     orgunit_groups: [],
     selected_orgunits: [],
     user_orgunits: [],
     type:"report", // can be 'data_entry'
-    selected_user_orgunit: "USER_ORGUNIT"
+    selected_user_orgunit: [{id:'USER_ORGUNIT', name: 'User org unit'}]
   };
 
   // The organisation unit configuration object This will have to come from outside.
@@ -53,6 +53,12 @@ export class OrgUnitFilterComponent implements OnInit {
   showOrgTree:boolean = false;
 
   customTemplateStringOrgunitOptions: any;
+
+  user_orgunits_types: Array<any> = [
+    {id:'USER_ORGUNIT', name: 'User org unit', shown: true},
+    {id:'USER_ORGUNIT_CHILDREN', name: 'User sub-units', shown: true},
+    {id:'USER_ORGUNIT_GRANDCHILDREN', name: 'User sub-x2-units', shown: true}
+  ];
   constructor(
     private http: Http,
     private orgunitService: OrgUnitService
@@ -143,8 +149,6 @@ export class OrgUnitFilterComponent implements OnInit {
                 let all_levels = data.pager.total;
                 let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
                 let use_level = parseInt(all_levels) - (parseInt(level) - 1);
-                // this.orgunit_model.user_orgunits = orgunits;
-
                 //load inital orgiunits to speed up loading speed
                 this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
                   (initial_data) => {
@@ -183,6 +187,12 @@ export class OrgUnitFilterComponent implements OnInit {
         );
   }
 
+  setType(type: string){
+    this.orgunit_model.selection_mode = type;
+    if( type == 'Usr_orgUnit' ){
+
+    }
+  }
   // display Orgunit Tree
   displayOrgTree(){
     // this.showOrgTree = !this.showOrgTree;
@@ -249,6 +259,25 @@ export class OrgUnitFilterComponent implements OnInit {
     this.orgUnit = $event.node.data;
     this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
   };
+
+  // set selected groups
+  setSelectedGroups( selected_groups ){
+    console.log(selected_groups)
+    this.orgunit_model.selected_groups = selected_groups;
+  }
+
+  // set selected groups
+  setSelectedUserOrg( selected_user_orgunit ){
+    console.log(selected_user_orgunit)
+    this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
+    console.log(this.getOrgUnitsForAnalytics(this.orgunit_model,false))
+  }
+
+  // set selected groups
+  setSelectedLevels( selected_levels ){
+    this.orgunit_model.selected_levels = selected_levels;
+    console.log(this.getOrgUnitsForAnalytics(this.orgunit_model,false))
+  }
 
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
     if (type == "top"){
@@ -338,17 +367,20 @@ export class OrgUnitFilterComponent implements OnInit {
     let organisation_unit_analytics_string = "";
     // if the selected orgunit is user org unit
     if(orgunit_model.selection_mode == "Usr_orgUnit"){
-      if(orgunit_model.user_orgunits.length == 1){
-        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0].id);
-        orgUnits.push(user_orgunit.id);
-        if(user_orgunit.hasOwnProperty('children') && with_children){
-          for( let orgunit of user_orgunit.children ){
-            orgUnits.push(orgunit.id);
-          }
-        }
-      }else{
-        organisation_unit_analytics_string += orgunit_model.selected_user_orgunit
-      }
+      // if(orgunit_model.user_orgunits.length == 1){
+      //   let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0].id);
+      //   orgUnits.push(user_orgunit.id);
+      //   if(user_orgunit.hasOwnProperty('children') && with_children){
+      //     for( let orgunit of user_orgunit.children ){
+      //       orgUnits.push(orgunit.id);
+      //     }
+      //   }
+      // }else{
+        orgunit_model.selected_user_orgunit.forEach((orgunit) => {
+          organisation_unit_analytics_string += orgunit.id+";";
+        });
+
+      // }
     }
 
     else{
@@ -372,12 +404,15 @@ export class OrgUnitFilterComponent implements OnInit {
       if(orgunit_model.selection_mode == "orgUnit"){
 
       }if(orgunit_model.selection_mode == "Level"){
-        organisation_unit_analytics_string += orgunit_model.selected_level+";";
+        orgunit_model.selected_levels.forEach((level) => {
+          organisation_unit_analytics_string += "LEVEL-" + level.level + ";";
+        });
       }if(orgunit_model.selection_mode == "Group"){
-        organisation_unit_analytics_string += orgunit_model.selected_group+";";
+        orgunit_model.selected_groups.forEach((group) => {
+          organisation_unit_analytics_string += "OU_GROUP-"+group.id + ";";
+        });
       }
     }
-
     return organisation_unit_analytics_string+orgUnits.join(";");
   }
 

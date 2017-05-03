@@ -3,6 +3,7 @@ import {Observable} from "rxjs";
 import {AngularIndexedDB} from "./angular2-indexeddb";
 
 export const DATAELEMENT_KEY =        'data-elements';
+export const DATASET_KEY =        'data-sets';
 export const ORGANISATION_UNIT_KEY =  'organisation-units';
 export const INDICATOR_KEY =          'indicators';
 export const CATEGORY_COMBOS_KEY =    'category-options';
@@ -13,7 +14,7 @@ export const INDICATOR_GROUP_KEY =    'indicator-groups';
 export class LocalStorageService {
   db;
   constructor() {
-    this.db = new AngularIndexedDB('my-dhis3-pivot', 1);
+    this.db = new AngularIndexedDB('my-dhis2-pivot', 2);
   }
 
   /**
@@ -22,7 +23,7 @@ export class LocalStorageService {
    * @private
    */
   _initiateStoreObjects(){
-    return this.db.createStore(1, (evt) => {
+    return this.db.createStore(2, (evt) => {
       //Create data element table
       this.createStore(evt, DATAELEMENT_KEY, "id");
 
@@ -40,6 +41,9 @@ export class LocalStorageService {
 
       //create indicator group table
       this.createStore(evt, INDICATOR_GROUP_KEY, "id");
+
+      //create indicator group table
+      this.createStore(evt, DATASET_KEY, "id");
     })
   }
 
