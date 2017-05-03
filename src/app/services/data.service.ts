@@ -37,6 +37,7 @@ export class DataService {
   getCategoryCombos(): Observable<CategoryCombo[]>{
     return this.http.get("../../../api/categoryCombos.json?fields=id,name,categoryOptionCombos[id,name]&paging=false")
       .map(res => res.json().categoryCombos || [])
+
   }
 
   getOrganisationUnits(): Observable<OrganisationUnit[]>{

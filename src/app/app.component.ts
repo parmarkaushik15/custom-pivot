@@ -10,7 +10,7 @@ import {
 import {
   LoadDataElementAction, LoadIndicatorAction, LoadDataElementGroupAction, LoadIndicatorGroupAction,
   LoadCategoryOptionAction, LoadOrganisationUnitAction, ToggleDataOptionAction, LoadDataSetAction, SelectGroupAction,
-  SelectDataAction, SelectPeriodAction, SelectOrgunitAction, ToggleDataAreaAction
+  SelectDataAction, SelectPeriodAction, SelectOrgunitAction, ToggleDataAreaAction, SetLayoutAction
 } from "./store/actions";
 import {UiState} from "./store/ui-state";
 import {PeriodFilterComponent} from "./components/period-filter/period-filter.component";
@@ -31,6 +31,7 @@ export class AppComponent implements OnInit{
   hideMonth: boolean =false;
   hideQuarter:boolean = false;
   uiState: UiState;
+  currentLayout: any;
 
   @ViewChild(PeriodFilterComponent)
   public periodComponent: PeriodFilterComponent;
@@ -53,6 +54,13 @@ export class AppComponent implements OnInit{
     // this.store.dispatch(new LoadOrganisationUnitAction());
     this.store.dispatch(new LoadDataSetAction());
 
+    //set initial layout
+    this.currentLayout = {
+      rows: ['ou'],
+      columns: ['dx'],
+      filters: ['pe'],
+      excluded:['co']
+    }
   }
 
   toogleDataOption( value ){
@@ -60,15 +68,19 @@ export class AppComponent implements OnInit{
   }
 
   setSelectedGroup( value ){
-    this.store.dispatch( new SelectGroupAction(value) );
+    this.store.dispatch( new SelectGroupAction( value ) );
   }
 
   setSelectedOrgunit( value ){
-    this.store.dispatch( new SelectOrgunitAction(value) );
+    this.store.dispatch( new SelectOrgunitAction( value ) );
   }
 
   setSelectedPeriod( value ){
-    this.store.dispatch( new SelectPeriodAction(value) );
+    this.store.dispatch( new SelectPeriodAction( value ) );
+  }
+
+  setLayout( value ){
+    this.store.dispatch( new SetLayoutAction( value ) );
   }
 
   toogleDataArea() {
@@ -77,7 +89,7 @@ export class AppComponent implements OnInit{
 
   setSelectedData( value ){
     console.log(value);
-    this.store.dispatch( new SelectDataAction(value) );
+    this.store.dispatch( new SelectDataAction( value ) );
     this.hideMonth = value.hideMonth;
     this.hideQuarter = value.hideQuarter;
     this.periodComponent.resetSelection( value.hideMonth, value.hideQuarter );

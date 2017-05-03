@@ -7,7 +7,7 @@ import {
   DATA_ELEMENT_LOADED_ACTION, INDICATOR_GROUP_LOADED_ACTION,
   INDICATOR_LOADED_ACTION, ORGANISATION_UNIT_LOADED_ACTION, CATEGORY_OPTION_LOADED_ACTION,
   DATA_ELEMENT_GROUP_LOADED_ACTION, TOGGLE_DATA_OPTION_ACTION, DATA_SET_LOADED_ACTION, SELECT_GROUP_ACTION,
-  SELECT_DATA_ACTION, SELECT_PERIOD_ACTION, SELECT_ORGANISATION_UNIT_ACTION, TOGGLE_DATA_AREA_ACTION,
+  SELECT_DATA_ACTION, SELECT_PERIOD_ACTION, SELECT_ORGANISATION_UNIT_ACTION, TOGGLE_DATA_AREA_ACTION, SET_LAYOUT_ACTION,
 } from "../actions";
 import {
   DATAELEMENT_KEY, ORGANISATION_UNIT_KEY, CATEGORY_COMBOS_KEY,
@@ -34,6 +34,11 @@ export function storeData(state: StoreData, action:Action) : StoreData {
         let store = _.cloneDeep( state );
         store.selectedData = action.payload;
         return store;
+
+      case SET_LAYOUT_ACTION:
+        let layoutStore = _.cloneDeep( state );
+        layoutStore.layout = action.payload;
+        return layoutStore;
 
       case SELECT_ORGANISATION_UNIT_ACTION:
         let ouStore = _.cloneDeep( state );

@@ -37,6 +37,7 @@ export interface StoreData {
     currentGroupList:any[];
     currentDataItemList:any[];
     dataOptions: any;
+    layout:any;
 
 }
 
@@ -91,5 +92,11 @@ export const INITIAL_STORE_DATA: StoreData = {
     {id:'.ACTUAL_REPORTS', name: "Actual Reports Submitted"},
     {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
     {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
-  ]
+  ],
+  layout:{
+    rows: ['pe'],
+    columns: ['dx'],
+    filters: ['ou'],
+    excluded:['co']
+  }
 };

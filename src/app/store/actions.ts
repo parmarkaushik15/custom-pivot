@@ -21,6 +21,7 @@ export const SELECT_GROUP_ACTION = 'SELECT_GROUP_ACTION';
 export const SELECT_DATA_ACTION = 'SELECT_DATA_ACTION';
 export const SELECT_PERIOD_ACTION = 'SELECT_PERIOD_ACTION';
 export const SELECT_ORGANISATION_UNIT_ACTION = 'SELECT_ORGANISATION_UNIT_ACTION';
+export const SET_LAYOUT_ACTION = 'SET_LAYOUT_ACTION';
 
 export class ToggleDataOptionAction implements Action {
   type = TOGGLE_DATA_OPTION_ACTION;
@@ -40,6 +41,12 @@ export class SelectGroupAction implements Action {
 
 export class SelectDataAction implements Action {
   type = SELECT_DATA_ACTION;
+
+  constructor ( public payload: any ) {}
+}
+
+export class SetLayoutAction implements Action {
+  type = SET_LAYOUT_ACTION;
 
   constructor ( public payload: any ) {}
 }

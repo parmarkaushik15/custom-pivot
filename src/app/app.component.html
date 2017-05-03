@@ -1,5 +1,5 @@
 <div class="container-fluid" style="border: 1px solid rgba(0,0,0,0.2); padding-left: 3px;padding-right: 3px">
-    <div class="data-filter  left-block"  *ngIf="uiState.dataAreaOpen">
+    <div class="data-filter  left-block"  [ngClass]="{'hideData': !uiState.dataAreaOpen}">
       <nav class="navbar navbar-default top-bar" style="margin-bottom: 5px">
         <div class="container-fluid" style="padding-left: 3px;padding-right: 3px">
           <div class="col-sm-10" style="padding: 0px">
@@ -53,7 +53,7 @@
               <span class="glyphicon glyphicon-indent-left"  style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></span>
             </a>
             <a class="btn btn-sm btn-default" >Update</a>
-            <a class="btn btn-sm btn-default" >Layout</a>
+            <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">
             <li><a href="../../../"><span class="glyphicon glyphicon-home"></span> Home</a></li>
