@@ -14,6 +14,7 @@ import {
 } from "./store/actions";
 import {UiState} from "./store/ui-state";
 import {PeriodFilterComponent} from "./components/period-filter/period-filter.component";
+import {LocalStorageService, DATAELEMENT_GROUP_KEY, INDICATOR_GROUP_KEY} from "./services/local-storage.service";
 
 @Component({
   selector: 'app-root',
@@ -81,7 +82,5 @@ export class AppComponent implements OnInit{
     this.hideQuarter = value.hideQuarter;
     this.periodComponent.resetSelection( value.hideMonth, value.hideQuarter );
   }
-
-
 
 }

@@ -23,6 +23,7 @@ import {DataFilterComponent} from "./components/data-filter/data-filter.componen
 import {FilterByNamePipe} from "./shared/pipes/filter-by-name.pipe";
 import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
 import {ClickOutsideDirective} from "./components/org-unit-filter/click-outside.directive";
+import {VisualizerService} from "./services/visualizer.service";
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import {ClickOutsideDirective} from "./components/org-unit-filter/click-outside.
   providers: [
     OrgUnitService,
     LocalStorageService,
-    DataService
+    DataService,
+    VisualizerService
   ],
   bootstrap: [
     AppComponent,

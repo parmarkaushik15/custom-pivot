@@ -2,7 +2,7 @@
   <div class="panel-heading" style="background-color: #ffffff;padding-bottom: 5px;padding-top: 5px;padding-left: 3px">
     <div class="" (click)="displayOrgTree()">
           <span *ngIf="!orgunit_tree_config.loading">
-              <!--{{  getProperPreOrgunitName() }}-->
+              {{  getProperPreOrgunitName() }}
           </span>
       <span *ngIf="orgunit_model.selected_orgunits.length > 10 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
@@ -51,7 +51,7 @@
     </div>
     <!--user_org_unit-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Usr_orgUnit'">
-      <app-multiselect [starting_items]="[{id:'USER_ORGUNIT', name: 'User org unit'}]" [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
+      <app-multiselect [starting_items]="initial_usr_orgunit" [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
 
     </div>
     <!--org_unit_levels-->

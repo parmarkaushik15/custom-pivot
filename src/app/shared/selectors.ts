@@ -30,6 +30,7 @@ export function currentGroupListSelector( state: ApplicationState ){
   let selectedItems = getSelectedOption(newStore.storeData.dataOptions);
   currentGroupList.push(...[{id:'all',name:'All'}]);
   if(_.includes(selectedItems, 'all') || _.includes(selectedItems,'de')){
+
     currentGroupList.push(...newStore.storeData.dataElementGroups)
   }if(_.includes(selectedItems, 'all') || _.includes(selectedItems,'in')){
     currentGroupList.push(...newStore.storeData.indicatorGroups)

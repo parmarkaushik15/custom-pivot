@@ -21,8 +21,9 @@ export class OrgUnitFilterComponent implements OnInit {
     selected_orgunits: [],
     user_orgunits: [],
     type:"report", // can be 'data_entry'
-    selected_user_orgunit: [{id:'USER_ORGUNIT', name: 'User org unit'}]
+    selected_user_orgunit: []
   };
+  initial_usr_orgunit = [];
 
   // The organisation unit configuration object This will have to come from outside.
   @Input() orgunit_tree_config: any = {
@@ -154,6 +155,8 @@ export class OrgUnitFilterComponent implements OnInit {
                   (initial_data) => {
                     this.organisationunits = initial_data
                     this.orgunit_tree_config.loading = false;
+                    // a hack to make sure the user orgunit is not triggered on the first time
+                    this.initial_usr_orgunit = [{id:'USER_ORGUNIT', name: 'User org unit'}];
                     // after done loading initial organisation units now load all organisation units
                     let fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
                     this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
@@ -262,21 +265,18 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // set selected groups
   setSelectedGroups( selected_groups ){
-    console.log(selected_groups)
     this.orgunit_model.selected_groups = selected_groups;
   }
 
   // set selected groups
   setSelectedUserOrg( selected_user_orgunit ){
-    console.log(selected_user_orgunit)
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
-    console.log(this.getOrgUnitsForAnalytics(this.orgunit_model,false))
+    // this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
   }
 
   // set selected groups
   setSelectedLevels( selected_levels ){
     this.orgunit_model.selected_levels = selected_levels;
-    console.log(this.getOrgUnitsForAnalytics(this.orgunit_model,false))
   }
 
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
@@ -326,12 +326,7 @@ export class OrgUnitFilterComponent implements OnInit {
   getProperPreOrgunitName() : string{
     let name = "";
     if( this.orgunit_model.selection_mode == "Group" ){
-      let use_value = this.orgunit_model.selected_group.split("-");
-      for( let single_group of this.orgunit_model.orgunit_groups ){
-        if ( single_group.id == use_value[1] ){
-          name = single_group.name + " in";
-        }
-      }
+      name = (this.orgunit_model.selected_groups.length == 0)?"":this.orgunit_model.selected_groups.map((group) => group.name).join(", ") + " in";
     }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
       if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT"){
         name = this.orgunit_model.user_orgunits[0].name;
@@ -343,12 +338,7 @@ export class OrgUnitFilterComponent implements OnInit {
         name = this.getOrgUnitName(this.orgunit_model.user_orgunits[0].id)+" sub-x2-units"
       }
     }else if( this.orgunit_model.selection_mode == "Level" ){
-      let use_level = this.orgunit_model.selected_level.split("-");
-      for( let single_level of this.orgunit_model.orgunit_levels ){
-        if ( single_level.level == use_level[1] ){
-          name = single_level.name + " in";
-        }
-      }
+      name = (this.orgunit_model.selected_levels.length == 0)?"":this.orgunit_model.selected_levels.map((level) => level.name).join(", ") + " in";
     }else{
       name = "";
     }
@@ -413,6 +403,7 @@ export class OrgUnitFilterComponent implements OnInit {
         });
       }
     }
+    console.log(organisation_unit_analytics_string+orgUnits.join(";"))
     return organisation_unit_analytics_string+orgUnits.join(";");
   }
 
