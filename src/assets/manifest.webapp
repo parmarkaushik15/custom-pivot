@@ -1,21 +1,21 @@
 {
-    "version": "0.1",
-    "name": "ARDS Pivot Table",
-    "description": "ARDS Pivot Table",
+    "version": "1.1",
+    "name": "Pivot Table- ARDS",
+    "description": "Pivot Table- ARDS",
     "launch_path": "index.html",
     "icons": {
-        "16": "assets/logo.png",
-        "48": "assets/logo.png",
-        "128": "assets/logo.png"
+        "16": "scorecard.svg",
+        "48": "scorecard.svg",
+        "128": "scorecard.svg"
     },
     "developer": {
-        "name": "HISPTZ",
-        "url": ""
+        "name": "HISP Tanzania",
+        "url": "http://hisptanzania.org/"
     },
     "default_locale": "en",
     "activities": {
         "dhis": {
-            "href": "/"
+            "href": "../../.."
         }
     }
 }

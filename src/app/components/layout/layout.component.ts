@@ -79,7 +79,7 @@ export class LayoutComponent implements OnInit {
       this.layout[dimension].push(event.dragData.data)
     }
 
-    this.onLayoutUpdate.emit(this.layout);
+    // this.onLayoutUpdate.emit(this.layout);
   }
 
   changeVisualisation(visualizationType, headers = []) {

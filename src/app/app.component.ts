@@ -4,6 +4,8 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "./store/application.state";
 import {Observable} from "rxjs";
 import {
+  dataItemSelector, dataOptionsSelector,
+  currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector, groupListSelector
   dataItemSelector, currentGroupListSelector, dataOptionsSelector,
   currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector, selectedDataSelector,
   selectedPeriodSelector, selectedOrgUnitSelector, layoutSelector
@@ -41,7 +43,7 @@ export class AppComponent implements OnInit{
 
   constructor( private store: Store<ApplicationState> ){
     this.dataItems$ = store.select(dataItemSelector);
-    this.currentGroupList$ = store.select(currentGroupListSelector);
+    this.currentGroupList$ = store.select(groupListSelector);
     this.currentDataItemList$ = store.select(currentDataItemListSelector);
     this.selectedGroup$ = store.select(selectedGroupSelector);
     this.dataOptions$ = store.select(dataOptionsSelector);
