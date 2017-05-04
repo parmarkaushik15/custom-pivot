@@ -14,6 +14,11 @@ export function dataOptionsSelector( state: ApplicationState ){
   return otherStore.storeData.dataOptions;
 }
 
+export function layoutSelector( state: ApplicationState ){
+  return state.storeData.layout;
+}
+
+
 export function hideMonthSelector( state: ApplicationState ){
   let otherStore = _.cloneDeep(state);
   return otherStore.storeData.selectedData.hideMonth;
@@ -88,6 +93,17 @@ export function selectedGroupSelector( state: ApplicationState ){
   return state.storeData.selectedGroup;
 }
 
+export function selectedDataSelector(state: ApplicationState) {
+  return state.storeData.selectedData;
+}
+
+export function selectedPeriodSelector(state: ApplicationState) {
+  return state.storeData.selectedPeriod
+}
+
+export function selectedOrgUnitSelector(state: ApplicationState) {
+  return state.storeData.selectedOrgUnits
+}
 function getSelectedOption( dataOptions ): any[]{
   let arr =  dataOptions.filter( (item) => item.selected );
   return _.map(arr,'prefix')

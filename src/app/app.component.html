@@ -52,7 +52,7 @@
             <a (click)="toogleDataArea()" *ngIf="!uiState.dataAreaOpen" class="pull-left close-right-area" title="open data selection area" style="margin-right:8px;cursor: pointer;font-weight: bold">
               <span class="glyphicon glyphicon-indent-left"  style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></span>
             </a>
-            <a class="btn btn-sm btn-default" >Update</a>
+            <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
             <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">
@@ -62,6 +62,7 @@
       </nav>
       <div class="container-fluid">
         <div class="col-md-12">
+          <app-table *ngIf="showTable" [tableData]="visualizationObject"></app-table>
         </div>
       </div>
       <div class="container-fluid" style="padding: 0px">

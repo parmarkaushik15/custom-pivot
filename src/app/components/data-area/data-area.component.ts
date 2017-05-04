@@ -11,6 +11,7 @@ export class DataAreaComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log(this.dataItems)
   }
 
 }

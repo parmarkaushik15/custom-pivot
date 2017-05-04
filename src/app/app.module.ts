@@ -25,6 +25,11 @@ import { ClickOutsideDirective } from "./components/org-unit-filter/click-outsid
 import { VisualizerService } from "./services/visualizer.service";
 import { LayoutComponent } from "./components/layout/layout.component";
 import { Draggable } from "./shared/draggable-directive.directive";
+import {TableComponent} from "./components/table/table.component";
+import {TableService} from "./services/table.service";
+import {Constants} from "./services/constants";
+import {VisualizationStore} from "./services/visualization-store";
+import {AnalyticsService} from "./services/analytics.service";
 
 @NgModule({
   declarations: [
@@ -36,6 +41,7 @@ import { Draggable } from "./shared/draggable-directive.directive";
     FilterByNamePipe,
     MultiselectComponent,
     LayoutComponent,
+    TableComponent,
     ClickOutsideDirective,
     Draggable
   ],
@@ -52,7 +58,11 @@ import { Draggable } from "./shared/draggable-directive.directive";
     OrgUnitService,
     LocalStorageService,
     DataService,
-    VisualizerService
+    VisualizerService,
+    TableService,
+    VisualizationStore,
+    AnalyticsService,
+    Constants
   ],
   bootstrap: [
     AppComponent,

@@ -51,10 +51,16 @@ export const INITIAL_STORE_DATA: StoreData = {
   categoryOptions: [],
   dataSets: [],
   selectedOrgUnits: null,
-  selectedPeriod: null,
+  selectedPeriod: {
+    items: null,
+    name: 'pe',
+    value: null},
   selectedData: {
     itemList:[],
-    selectedData:null,
+    selectedData: {
+      items: null,
+      name: 'dx',
+      value: null},
     hideQuarter:false,
     hideMonth:false
   },

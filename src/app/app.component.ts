@@ -5,7 +5,8 @@ import {ApplicationState} from "./store/application.state";
 import {Observable} from "rxjs";
 import {
   dataItemSelector, currentGroupListSelector, dataOptionsSelector,
-  currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector
+  currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector, selectedDataSelector,
+  selectedPeriodSelector, selectedOrgUnitSelector, layoutSelector
 } from "./shared/selectors";
 import {
   LoadDataElementAction, LoadIndicatorAction, LoadDataElementGroupAction, LoadIndicatorGroupAction,
@@ -32,6 +33,8 @@ export class AppComponent implements OnInit{
   hideQuarter:boolean = false;
   uiState: UiState;
   currentLayout: any;
+  visualizationObject: any = null;
+  showTable: boolean = false;
 
   @ViewChild(PeriodFilterComponent)
   public periodComponent: PeriodFilterComponent;
@@ -95,4 +98,39 @@ export class AppComponent implements OnInit{
     this.periodComponent.resetSelection( value.hideMonth, value.hideQuarter );
   }
 
+  updateTable() {
+
+    /**
+     * Get current dimensions .i.e data (dx), period (pe), orgunit(ou) and catCombo (co) if any
+     * @type {Array}
+     */
+    let dimensions = [];
+    this.store.select(selectedDataSelector).subscribe(data => dimensions.push(data.selectedData));
+    this.store.select(selectedPeriodSelector).subscribe(period => dimensions.push(period));
+    this.store.select(selectedOrgUnitSelector).subscribe(orgUnit => dimensions.push(orgUnit));
+
+    /**
+     * Get current layout
+     */
+    let currentLayout: any = null;
+    this.store.select(layoutSelector).subscribe(layout => currentLayout = layout);
+
+    let visualisationObject = {
+        id: 'pivot',
+        name: null,
+        type: 'TABLE',
+        created: null,
+        lastUpdated: null,
+        shape: 'NORMAL',
+        details: {
+          externalDimensions: dimensions,
+          externalLayout: currentLayout
+        },
+        layers: [],
+        operatingLayers: []
+    }
+
+    this.visualizationObject = visualisationObject;
+    this.showTable = true;
+  }
 }
