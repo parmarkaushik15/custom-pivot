@@ -118,14 +118,16 @@ export function selectedGroupSelector( state: ApplicationState ){
   return state.storeData.selectedGroup;
 }
 
-function getSelectedOption( state:ApplicationState ): any[]{
+function getSelectedOption( state:ApplicationState ): any[] {
   let someArr = [];
   state.storeData.dataOptions.forEach((val) => {
-    if(val.selected){
+    if (val.selected) {
       someArr.push(val);
     }
   });
-  return _.map(someArr,'prefix')
+  return _.map(someArr, 'prefix')
+}
+
 export function selectedDataSelector(state: ApplicationState) {
   return state.storeData.selectedData;
 }
