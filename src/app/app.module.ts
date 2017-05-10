@@ -51,7 +51,7 @@ import {AnalyticsService} from "./services/analytics.service";
     HttpModule,
     TreeModule,
     DndModule.forRoot(),
-    StoreModule.provideStore({ uiState,storeData },INITIAL_APPLICATION_STATE),
+    StoreModule.provideStore({ uiState: uiState, storeData: storeData },INITIAL_APPLICATION_STATE),
     EffectsModule.run(LoadMetaDataService)
   ],
   providers: [
