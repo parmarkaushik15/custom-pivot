@@ -32,7 +32,7 @@ export function storeData(state: StoreData, action:Action) : StoreData {
 
       case SELECT_PERIOD_ACTION:
         let store = _.cloneDeep( state );
-        store.selectedData = action.payload;
+        store.selectedPeriod = action.payload;
         return store;
 
       case SET_LAYOUT_ACTION:
@@ -75,7 +75,7 @@ export function storeData(state: StoreData, action:Action) : StoreData {
 // Handling changing of data Options
 function handleDataOptionToggleAction(state: StoreData, action: any ): StoreData {
   let newStore = _.cloneDeep( state );
-  if(action.payload == 'all'){
+  if(action.payload == 'ALL'){
     newStore.dataOptions[1].selected = false;
     newStore.dataOptions[2].selected = false;
     newStore.dataOptions[3].selected = false;
@@ -87,7 +87,7 @@ function handleDataOptionToggleAction(state: StoreData, action: any ): StoreData
       value['selected'] = !value['selected'];
     }
   });
-  newStore.selectedGroup = {id:'all', name:'all'};
+  newStore.selectedGroup = {id:'ALL', name:'All Data'};
   return newStore;
 }
 

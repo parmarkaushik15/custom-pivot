@@ -3,5 +3,6 @@ export interface DataElement {
   name: string;
   categoryCombo: {
     id: string
-  };
+  },
+  dataSetElements: any[];
 }

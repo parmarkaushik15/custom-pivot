@@ -62,12 +62,13 @@
       </nav>
       <div class="container-fluid">
         <div class="col-md-12">
-          <app-table *ngIf="showTable" [tableData]="visualizationObject"></app-table>
+          <!--{{ visualizationObject$  | async | json }}-->
+          <app-table *ngIf="showTable" [tableData]="visualizationObject$  | async"></app-table>
         </div>
       </div>
       <div class="container-fluid" style="padding: 0px">
         <div class="col-md-12" style="padding: 0px">
-          <data-area
+          <data-area *ngIf="!showTable"
             [dataItems]="dataItems$ | async"
           ></data-area>
         </div>

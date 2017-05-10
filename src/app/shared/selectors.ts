@@ -1,9 +1,10 @@
 import {ApplicationState} from "../store/application.state";
 import * as _ from 'lodash';
 import { createSelector } from 'reselect'
+import {DataElement} from "../model/data-element";
 /**
  * Created by kelvin on 4/30/17.
- * This file will have all functions to convert from store specific details to what is needed by the view
+ * This file will have ALL functions to convert from store specific details to what is needed by the view
  */
 
 export function dataItemSelector( state: ApplicationState ){
@@ -35,13 +36,13 @@ export const groupListSelector = createSelector(
   [ getSelectedOption, getData ],
   (options, data) => {
     let currentGroupList = [];
-    currentGroupList.push(...[{id:'all',name:'All'}]);
-    if(_.includes(options, 'all') || _.includes(options,'de')){
+    currentGroupList.push(...[{id:'ALL',name:'ALL'}]);
+    if(_.includes(options, 'ALL') || _.includes(options,'de')){
 
       currentGroupList.push(...data.dx)
-    }if(_.includes(options, 'all') || _.includes(options,'in')){
+    }if(_.includes(options, 'ALL') || _.includes(options,'in')){
       currentGroupList.push(...data.ind)
-    }if(_.includes(options, 'all') || _.includes(options,'cv')){
+    }if(_.includes(options, 'ALL') || _.includes(options,'cv')){
       currentGroupList.push(...data.dt)
     }
     return currentGroupList;
@@ -63,10 +64,22 @@ function getSelectedGroup( state:ApplicationState ){
 
 function getDataItems( state:ApplicationState ){
   return {
-    dx: state.storeData.dataElements,
+    dx: state.storeData.dataElements.map((dataElement) => {
+      let val = {
+        id: dataElement.id,
+        name: dataElement.name,
+        categoryCombo: dataElement.categoryCombo,
+        dataSetElements: (dataElement.dataSetElements)?dataElement.dataSetElements:[]
+      };
+      return val;
+    }),
     ind: state.storeData.indicators,
     dt: state.storeData.dataSets
   }
+}
+
+function getDetailedDataElements( dataElement: DataElement ){
+  let dataElements = [];
 }
 
 export const currentDataItemListSelector = createSelector(
@@ -76,8 +89,8 @@ export const currentDataItemListSelector = createSelector(
   let currentList = [];
 
   // check if data element is in a selected group
-  if(_.includes(selectedOptions, 'all') || _.includes(selectedOptions,'de')){
-    if( group.id == 'all' ){
+  if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'de')){
+    if( group.id == 'ALL' ){
       currentList.push(...data.dx)
     }else{
       if( group.hasOwnProperty('dataElements')){
@@ -90,8 +103,8 @@ export const currentDataItemListSelector = createSelector(
     }
     // check if data indicators are in a selected group
   }
-  if(_.includes(selectedOptions, 'all') || _.includes(selectedOptions,'in')){
-    if( group.id == 'all' ){
+  if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'in')){
+    if( group.id == 'ALL' ){
       currentList.push(...data.ind)
     }else{
       if( group.hasOwnProperty('indicators')){
@@ -103,8 +116,8 @@ export const currentDataItemListSelector = createSelector(
     }
     // check if data data sets are in a selected group
   }
-  if(_.includes(selectedOptions, 'all') || _.includes(selectedOptions,'cv')){
-    if( group.id == 'all' ){
+  if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'cv')){
+    if( group.id == 'ALL' ){
       currentList.push(...data.dt)
     }else{
 
@@ -128,19 +141,42 @@ function getSelectedOption( state:ApplicationState ): any[] {
   return _.map(someArr, 'prefix')
 }
 
-export function selectedDataSelector(state: ApplicationState) {
-  return state.storeData.selectedData;
-}
 
-export function selectedPeriodSelector(state: ApplicationState) {
-  return state.storeData.selectedPeriod
-}
+export function visualizationObjectSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  /**
+   * Get current dimensions .i.e data (dx), period (pe), orgunit(ou) and catCombo (co) if any
+   * @type {Array}
+   */
+  let dimensions = [];
+  dimensions.push(otherStore.storeData.selectedData.selectedData);
+  dimensions.push(otherStore.storeData.selectedPeriod);
+  dimensions.push(otherStore.storeData.selectedOrgUnits);
 
-export function selectedOrgUnitSelector(state: ApplicationState) {
-  return state.storeData.selectedOrgUnits
+  /**
+   * Get current layout
+   */
+  let currentLayout: any = null;
+  // this.store.select(layoutSelector).subscribe(layout => currentLayout = layout);
+
+  return {
+    id: 'pivot',
+    name: null,
+    type: 'TABLE',
+    created: null,
+    lastUpdated: null,
+    shape: 'NORMAL',
+    details: {
+      externalDimensions: dimensions,
+      externalLayout: otherStore.storeData.layout
+    },
+    layers: [],
+    operatingLayers: []
+  }
 }
-function getSelectedOption( dataOptions ): any[]{
-  let arr =  dataOptions.filter( (item) => item.selected );
-  return _.map(arr,'prefix')
-}
+//
+// function getSelectedOption( dataOptions ): any[]{
+//   let arr =  dataOptions.filter( (item) => item.selected );
+//   return _.map(arr,'prefix')
+// }
 

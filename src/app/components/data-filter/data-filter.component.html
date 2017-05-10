@@ -9,7 +9,7 @@
     </a>
   </li>
 </ul>
-<button class="btn btn-default btn-sm btn-block" (click)="showGroups = !showGroups">
+<button class="btn btn-default btn-sm btn-block" (click)="showGroups = !showGroups" appClickOutside (clickOutside)="showGroups = false">
   <span class="pull-left">{{ selectedGroup?.name || 'Select Table'}}</span>
   <span class="pull-right">
     <span class="glyphicon glyphicon-triangle-bottom"></span>
@@ -24,7 +24,7 @@
   </div>
 </div>
 <input type="text" class="form-control input-sm" *ngIf="listItems.length != 0" (focus)="showBody = true" placeholder="Search" style="margin-top: 4px;" [(ngModel)]="listchanges">
-<div class="row" style="margin-top:2px;padding-left: 15px; padding-right: 15px;max-height: 160px">
+<div class="row" style="margin-top:2px;padding-left: 15px; padding-right: 15px;max-height: 170px">
   <table class="table table-bordered" >
     <tbody>
       <tr>

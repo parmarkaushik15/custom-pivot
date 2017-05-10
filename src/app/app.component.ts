@@ -5,10 +5,8 @@ import {ApplicationState} from "./store/application.state";
 import {Observable} from "rxjs";
 import {
   dataItemSelector, dataOptionsSelector,
-  currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector, groupListSelector
-  dataItemSelector, currentGroupListSelector, dataOptionsSelector,
-  currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector, selectedDataSelector,
-  selectedPeriodSelector, selectedOrgUnitSelector, layoutSelector
+  currentDataItemListSelector, selectedGroupSelector, hideMonthSelector, hideQuarterSelector, groupListSelector,
+  layoutSelector, visualizationObjectSelector
 } from "./shared/selectors";
 import {
   LoadDataElementAction, LoadIndicatorAction, LoadDataElementGroupAction, LoadIndicatorGroupAction,
@@ -35,7 +33,7 @@ export class AppComponent implements OnInit{
   hideQuarter:boolean = false;
   uiState: UiState;
   currentLayout: any;
-  visualizationObject: any = null;
+  visualizationObject$: Observable<any>;
   showTable: boolean = false;
 
   @ViewChild(PeriodFilterComponent)
@@ -47,6 +45,7 @@ export class AppComponent implements OnInit{
     this.currentDataItemList$ = store.select(currentDataItemListSelector);
     this.selectedGroup$ = store.select(selectedGroupSelector);
     this.dataOptions$ = store.select(dataOptionsSelector);
+    this.visualizationObject$ = store.select(visualizationObjectSelector);
     store.select(state => state.uiState).subscribe(uiState => this.uiState =  _.cloneDeep(uiState) );
   }
 
@@ -93,7 +92,6 @@ export class AppComponent implements OnInit{
   }
 
   setSelectedData( value ){
-    console.log(value);
     this.store.dispatch( new SelectDataAction( value ) );
     this.hideMonth = value.hideMonth;
     this.hideQuarter = value.hideQuarter;
@@ -107,32 +105,12 @@ export class AppComponent implements OnInit{
      * @type {Array}
      */
     let dimensions = [];
-    this.store.select(selectedDataSelector).subscribe(data => dimensions.push(data.selectedData));
-    this.store.select(selectedPeriodSelector).subscribe(period => dimensions.push(period));
-    this.store.select(selectedOrgUnitSelector).subscribe(orgUnit => dimensions.push(orgUnit));
 
     /**
      * Get current layout
      */
-    let currentLayout: any = null;
-    this.store.select(layoutSelector).subscribe(layout => currentLayout = layout);
 
-    let visualisationObject = {
-        id: 'pivot',
-        name: null,
-        type: 'TABLE',
-        created: null,
-        lastUpdated: null,
-        shape: 'NORMAL',
-        details: {
-          externalDimensions: dimensions,
-          externalLayout: currentLayout
-        },
-        layers: [],
-        operatingLayers: []
-    }
 
-    this.visualizationObject = visualisationObject;
     this.showTable = true;
   }
 }

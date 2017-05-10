@@ -1,6 +1,3 @@
-
-
-
 import {OrganisationUnit} from "../model/organisation-unit";
 import {DataElement} from "../model/data-element";
 import {Indicator} from "../model/indicator";
@@ -65,7 +62,7 @@ export const INITIAL_STORE_DATA: StoreData = {
     hideMonth:false
   },
   selectedDataType: [],
-  selectedGroup: {id:'all',name:'all'},
+  selectedGroup: {id:'ALL',name:'All Data'},
   tableObject:null,
   currentAnalytics: null,
   selectedPeriodType: "Monthly",
@@ -74,21 +71,26 @@ export const INITIAL_STORE_DATA: StoreData = {
   dataOptions: [
     {
       name: 'All Data',
-      prefix: 'all',
-      selected: true},
+      prefix: 'ALL',
+      selected: false},
     {
       name: 'Data Elements',
       prefix: 'de',
-      selected: false
+      selected: true
     },
     {
-      name: 'Computed Values',
+      name: 'Computed',
       prefix: 'in',
+      selected: true
+    },
+    {
+      name: 'Submissions',
+      prefix: 'cv',
       selected: false
     },
     {
-      name: 'Submission Status',
-      prefix: 'cv',
+      name: 'Auto Growing',
+      prefix: 'at',
       selected: false
     }
   ],

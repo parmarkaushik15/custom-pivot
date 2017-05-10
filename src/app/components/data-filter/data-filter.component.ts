@@ -3,7 +3,7 @@ import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input, ChangeDet
 export const DATA_OPTIONS = [
   {
     name: 'All',
-    prefix: 'all',
+    prefix: 'ALL',
     selected: true},
   {
     name: 'Data Elements',

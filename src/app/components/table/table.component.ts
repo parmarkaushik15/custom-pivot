@@ -32,7 +32,7 @@ export class TableComponent implements OnInit, OnChanges {
   initializeTable() {
     this.loading = true;
     this.hasError = false;
-    console.log(this.tableData)
+    console.log('changed')
     this.tableService.getSanitizedTableData(this.tableData, this.customFilters).subscribe(sanitizedData => {
       this.tableData = sanitizedData;
       this.tableObjects = this.tableService.getTableObjects(this.tableData);
