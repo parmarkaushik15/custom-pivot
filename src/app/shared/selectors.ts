@@ -2,6 +2,7 @@ import {ApplicationState} from "../store/application.state";
 import * as _ from 'lodash';
 import { createSelector } from 'reselect'
 import {DataElement} from "../model/data-element";
+import {CategoryCombo} from "../model/category-combo";
 /**
  * Created by kelvin on 4/30/17.
  * This file will have ALL functions to convert from store specific details to what is needed by the view
@@ -63,23 +64,47 @@ function getSelectedGroup( state:ApplicationState ){
 }
 
 function getDataItems( state:ApplicationState ){
+  let dataElements = [];
+  state.storeData.dataElements.forEach((dataelement) => {
+    dataElements.push(...getDetailedDataElements(state, dataelement))
+  });
   return {
-    dx: state.storeData.dataElements.map((dataElement) => {
-      let val = {
-        id: dataElement.id,
-        name: dataElement.name,
-        categoryCombo: dataElement.categoryCombo,
-        dataSetElements: (dataElement.dataSetElements)?dataElement.dataSetElements:[]
-      };
-      return val;
-    }),
+    dx: dataElements,
     ind: state.storeData.indicators,
     dt: state.storeData.dataSets
   }
 }
 
-function getDetailedDataElements( dataElement: DataElement ){
+function getDetailedDataElements( state:ApplicationState, dataElement: DataElement ){
   let dataElements = [];
+  let categoryCombo = getCategoryCombo(state, dataElement.categoryCombo.id);
+  dataElements.push({
+    id:dataElement.id,
+    name:dataElement.name + "",
+    data:dataElement.dataSetElements
+  });
+  categoryCombo.categoryOptionCombos.forEach((option) => {
+    if(option.name != 'default'){
+      dataElements.push({
+        id:dataElement.id+"."+option.id,
+        name:dataElement.name + " "+option.name,
+        data:dataElement.dataSetElements
+      })
+    }
+
+  });
+  return dataElements;
+}
+
+function getCategoryCombo( state:ApplicationState, uid ) : CategoryCombo{
+  let category = null;
+  state.storeData.categoryOptions.forEach((val) => {
+    if( val.id == uid ){
+      category = val;
+    }
+  });
+  return category;
+
 }
 
 export const currentDataItemListSelector = createSelector(

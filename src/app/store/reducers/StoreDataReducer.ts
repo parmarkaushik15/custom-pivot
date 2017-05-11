@@ -8,6 +8,7 @@ import {
   INDICATOR_LOADED_ACTION, ORGANISATION_UNIT_LOADED_ACTION, CATEGORY_OPTION_LOADED_ACTION,
   DATA_ELEMENT_GROUP_LOADED_ACTION, TOGGLE_DATA_OPTION_ACTION, DATA_SET_LOADED_ACTION, SELECT_GROUP_ACTION,
   SELECT_DATA_ACTION, SELECT_PERIOD_ACTION, SELECT_ORGANISATION_UNIT_ACTION, TOGGLE_DATA_AREA_ACTION, SET_LAYOUT_ACTION,
+  ADD_DATA_ANALYITICS,
 } from "../actions";
 import {
   DATAELEMENT_KEY, ORGANISATION_UNIT_KEY, CATEGORY_COMBOS_KEY,
@@ -20,6 +21,9 @@ export function storeData(state: StoreData, action:Action) : StoreData {
 
       case TOGGLE_DATA_OPTION_ACTION:
         return handleDataOptionToggleAction(state, <any>action);
+
+      case ADD_DATA_ANALYITICS:
+        return handleAddDataAnalyticsAction(state, <any>action);
 
 
       case SELECT_GROUP_ACTION:
@@ -88,6 +92,13 @@ function handleDataOptionToggleAction(state: StoreData, action: any ): StoreData
     }
   });
   newStore.selectedGroup = {id:'ALL', name:'All Data'};
+  return newStore;
+}
+
+// Handling changing of data Options
+function handleAddDataAnalyticsAction(state: StoreData, action: any ): StoreData {
+  let newStore = _.cloneDeep( state );
+
   return newStore;
 }
 

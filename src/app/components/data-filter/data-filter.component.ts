@@ -150,6 +150,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       });
   }
 
+  // Remove selected Item
   removeSelected(item){
     this.selectedItems.splice(this.selectedItems.indexOf(item),1);
     this.getSelectedPeriods();
@@ -161,6 +162,23 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     });
   }
 
+  //selecting all items
+  selectAllItems(){
+    this.listItems.forEach((item) => {
+      if(!this.checkDataAvailabilty(item, this.selectedItems )){
+        this.selectedItems.push(item);
+      }
+    })
+  }
+
+  //selecting all items
+  deselectAllItems(){
+    this.selectedItems = [];
+  }
+
+
+
+  // Check if item is in selected list
   inSelected(item,list){
     let checker = false;
     for( let per of list ){
@@ -171,6 +189,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     return checker;
   }
 
+  // action that will fire when the sorting of selected data is done
   transferDataSuccess(data,current){
     if(data.dragData.id == current.id){
       console.log("Droping in the same area")

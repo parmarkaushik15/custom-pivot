@@ -22,9 +22,16 @@ export const SELECT_DATA_ACTION = 'SELECT_DATA_ACTION';
 export const SELECT_PERIOD_ACTION = 'SELECT_PERIOD_ACTION';
 export const SELECT_ORGANISATION_UNIT_ACTION = 'SELECT_ORGANISATION_UNIT_ACTION';
 export const SET_LAYOUT_ACTION = 'SET_LAYOUT_ACTION';
+export const ADD_DATA_ANALYITICS = 'ADD_DATA_ANALYITICS';
 
 export class ToggleDataOptionAction implements Action {
   type = TOGGLE_DATA_OPTION_ACTION;
+
+  constructor ( public payload: any ) {}
+}
+
+export class AddDataAnalyticsAction implements Action {
+  type = ADD_DATA_ANALYITICS;
 
   constructor ( public payload: any ) {}
 }

@@ -96,6 +96,19 @@ export class PeriodFilterComponent implements OnInit {
     }
   }
 
+  // transfer all period to selected section
+  selectAllItems(){
+    this.periods.forEach((item) => {
+      if(!this.checkPeriodAvailabilty(item, this.selected_periods )){
+        this.selected_periods.push(item);
+      }
+    })
+  }
+
+  deselectAllItems(){
+    this.selected_periods = [];
+  }
+
   // helper method to find the index of dragged item
   getPeriodPosition(period_id){
     let period_index = null;
@@ -157,7 +170,8 @@ export class PeriodFilterComponent implements OnInit {
       this.onPeriodUpdate.emit({
         items: this.selected_periods,
         name: 'pe',
-        value: this.getPeriodsForAnalytics(this.selected_periods)});
+        value: this.getPeriodsForAnalytics(this.selected_periods)
+      });
     }
   };
 
