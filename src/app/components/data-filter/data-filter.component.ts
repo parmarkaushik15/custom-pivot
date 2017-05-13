@@ -78,6 +78,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     dataSets: [],
   };
   loading:boolean = true;
+  p:number = 1;
+  k:number = 1;
   constructor( private dataService: DataService) { }
 
   ngOnInit() {

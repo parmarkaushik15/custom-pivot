@@ -5,7 +5,7 @@ import {ApplicationState} from "./store/application.state";
 import {Observable} from "rxjs";
 import {
   dataItemSelector, dataOptionsSelector, layoutSelector, visualizationObjectSelector, analyticsWithDataSelector,
-  analyticsWithoutDataSelector, dataDimensionSelector
+  analyticsWithoutDataSelector, dataDimensionSelector, dataItemAnalyticsSelector
 } from "./shared/selectors";
 import {
   SelectGroupAction,
@@ -49,6 +49,7 @@ export class AppComponent implements OnInit{
   currentLayout: any;
   dimensions: any;
   dataDimensions$: Observable<any>;
+  analyticsItems:any;
   analyticsWithData$: Observable<any>;
   analyticsWithoutData$: Observable<any>;
   visualizationObject$: Observable<any>;
@@ -65,6 +66,7 @@ export class AppComponent implements OnInit{
     this.analyticsWithoutData$ = store.select(analyticsWithoutDataSelector);
     store.select(state => state.uiState).subscribe(uiState => this.uiState =  _.cloneDeep(uiState) );
     store.select(dataDimensionSelector).subscribe( dimension => this.dimensions=dimension);
+    store.select(dataItemAnalyticsSelector).subscribe( dimension => this.analyticsItems = dimension);
   }
 
   ngOnInit() {
@@ -117,11 +119,12 @@ export class AppComponent implements OnInit{
     this.analyticsService.prepareAnalytics(this.dimensions.dimensions).subscribe(analytics => {
       this.store.dispatch(new AddDataAnalyticsAction(analytics));
     });
+    console.log(this.analyticsService.mergeAnalyticsCalls(this.analyticsItems));
     //this.store.dispatch( new AddDataAnalyticsAction())
     /**
      * Get current dimensions .i.e data (dx), period (pe), orgunit(ou) and catCombo (co) if any
      * @type {Array}
      */
-    this.showTable = false;
+    this.showTable = true;
   }
 }

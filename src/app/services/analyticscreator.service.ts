@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {Constants} from "./constants";
 import {Http} from "@angular/http";
 import {Observable} from "rxjs";
+import * as _ from 'lodash';
+
 
 @Injectable()
 export class AnalyticscreatorService {
@@ -47,9 +49,50 @@ export class AnalyticscreatorService {
       },
       rows:[],
       width:0,
-      height:0,
-    }
+      height:0
+    };
+
+    analytics.forEach( (analytic) => {
+      combined_analytics.headers = analytic.headers;
+      let namesArray = this._getArrayFromObject(analytic.metaData.names);
+      namesArray.forEach((name) => {
+        if(!combined_analytics.metaData.names[name.id]){
+          combined_analytics.metaData.names[name.id] = name.value;
+        }
+      });
+      analytic.metaData.dx.forEach((val) => {
+        if(!_.includes(combined_analytics.metaData.dx, val)){
+          combined_analytics.metaData.dx.push( val );
+        }
+      });
+      analytic.metaData.ou.forEach((val) => {
+        if(!_.includes(combined_analytics.metaData.pe, val)){
+          combined_analytics.metaData.ou.push( val );
+        }
+      });
+      analytic.metaData.pe.forEach((val) => {
+        if(!_.includes(combined_analytics.metaData.pe, val)){
+          combined_analytics.metaData.pe.push( val );
+        }
+      });
+      if(analytic.metaData.co){
+        analytic.metaData.co.forEach((val) => {
+          if(!_.includes(combined_analytics.metaData.co, val)){
+            combined_analytics.metaData.co.push( val );
+          }
+        })
+      }
+    });
+    return combined_analytics;
   }
+
+  private _getArrayFromObject(object){
+    return _.map(object, function(value, prop) {
+      return { id: prop, value: value };
+    });
+  }
+
+
 
   // prepare analytics from a group of dimension object and specify weather to skip data or not
   private _constructAnalyticUrlForExternalSource(sourceObject,showData) {

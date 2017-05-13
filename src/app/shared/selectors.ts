@@ -12,6 +12,10 @@ export function dataItemSelector( state: ApplicationState ){
   return state.storeData.dataAnalytics;
 }
 
+export function dataItemAnalyticsSelector( state: ApplicationState ){
+  return state.storeData.dataAnalytics.map(item => item.analytics);
+}
+
 export function dataOptionsSelector( state: ApplicationState ){
   let otherStore = _.cloneDeep(state);
   return otherStore.storeData.dataOptions;
