@@ -26,10 +26,12 @@ export interface StoreData {
       hideQuarter:boolean,
       hideMonth:boolean
     };
-    selectedDataType: string[];
+    selectedDataItems: string[];
     selectedGroup: any;
     tableObject:any;
+    dataAnalytics:any[];
     currentAnalytics: any;
+    currentEmptyAnalytics: any;
     selectedPeriodType: string;
     currentGroupList:any[];
     currentDataItemList:any[];
@@ -61,10 +63,12 @@ export const INITIAL_STORE_DATA: StoreData = {
     hideQuarter:false,
     hideMonth:false
   },
-  selectedDataType: [],
+  selectedDataItems: [],
   selectedGroup: {id:'ALL',name:'All Data'},
   tableObject:null,
+  dataAnalytics:[],
   currentAnalytics: null,
+  currentEmptyAnalytics: null,
   selectedPeriodType: "Monthly",
   currentGroupList:[],
   currentDataItemList:[],

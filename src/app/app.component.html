@@ -1,5 +1,5 @@
 <div class="container-fluid" style="border: 1px solid rgba(0,0,0,0.2); padding-left: 3px;padding-right: 3px">
-    <div class="data-filter  left-block"  [ngClass]="{'hideData': !uiState.dataAreaOpen}">
+    <div class="data-filter  left-block" [@heroState]="uiState.dataAreaOpenState" >
       <nav class="navbar navbar-default top-bar" style="margin-bottom: 5px">
         <div class="container-fluid" style="padding-left: 3px;padding-right: 3px">
           <div class="col-sm-10" style="padding: 0px">
@@ -19,12 +19,6 @@
           <div class="panel panel-default data-component-area">
             <div class="panel-body" style="padding: 3px">
               <app-data-filter
-                [dataGroups]="currentGroupList$ | async"
-                [listItems]="currentDataItemList$ | async"
-                [dataOptions]="dataOptions$ | async"
-                [selectedGroup]="selectedGroup$ | async"
-                (selected_data_option)="toogleDataOption($event)"
-                (selected_group)="setSelectedGroup($event)"
                 (onDataUpdate)="setSelectedData($event)"
               ></app-data-filter>
             </div>
@@ -69,7 +63,9 @@
       <div class="container-fluid" style="padding: 0px">
         <div class="col-md-12" style="padding: 0px">
           <data-area *ngIf="!showTable"
-            [dataItems]="dataItems$ | async"
+            [dataItems]="dataDimensions$ | async"
+            [analyticsWithoutData]="analyticsWithoutData$ | async"
+            [analyticsWithData]="analyticsWithData$ | async"
           ></data-area>
         </div>
       </div>

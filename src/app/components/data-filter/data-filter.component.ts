@@ -1,4 +1,6 @@
 import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input, ChangeDetectionStrategy} from '@angular/core';
+import {DataService} from "../../services/data.service";
+import * as _ from 'lodash'
 
 export const DATA_OPTIONS = [
   {
@@ -24,16 +26,40 @@ export const DATA_OPTIONS = [
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
-  styleUrls: ['./data-filter.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./data-filter.component.css']
 })
 export class DataFilterComponent implements OnInit, AfterViewInit {
 
 
-  @Input() listItems:any[] = [];
-  @Input() dataGroups: any[] = [];
-  @Input() dataOptions: any[] = [];
-  @Input() selectedGroup:any;
+  listItems:any[] = [];
+  dataGroups: any[] = [];
+  dataOptions: any[] = [
+    {
+      name: 'All Data',
+      prefix: 'ALL',
+      selected: false},
+    {
+      name: 'Data Elements',
+      prefix: 'de',
+      selected: true
+    },
+    {
+      name: 'Computed',
+      prefix: 'in',
+      selected: true
+    },
+    {
+      name: 'Submissions',
+      prefix: 'cv',
+      selected: false
+    },
+    {
+      name: 'Auto Growing',
+      prefix: 'at',
+      selected: false
+    }
+  ];
+  selectedGroup:any = {id:'ALL',name:'All Data'};
 
   @Output() selected_data_option: EventEmitter<any> = new EventEmitter<any>();
   @Output() selected_group: EventEmitter<any> = new EventEmitter<any>();
@@ -43,102 +69,201 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   listchanges: string = null;
   showGroups:boolean = false;
   showBody:boolean = false;
-  constructor(  ) { }
+  metaData:any = {
+    dataElements: [],
+    indicators: [],
+    dataElementGroups: [],
+    indicatorGroups: [],
+    categoryOptions: [],
+    dataSets: [],
+  };
+  loading:boolean = true;
+  constructor( private dataService: DataService) { }
 
   ngOnInit() {
-
+    this.dataService.initiateData().subscribe(
+      (items ) => {
+        this.metaData = {
+          dataElements: items[0],
+          indicators: items[1],
+          dataElementGroups: items[3],
+          indicatorGroups: items[2],
+          categoryOptions: items[5],
+          dataSets: items[4],
+        };
+        this.loading = false;
+        this.dataGroups = this.groupList();
+        this.listItems = this.dataItemList();
+      }
+    )
   }
 
   ngAfterViewInit() {
-   this.getAllItems(null);
-  }
+     //
+   }
 
   toggleDataOption(optionPrefix) {
-    this.selected_data_option.emit(optionPrefix);
+    if(optionPrefix == 'ALL'){
+      this.dataOptions[1].selected = false;
+      this.dataOptions[2].selected = false;
+      this.dataOptions[3].selected = false;
+    }else{
+      this.dataOptions[0].selected = false;
+    }
+    this.dataOptions.forEach((value) => {
+      if( value['prefix'] == optionPrefix ){
+        value['selected'] = !value['selected'];
+      }
+    });
+    this.selectedGroup = {id:'ALL', name:'All Data'};
+    this.dataGroups = this.groupList();
+    this.listItems = this.dataItemList();
   }
 
   setSelectedGroup(group) {
-    this.selected_group.emit(group);
+    this.selectedGroup = group;
+    this.listItems = this.dataItemList();
     this.showGroups = false;
   }
 
-  getList(){
-    let list  = [];
-    for( let item of this.dataGroups ){
-      if (item['dataElementGroups']){
-        for( let dataElement of item['dataElementGroups']){
-          list.push(dataElement);
+  getSelectedOption(): any[] {
+    let someArr = [];
+    this.dataOptions.forEach((val) => {
+      if (val.selected) {
+        someArr.push(val);
+      }
+    });
+    return _.map(someArr, 'prefix')
+  }
+
+  // get data Items data_element, indicators, dataSets
+  getDataItems( ){
+    let dataElements = [];
+    this.metaData.dataElements.forEach((dataelement) => {
+      dataElements.push(...this.getDetailedDataElements( dataelement ))
+    });
+    return {
+      dx: dataElements,
+      ind: this.metaData.indicators,
+      dt: this.metaData.dataSets
+    }
+  }
+
+  trackByFn(index, item) {
+    return item.id; // or item.id
+  }
+
+  // this function helps you to get the detailed metadata
+  getDetailedDataElements(dataElement ){
+    let dataElements = [];
+    let categoryCombo = this.getCategoryCombo( dataElement.categoryCombo.id);
+    dataElements.push({
+      id:dataElement.id,
+      name:dataElement.name + "",
+      data:dataElement.dataSetElements
+    });
+    categoryCombo.categoryOptionCombos.forEach((option) => {
+      if(option.name != 'default'){
+        dataElements.push({
+          id:dataElement.id+"."+option.id,
+          name:dataElement.name + " "+option.name,
+          data:dataElement.dataSetElements
+        })
+      }
+
+    });
+    return dataElements;
+  }
+
+  // Helper to get the data elements option
+  getCategoryCombo( uid ) : any{
+    let category = null;
+    this.metaData.categoryOptions.forEach((val) => {
+      if( val.id == uid ){
+        category = val;
+      }
+    });
+    return category;
+
+  }
+
+  // Helper function to get data groups
+  getData( ){
+    return {
+      dx: this.metaData.dataElementGroups,
+      ind: this.metaData.indicatorGroups,
+      dt: this.metaData.dataSetGroups
+    }
+  }
+
+  // get the data list do display
+  dataItemList() {
+    let currentList = [];
+    const group = this.selectedGroup;
+    const selectedOptions = this.getSelectedOption();
+    const data = this.getDataItems();
+    console.log(selectedOptions)
+    // check if data element is in a selected group
+    if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'de')){
+      if( group.id == 'ALL' ){
+        currentList.push(...data.dx)
+      }else{
+        if( group.hasOwnProperty('dataElements')){
+          let newArray = _.filter(data.dx, (dataElement) => {
+            return _.includes(_.map(group.dataElements,'id'), dataElement['id']);
+          });
+          currentList.push(...newArray)
         }
-      }if(item['indicatorGroups']){
-        for( let dataElement of item['indicatorGroups']){
-          list.push(dataElement);
+
+      }
+      // check if data indicators are in a selected group
+    }
+    if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'in')){
+      if( group.id == 'ALL' ){
+        currentList.push(...data.ind)
+      }else{
+        if( group.hasOwnProperty('indicators')){
+          let newArray = _.filter(data.ind, (indicator) => {
+            return _.includes(_.map(group.indicators,'id'),indicator['id']);
+          });
+          currentList.push(...newArray)
         }
       }
+      // check if data data sets are in a selected group
     }
-    return list;
-  }
+    if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'cv')){
+      if( group.id == 'ALL' ){
+        currentList.push(...data.dt)
+      }else{
 
-  getAllItems(default_list =null){
-    if(default_list != null){
-      this.listItems = default_list
-    }else{
-      let list  = [];
-      for( let item of this.dataGroups ){
-        if (item['dataElementGroups']){
-          for( let dataElement of item['dataElementGroups']){
-            for( let element of dataElement.dataElements){
-              list.push(element);
-            }
-          }
-        }if(item['indicatorGroups']){
-          for( let dataElement of item['indicatorGroups']){
-            for( let element of dataElement.indicators){
-              list.push(element);
-            }
-          }
-        }
-      }
-      this.listItems = list;
-    }
-  }
-
-  getDataGroupArray(dataOptions: any[]) {
-    let groupArray: any[] = [];
-
-    for(let option of dataOptions) {
-      if(option.selected) {
-        if(option.prefix == 'all') {
-          let allOptions: any[] = [];
-          for(let optionValue of dataOptions) {
-            if(optionValue.prefix != 'all') {
-              allOptions.push(optionValue.prefix);
-            }
-          }
-          groupArray = allOptions;
-          break;
-        } else {
-          groupArray.push(option.prefix);
-        }
       }
     }
-
-    return groupArray;
-  }
-
-  getDataGroups(groupArray) {
+    return currentList;
 
   }
 
-  showItems(item){
-    this.selectedGroup = item;
-    if(item.hasOwnProperty("dataElements")){
-      this.listItems = item.dataElements;
-    }if(item.hasOwnProperty("indicators")){
-      this.listItems = item.indicators;
+
+  // Get group list to display
+  groupList(){
+
+    let currentGroupList = [];
+    const options = this.getSelectedOption();
+    const data = this.getData();
+
+    currentGroupList.push(...[{id:'ALL',name:'ALL'}]);
+    if(_.includes(options, 'ALL') || _.includes(options,'de')){
+
+      currentGroupList.push(...data.dx)
+    }if(_.includes(options, 'ALL') || _.includes(options,'in')){
+      currentGroupList.push(...data.ind)
+    }if(_.includes(options, 'ALL') || _.includes(options,'cv')){
+      currentGroupList.push(...data.dt)
     }
-    this.showGroups = false;
+    return currentGroupList;
   }
 
+
+  // this will add a selected item in a list function
   addSelected(item){
     this.selectedItems.push(item);
     this.getSelectedPeriods();
@@ -168,12 +293,24 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       if(!this.checkDataAvailabilty(item, this.selectedItems )){
         this.selectedItems.push(item);
       }
-    })
+    });
+    this.onDataUpdate.emit({
+      itemList:this.selectedItems,
+      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
+      hideQuarter:this.hideQuarter,
+      hideMonth:this.hideMonth
+    });
   }
 
   //selecting all items
   deselectAllItems(){
     this.selectedItems = [];
+    this.onDataUpdate.emit({
+      itemList:this.selectedItems,
+      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
+      hideQuarter:this.hideQuarter,
+      hideMonth:this.hideMonth
+    });
   }
 
 
@@ -197,6 +334,12 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       let number = (this.getDataPosition(data.dragData.id) > this.getDataPosition(current.id))?0:1;
       this.deleteData( data.dragData );
       this.insertData( data.dragData, current, number);
+      this.onDataUpdate.emit({
+        itemList:this.selectedItems,
+        selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
+        hideQuarter:this.hideQuarter,
+        hideMonth:this.hideMonth
+      });
     }
   }
 

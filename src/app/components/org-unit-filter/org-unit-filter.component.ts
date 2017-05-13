@@ -76,8 +76,6 @@ export class OrgUnitFilterComponent implements OnInit {
     }
   }
   ngOnInit() {
-    console.log("component called");
-    console.log(this.orgunit_model.selected_orgunits);
     if(this.orgunit_tree_config.multiple) {
       if(this.orgunit_tree_config.multiple_key == "none"){
         let actionMapping:IActionMapping = {
@@ -277,6 +275,7 @@ export class OrgUnitFilterComponent implements OnInit {
   // set selected groups
   setSelectedLevels( selected_levels ){
     this.orgunit_model.selected_levels = selected_levels;
+    this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
   }
 
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
@@ -403,7 +402,6 @@ export class OrgUnitFilterComponent implements OnInit {
         });
       }
     }
-    console.log(organisation_unit_analytics_string+orgUnits.join(";"))
     return organisation_unit_analytics_string+orgUnits.join(";");
   }
 

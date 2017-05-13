@@ -6,6 +6,7 @@ export interface UiState {
     layoutOpened:boolean;
     currentError?: string;
     dataAreaOpen: boolean;
+    dataAreaOpenState: string;
 }
 
 
@@ -15,4 +16,5 @@ export const INITIAL_UI_STATE: UiState = {
   layoutOpened: false,
   loadingData: false,
   dataAreaOpen: true,
+  dataAreaOpenState: 'active'
 };

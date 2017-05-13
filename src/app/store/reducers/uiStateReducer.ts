@@ -20,7 +20,12 @@ export function uiState(state: UiState = INITIAL_UI_STATE, action: Action) : UiS
 
 function handleDataAreaToggleAction(state: UiState ): UiState {
   let newStore = _.cloneDeep( state );
-  newStore.dataAreaOpen = !newStore.dataAreaOpen
+  newStore.dataAreaOpen = !newStore.dataAreaOpen;
+  if(newStore.dataAreaOpen){
+    newStore.dataAreaOpenState = 'active';
+  }else{
+    newStore.dataAreaOpenState = 'inactive';
+  }
   return newStore;
 
 }

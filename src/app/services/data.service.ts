@@ -17,6 +17,16 @@ import {DataSet} from "../model/dataset";
 @Injectable()
 export class DataService {
 
+  metaData = {
+    organisationUnits: [],
+    dataElements: [],
+    indicators: [],
+    dataElementGroups: [],
+    indicatorGroups: [],
+    categoryOptions: [],
+    dataSets: [],
+  };
+
   constructor(private http: Http, private localDbService: LocalStorageService ) { }
 
   getIndicators(): Observable<Indicator[]>{
@@ -26,6 +36,7 @@ export class DataService {
 
   getDataElements(): Observable<DataElement[]>{
     return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo,dataSetElements[dataSet[periodType]&paging=false")
+    // return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo,dataSetElements[dataSet[periodType]&pageSize=400")
       .map(res => res.json().dataElements || [])
   }
 
@@ -46,16 +57,27 @@ export class DataService {
   }
 
   getDataElementGroups(): Observable<DataelementGroup[]>{
-    return this.http.get("../../../api/dataElementGroups.json?paging=false&fields=id,name,dataElements")
+    return this.http.get("../../../api/dataElementGroups.json?paging=false&fields=id,name,dataElements[id,name,categoryCombo,dataSetElements[dataSet[periodType]]")
       .map(res => res.json().dataElementGroups || [])
   }
 
   getIndicatorGroups(): Observable<IndicatorGroup[]>{
-    return this.http.get("../../../api/indicatorGroups.json?paging=false&fields=id,name,indicators")
+    return this.http.get("../../../api/indicatorGroups.json?paging=false&fields=id,name,indicators[id,name,dataSets[periodType]]")
       .map(res => res.json().indicatorGroups || [])
   }
 
 
+  initiateData(){
+    return Observable.forkJoin(
+      this.getDataFromLocalDatabase(DATAELEMENT_KEY),
+      this.getDataFromLocalDatabase(INDICATOR_KEY),
+      this.getDataFromLocalDatabase(INDICATOR_GROUP_KEY),
+      this.getDataFromLocalDatabase(DATAELEMENT_GROUP_KEY),
+      this.getDataFromLocalDatabase(DATASET_KEY),
+      this.getDataFromLocalDatabase(CATEGORY_COMBOS_KEY)
+    );
+
+  }
   /**
    * This function will be used to return all needed metadata either from offline or if not available the online
    * @param key
@@ -113,6 +135,8 @@ export class DataService {
       )
     });
   }
+
+
 
 
 }

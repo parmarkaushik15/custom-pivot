@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { StoreModule } from "@ngrx/store";
@@ -30,6 +31,8 @@ import {TableService} from "./services/table.service";
 import {Constants} from "./services/constants";
 import {VisualizationStore} from "./services/visualization-store";
 import {AnalyticsService} from "./services/analytics.service";
+import {NgxPaginationModule} from "ngx-pagination";
+import {AnalyticscreatorService} from "./services/analyticscreator.service";
 
 @NgModule({
   declarations: [
@@ -47,9 +50,11 @@ import {AnalyticsService} from "./services/analytics.service";
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
     TreeModule,
+    NgxPaginationModule,
     DndModule.forRoot(),
     StoreModule.provideStore({ uiState: uiState, storeData: storeData },INITIAL_APPLICATION_STATE),
     EffectsModule.run(LoadMetaDataService)
@@ -62,7 +67,8 @@ import {AnalyticsService} from "./services/analytics.service";
     TableService,
     VisualizationStore,
     AnalyticsService,
-    Constants
+    Constants,
+    AnalyticscreatorService
   ],
   bootstrap: [
     AppComponent,
