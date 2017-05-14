@@ -85,13 +85,26 @@ export class AppComponent implements OnInit{
   }
 
   addAnalytics(dimensions){
-    dimensions.dataItems.forEach( (value) => {
+    //select first data and constuct its analytics
+    if(dimensions.dataItems.length > 0){
       let newDimension = _.cloneDeep(dimensions.dimensions);
-      newDimension.splice(0,1,{name:'dx',value:value.id});
+      newDimension.splice(0,1,{name:'dx',value:dimensions.dataItems[0].id});
       this.analyticsService.prepareEmptyAnalytics(newDimension).subscribe(emptyAnalytics => {
-        this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics:emptyAnalytics, dataId:value.id}));
-      })
-    })
+        this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics:emptyAnalytics, dataId:dimensions.dataItems[0].id}));
+        dimensions.dataItems.forEach( (value) => {
+          this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics:this.analyticsService.duplicateAnalytics(emptyAnalytics,value,dimensions.dataItems[0].id), dataId:value.id}));
+
+        });
+      });
+    }
+
+    // dimensions.dataItems.forEach( (value) => {
+    //   let newDimension = _.cloneDeep(dimensions.dimensions);
+    //   newDimension.splice(0,1,{name:'dx',value:value.id});
+    //   this.analyticsService.prepareEmptyAnalytics(newDimension).subscribe(emptyAnalytics => {
+    //     this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics:emptyAnalytics, dataId:value.id}));
+    //   })
+    // })
   }
 
   setSelectedPeriod( value ){

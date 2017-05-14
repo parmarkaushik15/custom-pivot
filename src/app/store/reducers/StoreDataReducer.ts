@@ -100,10 +100,12 @@ function handleAddSingleDataAnalyticsAction(state: StoreData, action: any): Stor
       hidden: false,
       meta: false
     }
-  ]
+  ];
 
-  newStore.dataAnalytics.push({id:action.payload.dataId,analytics:action.payload.analytics});
-  console.log(newStore)
+  newStore.dataAnalytics.push({
+    id:action.payload.dataId,
+    analytics:action.payload.analytics
+  });
   return newStore;
 }
 

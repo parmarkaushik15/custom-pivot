@@ -76,6 +76,13 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     indicatorGroups: [],
     categoryOptions: [],
     dataSets: [],
+    dataSetGroups: [
+      {id:'', name: "Reporting Rate"},
+      {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
+      {id:'.ACTUAL_REPORTS', name: "Actual Reports Submitted"},
+      {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
+      {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
+    ]
   };
   loading:boolean = true;
   p:number = 1;
@@ -92,6 +99,13 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
           indicatorGroups: items[2],
           categoryOptions: items[5],
           dataSets: items[4],
+          dataSetGroups: [
+            {id:'', name: "Reporting Rate"},
+            {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
+            {id:'.ACTUAL_REPORTS', name: "Actual Reports Submitted"},
+            {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
+            {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
+          ]
         };
         this.loading = false;
         this.dataGroups = this.groupList();
@@ -105,27 +119,33 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
    }
 
   toggleDataOption(optionPrefix) {
-    if(optionPrefix == 'ALL'){
-      this.dataOptions[1].selected = false;
-      this.dataOptions[2].selected = false;
-      this.dataOptions[3].selected = false;
-    }else{
-      this.dataOptions[0].selected = false;
-    }
     this.dataOptions.forEach((value) => {
       if( value['prefix'] == optionPrefix ){
         value['selected'] = !value['selected'];
+        // if(optionPrefix == 'cv' && value['selected']){
+        //   this.selectedGroup = {id:'', name: "Reporting Rate"}
+        // }
+      }else{
+        if(optionPrefix == 'de' && value['prefix'] == 'in'){
+        }else if(optionPrefix == 'in' && value['prefix'] == 'de'){
+
+        }else{
+          value['selected'] = false
+        }
+
       }
     });
     this.selectedGroup = {id:'ALL', name:'All Data'};
     this.dataGroups = this.groupList();
     this.listItems = this.dataItemList();
+    this.p =1;
   }
 
   setSelectedGroup(group) {
     this.selectedGroup = group;
     this.listItems = this.dataItemList();
     this.showGroups = false;
+    this.p = 1;
   }
 
   getSelectedOption(): any[] {
@@ -151,6 +171,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // track by function to improve the list selection performance
   trackByFn(index, item) {
     return item.id; // or item.id
   }
@@ -235,15 +256,20 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'cv')){
       if( group.id == 'ALL' ){
-        currentList.push(...data.dt)
+        this.metaData.dataSetGroups.forEach((group) => {
+          currentList.push(...data.dt.map(data => {
+            return {id:data.id + group.id, name:group.name+' '+data.name}
+          }))
+        });
       }else{
-
+        currentList.push(...data.dt.map(data => {
+          return {id:data.id + group.id, name:group.name+' '+data.name}
+        }));
       }
     }
     return currentList;
 
   }
-
 
   // Get group list to display
   groupList(){
@@ -263,7 +289,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
     return currentGroupList;
   }
-
 
   // this will add a selected item in a list function
   addSelected(item){
@@ -314,8 +339,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       hideMonth:this.hideMonth
     });
   }
-
-
 
   // Check if item is in selected list
   inSelected(item,list){

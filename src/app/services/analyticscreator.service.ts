@@ -86,6 +86,14 @@ export class AnalyticscreatorService {
     return combined_analytics;
   }
 
+  duplicateAnalytics(analytics,data,oldDataId){
+    let newAnalytics = _.cloneDeep(analytics);
+    newAnalytics.metaData.dx = [data.id];
+    delete newAnalytics.metaData.names[oldDataId];
+    newAnalytics.metaData.names[data.id] = data.name;
+    return newAnalytics;
+  }
+
   private _getArrayFromObject(object){
     return _.map(object, function(value, prop) {
       return { id: prop, value: value };
