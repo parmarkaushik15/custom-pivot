@@ -183,14 +183,14 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     dataElements.push({
       id:dataElement.id,
       name:dataElement.name + "",
-      data:dataElement.dataSetElements
+      dataSetElements:dataElement.dataSetElements
     });
     categoryCombo.categoryOptionCombos.forEach((option) => {
       if(option.name != 'default'){
         dataElements.push({
           id:dataElement.id+"."+option.id,
           name:dataElement.name + " "+option.name,
-          data:dataElement.dataSetElements
+          dataSetElements:dataElement.dataSetElements
         })
       }
 
@@ -413,6 +413,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   getSelectedPeriods(){
     let periods = [];
     for (let data_item of this.selectedItems ){
+      console.log(data_item)
       if(data_item.hasOwnProperty("dataSets")){
         for( let dataset of data_item.dataSets ){
           console.log(dataset)
@@ -447,6 +448,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }
 
     }
+    console.log(this.hideMonth)
   }
 
   getDataForAnalytics(selectedData) {

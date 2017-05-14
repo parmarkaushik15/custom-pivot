@@ -30,14 +30,12 @@ import {AnalyticscreatorService} from "./services/analyticscreator.service";
   animations: [
     trigger('heroState', [
       state('inactive', style({
-        transform: 'scale(0)',
         display:'none'
       })),
       state('active',   style({
-        transform: 'scale(1)'
       })),
-      transition('inactive => active', animate('1000ms')),
-      transition('active => inactive', animate('1000ms'))
+      transition('inactive => active', animate('100ms')),
+      transition('active => inactive', animate('100ms'))
     ])
   ]
 })
@@ -93,7 +91,6 @@ export class AppComponent implements OnInit{
         this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics:emptyAnalytics, dataId:dimensions.dataItems[0].id}));
         dimensions.dataItems.forEach( (value) => {
           this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics:this.analyticsService.duplicateAnalytics(emptyAnalytics,value,dimensions.dataItems[0].id), dataId:value.id}));
-
         });
       });
     }
@@ -122,7 +119,7 @@ export class AppComponent implements OnInit{
 
   setSelectedData( value ){
     this.store.dispatch( new SelectDataAction( value ) );
-    this.addAnalytics(this.dimensions)
+    this.addAnalytics(this.dimensions);
     this.hideMonth = value.hideMonth;
     this.hideQuarter = value.hideQuarter;
     this.periodComponent.resetSelection( value.hideMonth, value.hideQuarter );

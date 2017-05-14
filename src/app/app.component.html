@@ -7,7 +7,7 @@
           </div>
           <div class="col-sm-2" style="padding: 0px">
             <a (click)="toogleDataArea()" class="pull-right close-right-area" title="close data selection area" style="cursor: pointer;font-weight: bold">
-              <span class="glyphicon glyphicon-indent-right" style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></span>
+              <i class="fa fa-angle-double-left" style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></i>
             </a>
           </div>
 
@@ -44,7 +44,7 @@
         <div class="container-fluid" style="padding-top: 4px;padding-left: 3px;padding-right: 3px">
           <div class="navbar-header">
             <a (click)="toogleDataArea()" *ngIf="!uiState.dataAreaOpen" class="pull-left close-right-area" title="open data selection area" style="margin-right:8px;cursor: pointer;font-weight: bold">
-              <span class="glyphicon glyphicon-indent-left"  style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></span>
+              <i class="fa fa-angle-double-right"  style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></i>
             </a>
             <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
             <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>

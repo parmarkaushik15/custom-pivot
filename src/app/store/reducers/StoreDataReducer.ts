@@ -63,8 +63,14 @@ function handleAddDataAnalyticsAction(state: StoreData, action: any, data_availa
 function handleAddSingleDataAnalyticsAction(state: StoreData, action: any): StoreData {
   let newStore = _.cloneDeep( state );
   let analyticsExist = getIndexofAnalytics(newStore.dataAnalytics,action.payload.dataId);
+  let add_item = true;
   if(analyticsExist.checker){
-    newStore.dataAnalytics.splice(analyticsExist.index,1)
+    if( newStore.dataAnalytics[analyticsExist.index].lastOu == newStore.selectedOrgUnits.value && newStore.dataAnalytics[analyticsExist.index].lastPe == newStore.selectedPeriod.value){
+      add_item = false;
+    }else{
+      add_item = true;
+      newStore.dataAnalytics.splice(analyticsExist.index,1)
+    }
   }else{
   }
   action.payload.analytics.headers = [
@@ -101,11 +107,14 @@ function handleAddSingleDataAnalyticsAction(state: StoreData, action: any): Stor
       meta: false
     }
   ];
-
-  newStore.dataAnalytics.push({
-    id:action.payload.dataId,
-    analytics:action.payload.analytics
-  });
+  if(add_item){
+    newStore.dataAnalytics.push({
+      id:action.payload.dataId,
+      analytics: action.payload.analytics,
+      lastOu: newStore.selectedOrgUnits.value,
+      lastPe: newStore.selectedPeriod.value
+    });
+  }
   return newStore;
 }
 
