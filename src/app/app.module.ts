@@ -33,6 +33,7 @@ import {VisualizationStore} from "./services/visualization-store";
 import {AnalyticsService} from "./services/analytics.service";
 import {NgxPaginationModule} from "ngx-pagination";
 import {AnalyticscreatorService} from "./services/analyticscreator.service";
+import {HttpClientService} from "./services/http-client.service";
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import {AnalyticscreatorService} from "./services/analyticscreator.service";
     VisualizationStore,
     AnalyticsService,
     Constants,
-    AnalyticscreatorService
+    AnalyticscreatorService,
+    HttpClientService
   ],
   bootstrap: [
     AppComponent,

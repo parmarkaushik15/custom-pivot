@@ -10,14 +10,20 @@ export class MultiselectComponent implements OnInit {
   @Input() items: any[] = [];
   @Input() placeholder: string = "Select";
   @Input() starting_items: any[] = [];
-  selected_items: any[] = [];
+  @Input() selected_items: any[] = [];
   hideOptions: boolean = true;
   @Output() onSelected: EventEmitter<any> = new EventEmitter<any>()
   constructor() { }
 
   ngOnInit() {
     if(this.starting_items.length != 0){
-      this.selected_items = this.starting_items;
+      if(this.selected_items.length == 0){
+        this.selected_items = this.starting_items;
+      }else{
+        this.starting_items.forEach((val) => {
+          this.selected_items.push(val)
+        })
+      }
       this.onSelected.emit(this.selected_items);
     }
   }

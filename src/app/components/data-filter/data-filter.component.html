@@ -9,7 +9,7 @@
     </a>
   </li>
 </ul>
-<div appClickOutside (clickOutside)="showGroups = false">
+<div appClickOutside (clickOutside)="showGroups = false" [ngClass]="{'hiddenTree': !need_groups}">
   <button class="btn btn-default btn-sm btn-block" (click)="showGroups = !showGroups">
     <span class="pull-left">{{ selectedGroup?.name || 'Select Table'}}</span>
     <span class="pull-right">

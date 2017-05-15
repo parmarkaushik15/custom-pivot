@@ -9,12 +9,13 @@ export const INDICATOR_KEY =          'indicators';
 export const CATEGORY_COMBOS_KEY =    'category-options';
 export const DATAELEMENT_GROUP_KEY =  'data-element-groups';
 export const INDICATOR_GROUP_KEY =    'indicator-groups';
+export const PROGRAM_KEY =    'programs';
 
 @Injectable()
 export class LocalStorageService {
   db;
   constructor() {
-    this.db = new AngularIndexedDB('my-dhis2-pivot', 2);
+    this.db = new AngularIndexedDB('my-dhis-pivot', 1);
   }
 
   /**
@@ -44,6 +45,9 @@ export class LocalStorageService {
 
       //create indicator group table
       this.createStore(evt, DATASET_KEY, "id");
+
+      //create programs table
+      this.createStore(evt, PROGRAM_KEY, "id");
     })
   }
 

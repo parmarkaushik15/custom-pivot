@@ -8,11 +8,13 @@ import {CategoryCombo} from "../model/category-combo";
 import {OrganisationUnit} from "../model/organisation-unit";
 import {
   LocalStorageService, DATAELEMENT_KEY, INDICATOR_KEY,
-  ORGANISATION_UNIT_KEY, CATEGORY_COMBOS_KEY, INDICATOR_GROUP_KEY, DATAELEMENT_GROUP_KEY, DATASET_KEY
+  ORGANISATION_UNIT_KEY, CATEGORY_COMBOS_KEY, INDICATOR_GROUP_KEY, DATAELEMENT_GROUP_KEY, DATASET_KEY, PROGRAM_KEY
 } from "./local-storage.service";
 import {DataelementGroup} from "../model/dataelement-group";
 import {IndicatorGroup} from "../model/indicator-group";
 import {DataSet} from "../model/dataset";
+import {AutoGrowing} from "../model/auto-growing";
+import {HttpClientService} from "./http-client.service";
 
 @Injectable()
 export class DataService {
@@ -27,7 +29,7 @@ export class DataService {
     dataSets: [],
   };
 
-  constructor(private http: Http, private localDbService: LocalStorageService ) { }
+  constructor(private http: Http, private localDbService: LocalStorageService,private httpService:HttpClientService ) { }
 
   getIndicators(): Observable<Indicator[]>{
     return this.http.get("../../../api/indicators.json?fields=id,name,dataSets[periodType]&paging=false")
@@ -66,6 +68,12 @@ export class DataService {
       .map(res => res.json().indicatorGroups || [])
   }
 
+  getPrograms(): Observable<AutoGrowing[]>{
+    return this.http.get("../../../api/programs.json?paging=false&fields=id,name,programType")
+      .map(res => res.json().programs || [])
+
+  }
+
 
   initiateData(){
     return Observable.forkJoin(
@@ -74,10 +82,60 @@ export class DataService {
       this.getDataFromLocalDatabase(INDICATOR_GROUP_KEY),
       this.getDataFromLocalDatabase(DATAELEMENT_GROUP_KEY),
       this.getDataFromLocalDatabase(DATASET_KEY),
-      this.getDataFromLocalDatabase(CATEGORY_COMBOS_KEY)
+      this.getDataFromLocalDatabase(CATEGORY_COMBOS_KEY),
+      this.getDataFromLocalDatabase(PROGRAM_KEY)
     );
 
   }
+
+  getFunctions(){
+    return new Observable((observ)=>{
+      this.http.get("../../../api/dataStore/functions").map(res=>res.json()).subscribe((results)=>{
+        let observable = [];
+        results.forEach((id)=>{
+          observable.push(this.http.get("../../../api/dataStore/functions/" + id).map(res=>res.json()))
+        });
+        Observable.forkJoin(observable).subscribe((responses:any)=>{
+          let functions = [];
+          responses.forEach((response,index)=>{
+            functions.push(response);
+          });
+          observ.next(functions);
+          observ.complete();
+        },(error)=>{
+
+        })
+      },(error)=>{
+
+      })
+    })
+
+  }
+
+  getMapping(){
+    return new Observable((observ)=>{
+      this.http.get("../../../api/dataStore/functionMapper").map(res=>res.json()).subscribe((results)=>{
+        let observable = [];
+        results.forEach((id)=>{
+          observable.push(this.http.get("../../../api/dataStore/functionMapper/" + id).map(res=>res.json()))
+        });
+        Observable.forkJoin(observable).subscribe((responses:any)=>{
+          let functions = [];
+          responses.forEach((response,index)=>{
+            functions.push(response);
+          });
+          observ.next(functions);
+          observ.complete();
+        },(error)=>{
+          observ.error();
+        })
+      },(error)=>{
+        observ.error();
+      })
+    })
+
+  }
+
   /**
    * This function will be used to return all needed metadata either from offline or if not available the online
    * @param key
@@ -113,6 +171,9 @@ export class DataService {
                 break;
               case DATAELEMENT_GROUP_KEY:
                 dataStream$ = this.getDataElementGroups();
+                break;
+              case PROGRAM_KEY:
+                dataStream$ = this.getPrograms()
                 break;
               default:
                 console.error("The key passed is not recognized");

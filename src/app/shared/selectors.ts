@@ -22,7 +22,43 @@ export function dataOptionsSelector( state: ApplicationState ){
 }
 
 export function layoutSelector( state: ApplicationState ){
-  return state.storeData.layout;
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.layout;
+}
+
+export function selectedDataSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.selectedData.itemList;
+}
+
+export function selectedPeriodSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.selectedPeriod.items;
+}
+
+export function selectedPeriodTypeSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.selectedPeriod.type;
+}
+
+export function selectedPeriodYearSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.selectedPeriod.starting_year;
+}
+
+export function orgunitModelSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.orgunit_model;
+}
+
+export function functionsSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.functions;
+}
+
+export function mappingSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.mapping;
 }
 
 export function visualizationObjectSelector( state: ApplicationState ){

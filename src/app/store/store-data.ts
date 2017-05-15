@@ -18,9 +18,12 @@ export interface StoreData {
     selectedOrgUnits:any;
     selectedPeriod: {
       items: any,
+      type: string,
+      starting_year: number,
       name: string,
       value:string},
     selectedData: {
+      auto_growing:any[],
       itemList:any[],
       selectedData:any,
       hideQuarter:boolean,
@@ -30,13 +33,29 @@ export interface StoreData {
     selectedGroup: any;
     tableObject:any;
     dataAnalytics:any[];
+    autoGrowingAnalytics:any[];
     currentAnalytics: any;
     currentEmptyAnalytics: any;
     selectedPeriodType: string;
+    selectedYear: number;
     currentGroupList:any[];
     currentDataItemList:any[];
     dataOptions: any;
     layout:any;
+    orgunit_model: {
+      selection_mode: string,
+      selected_levels: any[],
+      show_update_button:true,
+      selected_groups: any[],
+      orgunit_levels: any[],
+      orgunit_groups: any[],
+      selected_orgunits: any[],
+      user_orgunits: any[],
+      type:string,
+      selected_user_orgunit: any[]
+    },
+    mapping:any[],
+    functions:any[]
 
 }
 
@@ -51,10 +70,13 @@ export const INITIAL_STORE_DATA: StoreData = {
   dataSets: [],
   selectedOrgUnits: null,
   selectedPeriod: {
-    items: null,
+    items: [],
+    type:"Monthly",
+    starting_year:new Date().getFullYear(),
     name: 'pe',
     value: null},
   selectedData: {
+    auto_growing:[],
     itemList:[],
     selectedData: {
       items: null,
@@ -67,9 +89,11 @@ export const INITIAL_STORE_DATA: StoreData = {
   selectedGroup: {id:'ALL',name:'All Data'},
   tableObject:null,
   dataAnalytics:[],
+  autoGrowingAnalytics:[],
   currentAnalytics: null,
   currentEmptyAnalytics: null,
   selectedPeriodType: "Monthly",
+  selectedYear: new Date().getFullYear(),
   currentGroupList:[],
   currentDataItemList:[],
   dataOptions: [
@@ -110,5 +134,19 @@ export const INITIAL_STORE_DATA: StoreData = {
     columns: ['dx'],
     filters: ['ou'],
     excluded:['co']
-  }
+  },
+  orgunit_model: {
+    selection_mode: "Usr_orgUnit",
+    selected_levels: [],
+    show_update_button:true,
+    selected_groups: [],
+    orgunit_levels: [],
+    orgunit_groups: [],
+    selected_orgunits: [],
+    user_orgunits: [],
+    type:"report", // can be 'data_entry'
+    selected_user_orgunit: []
+  },
+  mapping:[],
+  functions:[]
 };

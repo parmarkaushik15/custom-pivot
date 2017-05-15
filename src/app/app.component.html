@@ -20,20 +20,25 @@
             <div class="panel-body" style="padding: 3px">
               <app-data-filter
                 (onDataUpdate)="setSelectedData($event)"
+                [selectedItems]="selectedData$ | async"
               ></app-data-filter>
             </div>
           </div>
 
           <!--period-->
-          <div app-period-filter
+          <div app-period-filter #periodComponent *ngIf="uiState.dataAreaOpen"
                [hideMonth]="hideMonth"
                [hideQuarter]="hideQuarter"
                (onPeriodUpdate)="setSelectedPeriod($event)"
+               [selected_periods]="selectedPeriod$ | async"
+               [period_type]="selectedPeriodType$ | async"
           ></div>
 
           <!--organisation unit-->
-          <div app-org-unit-filter
+          <div app-org-unit-filter *ngIf="uiState.dataAreaOpen"
                (onOrgUnitUpdate)="setSelectedOrgunit($event)"
+               [orgunit_model]="orgunitModel$ | async"
+               (onOrgUnitModelUpdate)="setOrgunitModel($event)"
           ></div>
         </div>
       </div>
@@ -46,6 +51,40 @@
             <a (click)="toogleDataArea()" *ngIf="!uiState.dataAreaOpen" class="pull-left close-right-area" title="open data selection area" style="margin-right:8px;cursor: pointer;font-weight: bold">
               <i class="fa fa-angle-double-right"  style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></i>
             </a>
+            <!--data-->
+            <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showDx = false" >
+              <a class="btn btn-sm btn-default" (click)="showDx = !showDx">Data</a>
+              <div [ngClass]="{'hideData': !showDx}" class="dropdownField">
+                <app-data-filter
+                  (onDataUpdate)="setSelectedData($event)"
+                  [selectedItems]="selectedData$ | async"
+                ></app-data-filter>
+              </div>
+            </div>
+            <!--period-->
+            <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showPe = false">
+              <a class="btn btn-sm btn-default" (click)="showPe = !showPe">Period</a>
+              <div *ngIf="showPe" class="dropdownField">
+                <div app-period-filter #periodComponent1
+                     [hideMonth]="hideMonth"
+                     [hideQuarter]="hideQuarter"
+                     (onPeriodUpdate)="setSelectedPeriod($event)"
+                     [selected_periods]="selectedPeriod$ | async"
+                     [period_type]="selectedPeriodType$ | async"
+                ></div>
+              </div>
+            </div>
+            <!--organisation units-->
+            <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px;padding-right: 3px" appClickOutside (clickOutside)="showOu = false">
+              <a class="btn btn-sm btn-default" (click)="showOu = !showOu">Orgunit</a>
+              <div [ngClass]="{'hideData': !showOu}" class="dropdownField">
+                <div app-org-unit-filter *ngIf="!uiState.dataAreaOpen"
+                     (onOrgUnitUpdate)="setSelectedOrgunit($event)"
+                     [orgunit_model]="orgunitModel$ | async"
+                     (onOrgUnitModelUpdate)="setOrgunitModel($event)"
+                ></div>
+              </div>
+            </div>
             <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
             <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
           </div>

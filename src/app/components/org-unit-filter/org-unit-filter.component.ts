@@ -39,6 +39,7 @@ export class OrgUnitFilterComponent implements OnInit {
 
   @Output() onOrgUnitUpdate : EventEmitter<any> = new EventEmitter<any>();
   @Output() onOrgUnitInit : EventEmitter<any> = new EventEmitter<any>();
+  @Output() onOrgUnitModelUpdate : EventEmitter<any> = new EventEmitter<any>();
 
   orgUnit: any = {};
   root_url = '../../../';
@@ -246,6 +247,7 @@ export class OrgUnitFilterComponent implements OnInit {
       }
     });
     this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   };
 
   // add item to array of selected items when item is selected
@@ -259,6 +261,7 @@ export class OrgUnitFilterComponent implements OnInit {
     }
     this.orgUnit = $event.node.data;
     this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   };
 
   // set selected groups
@@ -276,6 +279,7 @@ export class OrgUnitFilterComponent implements OnInit {
   setSelectedLevels( selected_levels ){
     this.orgunit_model.selected_levels = selected_levels;
     this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
@@ -319,6 +323,7 @@ export class OrgUnitFilterComponent implements OnInit {
   updateOrgUnitModel() {
     this.displayOrgTree();
     this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
   // prepare a proper name for updating the organisation unit display area.

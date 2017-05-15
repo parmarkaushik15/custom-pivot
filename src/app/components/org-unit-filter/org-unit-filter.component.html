@@ -46,17 +46,17 @@
     </div>
     <!--org_unit_groups-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
-      <app-multiselect [placeholder]="'Select organisation units group'" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
+      <app-multiselect [placeholder]="'Select organisation units group'" [selected_items]="orgunit_model.selected_groups" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
 
     </div>
     <!--user_org_unit-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Usr_orgUnit'">
-      <app-multiselect [starting_items]="initial_usr_orgunit" [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
+      <app-multiselect [starting_items]="initial_usr_orgunit"  [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
 
     </div>
     <!--org_unit_levels-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
-      <app-multiselect [placeholder]="'Select organisation units levels'" [items]="orgunit_model.orgunit_levels" (onSelected)="setSelectedLevels($event)"></app-multiselect>
+      <app-multiselect [placeholder]="'Select organisation units levels'" [selected_items]="orgunit_model.selected_levels" [items]="orgunit_model.orgunit_levels" (onSelected)="setSelectedLevels($event)"></app-multiselect>
 
     </div>
     <!--<div class="search-area">-->

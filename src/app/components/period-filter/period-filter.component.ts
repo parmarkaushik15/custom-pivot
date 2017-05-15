@@ -44,13 +44,16 @@ export class PeriodFilterComponent implements OnInit {
   };
   @Input() hideMonth:boolean = false;
   @Input() hideQuarter:boolean = false;
-  selected_periods:any[] = [];
+  @Input() selected_periods:any[] = [];
+  @Input() period_type: string = 'Monthly';
+  @Input() starting_year: number = new Date().getFullYear();
   @Output() onPeriodUpdate: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onYearUpdate: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onTypeUpdate: EventEmitter<any> = new EventEmitter<any>();
   periods = [];
   period: any = {};
   showPerTree:boolean = false;
-  period_type: string = 'Monthly';
-  year: number = 2016;
+  year: number = new Date().getFullYear();
   default_period: string[] = [];
   customTemplateStringOrgunitOptions: any;
   period_type_config: Array<any>;
@@ -88,7 +91,6 @@ export class PeriodFilterComponent implements OnInit {
 
   transferDataSuccess(data,current){
     if(data.dragData.id == current.id){
-      console.log("Droping in the same area")
     }else{
       let number = (this.getPeriodPosition(data.dragData.id) > this.getPeriodPosition(current.id))?0:1;
       this.deletePeriod( data.dragData );
@@ -141,15 +143,18 @@ export class PeriodFilterComponent implements OnInit {
   pushPeriodForward(){
     this.year += 1;
     this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.onYearUpdate.emit(this.year);
   }
 
   pushPeriodBackward(){
     this.year -= 1;
     this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.onYearUpdate.emit(this.year);
   }
 
   changePeriodType(){
     this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.onTypeUpdate.emit(this.period_type);
   }
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
@@ -158,6 +163,8 @@ export class PeriodFilterComponent implements OnInit {
     //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
     this.onPeriodUpdate.emit({
       items: this.selected_periods,
+      type: this.period_type,
+      starting_year: this.starting_year,
       name: 'pe',
       value: this.getPeriodsForAnalytics(this.selected_periods)});
   };
@@ -169,6 +176,8 @@ export class PeriodFilterComponent implements OnInit {
       //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
       this.onPeriodUpdate.emit({
         items: this.selected_periods,
+        type: this.period_type,
+        starting_year: this.starting_year,
         name: 'pe',
         value: this.getPeriodsForAnalytics(this.selected_periods)
       });
@@ -354,7 +363,6 @@ export class PeriodFilterComponent implements OnInit {
     else if(period_type == "SixMonthlyApril"){
       let year = period.substring(0,4);
       let six_month = period.substring(4,12);
-      console.log(period.substring(4,12))
       let time = "";
       if(six_month == "AprilS2"){
         time = year+"AprilS1"

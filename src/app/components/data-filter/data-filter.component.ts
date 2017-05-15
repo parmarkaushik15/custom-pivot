@@ -64,7 +64,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   @Output() selected_data_option: EventEmitter<any> = new EventEmitter<any>();
   @Output() selected_group: EventEmitter<any> = new EventEmitter<any>();
   @Output() onDataUpdate: EventEmitter<any> = new EventEmitter<any>();
-  selectedItems:any[] = [];
+  @Input() selectedItems:any[] = [];
   querystring: string = null;
   listchanges: string = null;
   showGroups:boolean = false;
@@ -76,6 +76,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     indicatorGroups: [],
     categoryOptions: [],
     dataSets: [],
+    programs: [],
     dataSetGroups: [
       {id:'', name: "Reporting Rate"},
       {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
@@ -87,6 +88,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   loading:boolean = true;
   p:number = 1;
   k:number = 1;
+  need_groups:boolean =true;
   constructor( private dataService: DataService) { }
 
   ngOnInit() {
@@ -99,6 +101,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
           indicatorGroups: items[2],
           categoryOptions: items[5],
           dataSets: items[4],
+          programs: items[6],
           dataSetGroups: [
             {id:'', name: "Reporting Rate"},
             {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
@@ -167,7 +170,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     return {
       dx: dataElements,
       ind: this.metaData.indicators,
-      dt: this.metaData.dataSets
+      dt: this.metaData.dataSets,
+      at: this.metaData.programs
     }
   }
 
@@ -225,7 +229,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     const group = this.selectedGroup;
     const selectedOptions = this.getSelectedOption();
     const data = this.getDataItems();
-    console.log(selectedOptions)
     // check if data element is in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'de')){
       if( group.id == 'ALL' ){
@@ -267,6 +270,9 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         }));
       }
     }
+    if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'at')){
+      currentList.push(...data.at);
+    }
     return currentList;
 
   }
@@ -286,6 +292,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       currentGroupList.push(...data.ind)
     }if(_.includes(options, 'ALL') || _.includes(options,'cv')){
       currentGroupList.push(...data.dt)
+    }if(_.includes(options,'at')){
+      this.need_groups = false;
     }
     return currentGroupList;
   }
@@ -295,11 +303,33 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.selectedItems.push(item);
     this.getSelectedPeriods();
     this.onDataUpdate.emit({
-        itemList:this.selectedItems,
-        selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
-        hideQuarter:this.hideQuarter,
-        hideMonth:this.hideMonth
-      });
+      itemList: this.selectedItems,
+      auto_growing: this.getAutogrowingTables(this.selectedItems),
+      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
+      hideQuarter:this.hideQuarter,
+      hideMonth:this.hideMonth
+    });
+  }
+
+  getAutogrowingTables(selections){
+    let autogrowings = [];
+    selections.forEach((value) => {
+      if(value.hasOwnProperty('programType')){
+        autogrowings.push(value);
+      }
+    });
+    return autogrowings;
+  }
+
+  gettables(selections){
+    let autogrowings = [];
+    selections.forEach((value) => {
+      if(value.hasOwnProperty('programType')){
+      }else{
+        autogrowings.push(value);
+      }
+    })
+    return autogrowings;
   }
 
   // Remove selected Item
@@ -307,7 +337,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.selectedItems.splice(this.selectedItems.indexOf(item),1);
     this.getSelectedPeriods();
     this.onDataUpdate.emit({
-      itemList:this.selectedItems,
+      itemList: this.selectedItems,
+      auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
       hideMonth:this.hideMonth
@@ -322,7 +353,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }
     });
     this.onDataUpdate.emit({
-      itemList:this.selectedItems,
+      itemList: this.selectedItems,
+      auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
       hideMonth:this.hideMonth
@@ -333,7 +365,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   deselectAllItems(){
     this.selectedItems = [];
     this.onDataUpdate.emit({
-      itemList:this.selectedItems,
+      itemList: this.selectedItems,
+      auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
       hideMonth:this.hideMonth
@@ -360,7 +393,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       this.deleteData( data.dragData );
       this.insertData( data.dragData, current, number);
       this.onDataUpdate.emit({
-        itemList:this.selectedItems,
+        itemList: this.selectedItems,
+        auto_growing: this.getAutogrowingTables(this.selectedItems),
         selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
         hideQuarter:this.hideQuarter,
         hideMonth:this.hideMonth
@@ -413,10 +447,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   getSelectedPeriods(){
     let periods = [];
     for (let data_item of this.selectedItems ){
-      console.log(data_item)
       if(data_item.hasOwnProperty("dataSets")){
         for( let dataset of data_item.dataSets ){
-          console.log(dataset)
           if(periods.indexOf(dataset.periodType) == -1){
             periods.push(dataset.periodType)
           }
@@ -448,13 +480,15 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }
 
     }
-    console.log(this.hideMonth)
   }
 
   getDataForAnalytics(selectedData) {
     let dataForAnalytics = "";
     selectedData.forEach((dataValue, dataIndex) => {
-      dataForAnalytics += dataIndex == 0 ? dataValue.id : ';' + dataValue.id;
+      if(dataValue.hasOwnProperty('programType')){
+      }else{
+        dataForAnalytics += dataIndex == 0 ? dataValue.id : ';' + dataValue.id;
+      }
     });
     return dataForAnalytics;
   }
