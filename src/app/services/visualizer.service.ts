@@ -237,6 +237,27 @@ export class VisualizerService {
     return num;
   }
 
+  getAutoGrowingDataValue ( analyticsObject, dataItems = [] ) {
+    let num:any;
+    console.log(dataItems)
+
+    for ( let value of analyticsObject.rows) {
+      let counter = 0;
+      for ( let item of dataItems ){
+        if ( value[this._getTitleIndex( analyticsObject.headers, item.type )] === item.value ) {
+          counter ++;
+        }
+      }
+      if ( counter === dataItems.length ) {
+        num = value[this._getTitleIndex( analyticsObject.headers, 'value' )];
+      }
+
+
+
+    }
+    return num;
+  }
+
   // TODO: Implement the map details here
 
   /**
@@ -736,6 +757,212 @@ export class VisualizerService {
             item.items.push({
               'name': '',
               'val': this.getDataValue(analyticsObject, dataItem),
+              'row_span': '1',
+              'display': true
+            });
+          }
+          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+              table.rows.push(item);
+            }
+          } else {
+            table.rows.push(item);
+          }
+      }
+    }
+    return table;
+  }
+
+  drawAutogrowingTable ( analyticsObject , tableConfiguration ) {
+    console.log(tableConfiguration);
+    let table = {
+      'headers': [],
+      'columns': [],
+      'rows': [],
+      'titles': {
+        'rows': [],
+        'column': []
+      }
+    };
+    if(tableConfiguration.hasOwnProperty('title')){
+      table['title'] = tableConfiguration.title;
+    }
+    if (tableConfiguration.hasOwnProperty("display_list") && tableConfiguration.display_list) {
+      table.headers[0] = {
+        items: [],
+        style: ""
+      };
+      tableConfiguration.columns[tableConfiguration.columns.indexOf('pe')] = 'eventdate';
+      tableConfiguration.columns[tableConfiguration.columns.indexOf('ou')] = 'ouname';
+      for ( let item of tableConfiguration.columns ){
+        table.headers[0].items.push(
+          {
+            name: analyticsObject.headers[this._getTitleIndex(analyticsObject.headers,item)].column,
+            span: 1
+          }
+        )
+      }
+      for( let item of analyticsObject.rows ){
+        let column_items = [];
+        for ( let col of tableConfiguration.columns ){
+          let index = this._getTitleIndex( analyticsObject.headers,col );
+          column_items.push({
+            name:"",
+            display:true,
+            row_span: "1",
+            val: item[index]
+          })
+
+        }
+        table.rows.push(
+          {
+            headers:[],
+            items:column_items
+          }
+        )
+      }
+    } else {
+      // add names to titles array
+      for (let item of tableConfiguration.columns) {
+        table.titles.column.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+      }
+      for (let item of tableConfiguration.rows) {
+        table.titles.rows.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+      }
+      for (let columnItem of tableConfiguration.columns) {
+        let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.columns, columnItem);
+        let currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem);
+        let headerItem = [];
+        for (let i = 0; i < dimension.duplication; i++) {
+          for (let currentItem of currentColumnItems) {
+            headerItem.push({'name': currentItem.name, 'span': dimension.col_span});
+          }
+        }
+        let styles = '';
+        if (tableConfiguration.hasOwnProperty('style')) {
+          if (tableConfiguration.styles.hasOwnProperty(columnItem)) {
+            styles = tableConfiguration.styles[columnItem]
+          }
+        }
+        table.headers.push({'items': headerItem, 'style': styles});
+      }
+      for (let rowItem of tableConfiguration.rows) {
+        table.columns.push(rowItem);
+      }
+
+      // Preparing table columns
+      let column_length = tableConfiguration.columns.length;
+      let column_items_array = [];
+      for (let i = 0; i < column_length; i++) {
+        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i]);
+        column_items_array.push(currentRowItems);
+      }
+      let table_columns_array = [];
+      for (let i = 0; i < column_items_array.length; i++) {
+        if (table_columns_array.length === 0) {
+          for (let item of column_items_array[i]) {
+            table_columns_array.push([item]);
+          }
+        } else {
+          let temp_arr = table_columns_array.concat();
+          table_columns_array = [];
+          for (let item of temp_arr) {
+            for (let val of  column_items_array[i]) {
+              if (item instanceof Array) {
+                let tempArr = Array.from(item);
+                table_columns_array.push(tempArr.concat([val]));
+              } else {
+                table_columns_array.push([item, val]);
+              }
+            }
+          }
+        }
+
+      }
+
+      // Preparing table rows
+      let rows_length = tableConfiguration.rows.length;
+      let row_items_array = [];
+      for (let i = 0; i < rows_length; i++) {
+        let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.rows, tableConfiguration.rows[i]);
+        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i]);
+        row_items_array.push({'items': currentRowItems, 'dimensions': dimension});
+      }
+      let table_rows_array = [];
+      for (let i = 0; i < row_items_array.length; i++) {
+        if (table_rows_array.length === 0) {
+          for (let item of row_items_array[i].items) {
+            item.dimensions = row_items_array[i].dimensions;
+            table_rows_array.push([item]);
+          }
+        } else {
+          let temp_arr = table_rows_array.concat();
+          table_rows_array = [];
+          for (let item of temp_arr) {
+            for (let val of  row_items_array[i].items) {
+              val.dimensions = row_items_array[i].dimensions;
+              if (item instanceof Array) {
+                let tempArr = Array.from(item);
+                table_rows_array.push(tempArr.concat([val]));
+              } else {
+                table_rows_array.push([item, val]);
+              }
+            }
+          }
+        }
+
+      }
+
+      let counter = 0;
+      if(table_rows_array.length != 0){
+        for (let rowItem of table_rows_array) {
+          let item = {
+            'items': [],
+            'headers': rowItem
+          };
+          for (let val of rowItem) {
+            if (counter === 0 || counter % val.dimensions.col_span === 0) {
+              item.items.push({'name': val.uid, 'val': val.name, 'row_span': val.dimensions.col_span});
+            }
+          }
+          for (let colItem of table_columns_array) {
+            let dataItem = [];
+            for (let val of rowItem) {
+              dataItem.push({'type': val.type, 'value': val.uid});
+            }
+            for (let val of colItem) {
+              dataItem.push({'type': val.type, 'value': val.uid});
+            }
+            item.items.push({
+              'name': '',
+              'val': this.getAutoGrowingDataValue(analyticsObject, dataItem),
+              'row_span': '1',
+              'display': true
+            });
+          }
+          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+              table.rows.push(item);
+            }
+          } else {
+            table.rows.push(item);
+          }
+
+          counter++;
+        }
+      }else{
+          let item = {
+            'items': [],
+            'headers': []
+          };
+          for (let colItem of table_columns_array) {
+            let dataItem = [];
+            for (let val of colItem) {
+              dataItem.push({'type': val.type, 'value': val.uid});
+            }
+            item.items.push({
+              'name': '',
+              'val': this.getAutoGrowingDataValue(analyticsObject, dataItem),
               'row_span': '1',
               'display': true
             });

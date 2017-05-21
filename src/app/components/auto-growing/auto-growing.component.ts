@@ -22,13 +22,13 @@ export class AutoGrowingComponent implements OnInit {
       showDimensionLabels: false,
       hideEmptyRows: false,
       showHierarchy: false,
-      rows: ['pe'],
+      rows: ['event'],
       columns: ['dx'],
       displayList: false
     };
     console.log(this.tableObject)
     if(this.autogrowings[0]){
-      this.tableObject = this.visualization.drawTable(this.autogrowings[0].analytics, table_structure);
+      this.tableObject = this.visualization.drawAutogrowingTable(this.autogrowings[0].analytics, table_structure);
       console.log(this.tableObject)
     }
 
