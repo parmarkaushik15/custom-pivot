@@ -1,3 +1,6 @@
+<div [ngClass]="{'show':!show,'hide':show}" style="text-align: center;">
+  <img src="assets/img/balls-5.svg"/>
+</div>
 <table [ngClass]="{'show':show,'hide':!show}" class="table table-bordered table-responsive table-condensed custom-table"
        *ngIf="tableObject.rows.length != 0">
   <thead>
