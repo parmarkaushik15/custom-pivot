@@ -1,4 +1,4 @@
-<table class="table table-bordered table-responsive table-condensed custom-table"
+<table [ngClass]="{'show':show,'hide':!show}" class="table table-bordered table-responsive table-condensed custom-table"
        *ngIf="tableObject.rows.length != 0">
   <thead>
   <tr *ngFor="let header of tableObject.headers; let j = index">
@@ -11,8 +11,8 @@
     </th>
   </tr>
   </thead>
-  <tbody #tbody class>
-  <tr [ngClass]="{'show':show,'hide':!show}" *ngFor="let row of tableObject.rows">
+  <tbody #tbody>
+  <tr *ngFor="let row of tableObject.rows">
     <td *ngFor="let header_column of row.items" style="text-align: center;vertical-align: middle"
         >
       {{ header_column.val }}

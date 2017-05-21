@@ -150,10 +150,11 @@ export class AutoGrowingComponent implements OnInit {
         return adjacentString;
       }
 
-      for (var i = 0; i <= scope.data.dataElements.length; i++) {
-        //var dataIndex = i;
+      for (var i = 0; i < scope.data.dataElements.length; i++) {
+        var dataIndex = i;
         var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
-        if (scope.config.groupBy.indexOf(scope.data.dataElements[i].id) > -1) {
+        console.log(scope.data.dataElements,dataIndex)
+        if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1) {
           elem.children.forEach((trElement, index)=> {
             if (trElement.children[i]) {
               let el = trElement.children[i];

@@ -1,6 +1,6 @@
 .show{
-  visibility:visible;
+  display:block;
 }
 .hide{
-  visibility:hidden;
+  display:none;
 }
