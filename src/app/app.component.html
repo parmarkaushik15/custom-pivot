@@ -37,7 +37,6 @@
           <!--organisation unit-->
           <div app-org-unit-filter *ngIf="uiState.dataAreaOpen"
                (onOrgUnitUpdate)="setSelectedOrgunit($event)"
-               [orgunit_model]="orgunitModel$ | async"
                (onOrgUnitModelUpdate)="setOrgunitModel($event)"
           ></div>
         </div>
@@ -80,7 +79,6 @@
               <div [ngClass]="{'hideData': !showOu}" class="dropdownField">
                 <div app-org-unit-filter *ngIf="!uiState.dataAreaOpen"
                      (onOrgUnitUpdate)="setSelectedOrgunit($event)"
-                     [orgunit_model]="orgunitModel$ | async"
                      (onOrgUnitModelUpdate)="setOrgunitModel($event)"
                 ></div>
               </div>
@@ -96,15 +94,18 @@
       <div class="container-fluid">
         <div class="col-md-12">
           <!--{{ visualizationObject$  | async | json }}-->
-          <app-table *ngIf="showTable" [tableData]="visualizationObject$  | async"></app-table>
+          <!--<app-table *ngIf="showTable" [tableData]="visualizationObject$  | async"></app-table>-->
         </div>
       </div>
       <div class="container-fluid" style="padding: 0px">
         <div class="col-md-12" style="padding: 0px">
-          <data-area *ngIf="!showTable"
-            [dataItems]="dataDimensions$ | async"
-            [analyticsWithoutData]="analyticsWithoutData$ | async"
-            [analyticsWithData]="analyticsWithData$ | async"
+          <data-area
+            [showTable]="showTable"
+            [showAutoGrowingTable]="showAutoGrowingTable"
+            [tableObjects]="tableObject$ | async"
+            [dataItems] = "dataDimensions$ | async"
+            [autoGrowingData]="autoGrowingData$ | async"
+            [layoutItems] = "layout"
           ></data-area>
         </div>
       </div>

@@ -72,7 +72,8 @@ export class PeriodFilterComponent implements OnInit {
     }
 
     this.getSystemSettings().subscribe((value) => {
-      this.activatePer({ id:value.keyAnalysisRelativePeriod, name:value.keyAnalysisRelativePeriod })
+      // TODO: Find a way to find the relative period dynamic
+      this.activatePer({ id:value.keyAnalysisRelativePeriod, name:"Last 12 Month" })
     })
   }
 

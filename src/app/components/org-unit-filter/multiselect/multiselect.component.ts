@@ -32,6 +32,11 @@ export class MultiselectComponent implements OnInit {
     this.hideOptions = !this.hideOptions;
   }
 
+  reset(){
+    this.selected_items = [];
+    this.onSelected.emit(this.selected_items);
+  }
+
   checkItemAvailabilty(item, array): boolean{
     let checker = false;
     for( let per of array ){

@@ -557,6 +557,9 @@ export class VisualizerService {
         'column': []
       }
     };
+    if(tableConfiguration.hasOwnProperty('title')){
+      table['title'] = tableConfiguration.title;
+    }
     if (tableConfiguration.hasOwnProperty("display_list") && tableConfiguration.display_list) {
       table.headers[0] = {
         items: [],

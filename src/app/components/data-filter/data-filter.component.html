@@ -1,6 +1,6 @@
 <ul class="list-inline" *ngIf="dataOptions.length != 0">
   <li *ngFor="let option of dataOptions" style="padding-right: 0px">
-    <a (click)="toggleDataOption(option.prefix)"
+    <a (click)="toggleDataOption(option.prefix, $event)"
        class="btn btn-sm {{option.selected ? 'btn-info' : 'btn-default'}}"
        style="height: 32px; border-radius: 16px;padding: 5px 5px"
        title="Click to see {{option.name}}"
@@ -20,7 +20,7 @@
   <div class="panel-body" style="padding: 5px;">
     <input type="search" class="form-control input-sm" placeholder="Search" style="margin-bottom: 5px;" [(ngModel)]="querystring">
     <ul class="list-unstyled metadata-list  tree-area1">
-      <li *ngFor="let item of dataGroups | filterByName:querystring" (click)="setSelectedGroup(item)">{{ item.name }}</li>
+      <li *ngFor="let item of dataGroups | fuseSearch:searchOptions:querystring" (click)="setSelectedGroup(item)">{{ item.name }}</li>
     </ul>
   </div>
 </div>
@@ -32,13 +32,13 @@
       <tr>
         <th width="50%">
           <ul class="list-inline data-header-list">
-            <li>Available( {{(listItems| filterByName:listchanges).length }} )</li>
+            <li>Available <span class="fadeOut">({{(listItems| fuseSearch:searchOptions:listchanges).length }})</span></li>
             <li class="pull-right pointer"><a (click)="selectAllItems()" title="Select all"><i class="fa fa-angle-double-right"></i></a></li>
           </ul>
         </th>
         <th width="50%">
           <ul class="list-inline data-header-list">
-            <li class="pull-right">Selected ( {{ selectedItems.length }} )</li>
+            <li class="pull-right">Selected <span class="fadeOut">({{ selectedItems.length }})</span></li>
             <li class="pull-left pointer"><a (click)="deselectAllItems()" title="Remove all selections"><i class="fa fa-angle-double-left"></i></a></li>
           </ul>
         </th>
@@ -47,14 +47,19 @@
         <td width="50%" style="height: 90%">
           <ul class="list-unstyled metadata-list scrollable">
             <li *ngIf="listItems.length == 0">Loading...</li>
-            <li *ngFor="let item of listItems | filterByName:listchanges | paginate:{id: 'list',itemsPerPage: 100, currentPage: p};trackBy: trackByFn "
+            <li *ngFor="let item of listItems | fuseSearch:searchOptions:listchanges | paginate: { id: 'foo',
+                                                      itemsPerPage: 100,
+                                                      currentPage: p };trackBy: trackByFn "
                 (click)="addSelected(item)"
                 [ngClass]="{'hiddenTree': inSelected(item, selectedItems)}"
                 title="Click to select item">
               {{ item.name }}
             </li>
-            <li *ngIf="(listItems| filterByName:listchanges).length >= 100">
-              <pagination-controls id ='list' maxSize="0" (pageChange)="p = $event"></pagination-controls>
+            <li *ngIf="(listItems| fuseSearch:searchOptions:listchanges).length >= 100">
+              <pagination-controls  id="foo"
+                                    (pageChange)="p = $event"
+                                    maxSize="0">
+              </pagination-controls>
             </li>
           </ul>
         </td>

@@ -15,11 +15,22 @@ export const ADD_EMPTY_ANALYITICS = 'ADD_EMPTY_ANALYITICS';
 export const ADD_SINGLE_EMPTY_ANALYITICS = 'ADD_SINGLE_EMPTY_ANALYITICS';
 export const ADD_SINGLE_AUTOGROWING_ANALYITICS = 'ADD_SINGLE_AUTOGROWING_ANALYITICS';
 export const ADD_FUNCTIONS_ACTION = 'ADD_FUNCTIONS';
+export const UPDATE_TABLE_ACTION = 'UPDATE_TABLE_ACTION';
 export const ADD_FUNCTION_MAPPING_ACTION = 'ADD_FUNCTION_MAPPING';
+export const RESET_TABLE_OBJECTS_ACTION = 'RESET_TABLE_OBJECTS_ACTION';
 
 
 export class AddDataAnalyticsAction implements Action {
   type = ADD_DATA_ANALYITICS;
+  constructor ( public payload: any ) {}
+}
+
+export class ResetTableObjectAction implements Action {
+  type = RESET_TABLE_OBJECTS_ACTION;
+}
+
+export class UpdateTableAction implements Action {
+  type = UPDATE_TABLE_ACTION;
   constructor ( public payload: any ) {}
 }
 

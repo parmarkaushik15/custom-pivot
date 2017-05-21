@@ -3,6 +3,7 @@ import {Response, Http} from "@angular/http";
 import {TreeComponent, TREE_ACTIONS, IActionMapping} from "angular-tree-component";
 import {Observable} from "rxjs";
 import {OrgUnitService} from "./org-unit.service";
+import {MultiselectComponent} from "./multiselect/multiselect.component";
 
 @Component({
   selector: '[app-org-unit-filter]',
@@ -47,6 +48,9 @@ export class OrgUnitFilterComponent implements OnInit {
   orgunit_levels:any[] = [];
   @ViewChild('orgtree')
   orgtree: TreeComponent;
+
+  @ViewChild('period_selector')
+  period_selector: MultiselectComponent;
 
   organisationunits: any[] = [];
   selected_orgunits: any[] = [];
@@ -238,29 +242,33 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
+    this.period_selector.reset();
     if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
       this.orgunit_model.selection_mode = "orgUnit";
+      this.period_selector.reset();
     }
     this.orgunit_model.selected_orgunits.forEach((item,index) => {
       if( $event.node.data.id == item.id ) {
         this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
-    this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   };
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
+    this.period_selector.reset();
     if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
       this.orgunit_model.selection_mode = "orgUnit";
+      this.period_selector.reset();
     }
     this.selected_orgunits = [$event.node.data];
     if(!this.checkOrgunitAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
-    this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   };
 
@@ -272,13 +280,13 @@ export class OrgUnitFilterComponent implements OnInit {
   // set selected groups
   setSelectedUserOrg( selected_user_orgunit ){
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
-    // this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits,name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
   }
 
   // set selected groups
   setSelectedLevels( selected_levels ){
     this.orgunit_model.selected_levels = selected_levels;
-    this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
@@ -322,7 +330,7 @@ export class OrgUnitFilterComponent implements OnInit {
 
   updateOrgUnitModel() {
     this.displayOrgTree();
-    this.onOrgUnitUpdate.emit({name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
@@ -360,7 +368,7 @@ export class OrgUnitFilterComponent implements OnInit {
     let orgUnits = [];
     let organisation_unit_analytics_string = "";
     // if the selected orgunit is user org unit
-    if(orgunit_model.selection_mode == "Usr_orgUnit"){
+    if( orgunit_model.selected_user_orgunit.length != 0 ){
       // if(orgunit_model.user_orgunits.length == 1){
       //   let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0].id);
       //   orgUnits.push(user_orgunit.id);

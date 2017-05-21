@@ -31,7 +31,7 @@ export interface StoreData {
     };
     selectedDataItems: string[];
     selectedGroup: any;
-    tableObject:any;
+    tableObject:any[];
     dataAnalytics:any[];
     autoGrowingAnalytics:any[];
     currentAnalytics: any;
@@ -87,7 +87,7 @@ export const INITIAL_STORE_DATA: StoreData = {
   },
   selectedDataItems: [],
   selectedGroup: {id:'ALL',name:'All Data'},
-  tableObject:null,
+  tableObject:[],
   dataAnalytics:[],
   autoGrowingAnalytics:[],
   currentAnalytics: null,

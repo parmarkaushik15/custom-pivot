@@ -34,6 +34,8 @@ import {AnalyticsService} from "./services/analytics.service";
 import {NgxPaginationModule} from "ngx-pagination";
 import {AnalyticscreatorService} from "./services/analyticscreator.service";
 import {HttpClientService} from "./services/http-client.service";
+import {FuseSearchPipe} from "./shared/pipes/fuse-search.pipe";
+import { AutoGrowingComponent } from './components/auto-growing/auto-growing.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,9 @@ import {HttpClientService} from "./services/http-client.service";
     LayoutComponent,
     TableComponent,
     ClickOutsideDirective,
-    Draggable
+    Draggable,
+    FuseSearchPipe,
+    AutoGrowingComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,9 @@
-<div class="col-md-12" style="padding-left: 30px;">
+<app-auto-growing *ngIf="showAutoGrowingTable"
+  [autogrowings]="autoGrowingData"
+>
+
+</app-auto-growing>
+<div class="col-md-12" style="padding-left: 10px;" *ngIf="!showTable">
   <h6>Creating Pivot table</h6>
   <ul class="list-unstyled">
     <li><small>- Select items from any dimension of the left menu</small></li>
@@ -12,4 +17,31 @@
     <li><small>- Click Download to save table data to your computer</small></li>
   </ul>
 </div>
+<h4 *ngIf="dataItems.data.items?.length != 0 && showTable" class="text-center text-muted"> {{ getTitle() }} </h4>
+<div *ngFor="let tableObject of tableObjects" style="padding: 3px">
+  <h3 *ngIf="tableObject.title">{{tableObject.title}} <button class="btn btn-default btn-sm pull-right"><i class="fa fa-file-excel-o"></i> Excel </button></h3>
+  <table class="table table-bordered table-responsive table-condensed custom-table"
+         *ngIf="tableObject.rows.length != 0">
+    <thead>
+    <tr *ngFor="let header of tableObject.headers; let j = index">
+      <th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">
+        {{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}
+      </th>
+      <th *ngFor="let header_column of header.items" [colSpan]="header_column.span"
+          style="text-align: center">
+        {{ header_column.name }}
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of tableObject.rows">
+      <td *ngFor="let header_column of row.items" style="text-align: center;vertical-align: middle"
+          [attr.rowspan]="header_column.row_span">
+        {{ header_column.val }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
 
+
+</div>

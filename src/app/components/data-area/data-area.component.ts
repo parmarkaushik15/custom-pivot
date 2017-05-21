@@ -1,7 +1,4 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/application.state";
-import {AnalyticscreatorService} from "../../services/analyticscreator.service";
 
 @Component({
   selector: 'data-area',
@@ -10,13 +7,42 @@ import {AnalyticscreatorService} from "../../services/analyticscreator.service";
 })
 export class DataAreaComponent implements OnInit {
 
+  @Input() showTable:boolean = false;
+  @Input() showAutoGrowingTable:boolean = false;
+  @Input() tableObjects:any[] = [];
   @Input() dataItems:any = null;
-  @Input() analyticsWithoutData:any = null;
-  @Input() analyticsWithData:any = null;
-  constructor( private store: Store<ApplicationState>, private analyticsService: AnalyticscreatorService ) { }
+  @Input() autoGrowingData:any = null;
+  @Input() layoutItems:any = {
+    rows: ['pe'],
+    columns: ['dx'],
+    filters: ['ou'],
+    excluded:['co']
+  };
+  constructor(  ) { }
 
   ngOnInit() {
-    console.log(this.dataItems)
+    console.log("data-area",this.autoGrowingData)
+  }
+
+  getTitle(){
+    let title = [];
+    this.layoutItems.filters.forEach((val) => {
+      if(val == 'ou'){
+        if(this.dataItems.ou){
+          this.dataItems.ou.items.forEach((ous) => {
+            title.push(ous.name);
+          });
+        }
+      }
+      if(val == 'pe'){
+        if(this.dataItems.period){
+          this.dataItems.period.items.forEach((ous) => {
+            title.push(ous.name);
+          });
+        }
+      }
+    });
+    return title.join(", ");
   }
 
 }

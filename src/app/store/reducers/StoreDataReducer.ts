@@ -8,6 +8,7 @@ import {
   SELECT_DATA_ACTION, SELECT_PERIOD_ACTION, SELECT_ORGANISATION_UNIT_ACTION, SET_LAYOUT_ACTION, ADD_DATA_ANALYITICS,
   ADD_EMPTY_ANALYITICS, ADD_SINGLE_EMPTY_ANALYITICS, SET_ORGANISATION_MODEL_ACTION, SET_PERIOD_TYPE_ACTION,
   SET_YEAR_ACTION, ADD_FUNCTION_MAPPING_ACTION, ADD_FUNCTIONS_ACTION, ADD_SINGLE_AUTOGROWING_ANALYITICS,
+  UPDATE_TABLE_ACTION, RESET_TABLE_OBJECTS_ACTION,
 } from "../actions";
 
 
@@ -66,6 +67,16 @@ export function storeData(state: StoreData, action:Action) : StoreData {
         let fnStore = _.cloneDeep( state );
         fnStore.functions = action.payload;
         return fnStore;
+
+      case UPDATE_TABLE_ACTION:
+        let tbStore = _.cloneDeep( state );
+        tbStore.tableObject.push(action.payload);
+        return tbStore;
+
+      case RESET_TABLE_OBJECTS_ACTION:
+        let reStore = _.cloneDeep( state );
+        reStore.tableObject = [];
+        return reStore;
 
       case SELECT_ORGANISATION_UNIT_ACTION:
         let ouStore = _.cloneDeep( state );

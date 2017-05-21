@@ -112,7 +112,7 @@ export class AnalyticscreatorService {
         url += 'dimension=' + item.name + ':' + item.value;
       }
     });
-    url += '&displayProperty=NAME&'+showData;
+    url += '&displayProperty=NAME&hierarchyMeta=true&'+showData;
 
     return url;
   }

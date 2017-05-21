@@ -89,9 +89,23 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   p:number = 1;
   k:number = 1;
   need_groups:boolean =true;
+  searchOptions:any;
   constructor( private dataService: DataService) { }
 
   ngOnInit() {
+    this.searchOptions={
+      shouldSort: true,
+      tokenize: true,
+      findAllMatches: true,
+      threshold: 0,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      keys: [
+        "name"
+      ]
+    };
     this.dataService.initiateData().subscribe(
       (items ) => {
         this.metaData = {
@@ -121,23 +135,23 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
      //
    }
 
-  toggleDataOption(optionPrefix) {
-    this.dataOptions.forEach((value) => {
-      if( value['prefix'] == optionPrefix ){
-        value['selected'] = !value['selected'];
-        // if(optionPrefix == 'cv' && value['selected']){
-        //   this.selectedGroup = {id:'', name: "Reporting Rate"}
-        // }
-      }else{
-        if(optionPrefix == 'de' && value['prefix'] == 'in'){
-        }else if(optionPrefix == 'in' && value['prefix'] == 'de'){
-
-        }else{
-          value['selected'] = false
+  toggleDataOption(optionPrefix,event) {
+    if(event.ctrlKey) {
+      this.dataOptions.forEach((value) => {
+        if( value['prefix'] == optionPrefix ){
+          value['selected'] = !value['selected'];
         }
+      });
+    } else {
+      this.dataOptions.forEach((value) => {
+        if( value['prefix'] == optionPrefix ){
+          value['selected'] = !value['selected'];
+        }else{
+            value['selected'] = false;
 
-      }
-    });
+        }
+      });
+    }
     this.selectedGroup = {id:'ALL', name:'All Data'};
     this.dataGroups = this.groupList();
     this.listItems = this.dataItemList();
@@ -279,7 +293,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
 
   // Get group list to display
   groupList(){
-
+    this.need_groups = true;
     let currentGroupList = [];
     const options = this.getSelectedOption();
     const data = this.getData();

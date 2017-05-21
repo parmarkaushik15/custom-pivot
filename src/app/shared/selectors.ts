@@ -9,11 +9,17 @@ import {CategoryCombo} from "../model/category-combo";
  */
 
 export function dataItemSelector( state: ApplicationState ){
-  return state.storeData.dataAnalytics;
+  let otherStore = _.cloneDeep(state);
+  return {
+    data: otherStore.storeData.selectedData,
+    period: otherStore.storeData.selectedPeriod,
+    ou: otherStore.storeData.selectedOrgUnits,
+  };
 }
 
 export function dataItemAnalyticsSelector( state: ApplicationState ){
-  return state.storeData.dataAnalytics.map(item => item.analytics);
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.dataAnalytics.map(item => item.analytics);
 }
 
 export function dataOptionsSelector( state: ApplicationState ){
@@ -24,6 +30,11 @@ export function dataOptionsSelector( state: ApplicationState ){
 export function layoutSelector( state: ApplicationState ){
   let otherStore = _.cloneDeep(state);
   return otherStore.storeData.layout;
+}
+
+export function tableObjectSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.tableObject;
 }
 
 export function selectedDataSelector( state: ApplicationState ){
@@ -95,11 +106,13 @@ export function visualizationObjectSelector( state: ApplicationState ){
 }
 
 export function analyticsWithoutDataSelector( state: ApplicationState ){
-  return state.storeData.currentEmptyAnalytics;
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.currentEmptyAnalytics;
 }
 
 export function analyticsWithDataSelector( state: ApplicationState ){
-  return state.storeData.currentAnalytics;
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.autoGrowingAnalytics;
 }
 
 export function dataDimensionSelector( state: ApplicationState ){
