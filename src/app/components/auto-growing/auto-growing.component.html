@@ -2,9 +2,9 @@
        *ngIf="tableObject.rows.length != 0">
   <thead>
   <tr *ngFor="let header of tableObject.headers; let j = index">
-    <th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">
-      {{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}
-    </th>
+    <!--<th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">-->
+      <!--{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}-->
+    <!--</th>-->
     <th *ngFor="let header_column of header.items" [colSpan]="header_column.span"
         style="text-align: center">
       {{ header_column.name }}
