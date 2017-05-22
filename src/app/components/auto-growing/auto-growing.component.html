@@ -15,26 +15,12 @@
   </tr>
   </thead>
   <tbody *ngIf="!$scope.config.groupBy" #tbody>
-  <!--<tr *ngFor="let row of tableObject.rows">
-    <td *ngFor="let header_column of row.items" style="text-align: center;vertical-align: middle"
-        >
-      {{ header_column.val }}
-    </td>
-  </tr>-->
   <tr *ngFor="let event of $scope.data.events">
-    <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
     <td *ngFor="let dataElement of data.dataElements"> {{event[dataElement.name]}}</td>
   </tr>
   </tbody>
   <tbody *ngIf="$scope.config.groupBy" #tbody>
-  <!--<tr *ngFor="let row of tableObject.rows">
-    <td *ngFor="let header_column of row.items" style="text-align: center;vertical-align: middle"
-        >
-      {{ header_column.val }}
-    </td>
-  </tr>-->
   <tr *ngFor="let event of $scope.data.events">
-    <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
     <template ngFor let-dataElement [ngForOf]="$scope.data.dataElements"  let-i="index">
       <td [ngClass]="{'hide-text':checkHide(index)}" style="border:1px solid lightgrey" *ngIf="event[dataElement.name] != undefined && dataElement.valueType != 'NA'">{{event[dataElement.name] | removeNaN:dataElement}}</td>
     </template>

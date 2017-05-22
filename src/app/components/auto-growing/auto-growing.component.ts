@@ -81,7 +81,7 @@ export class AutoGrowingComponent implements OnInit {
   }
 
   dynamicSort(property) {
-    return function (obj1, obj2) {
+    return (obj1, obj2) =>{
       return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
         : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
     }
@@ -145,7 +145,6 @@ export class AutoGrowingComponent implements OnInit {
         if(dataIndex > 0){
           dataIndex = i - 1;
         }
-        console.log("I:",dataIndex,this.$scope.data.dataElements[dataIndex].id);
         var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
         if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
           elem.children.forEach((trElement, index)=> {
@@ -168,12 +167,10 @@ export class AutoGrowingComponent implements OnInit {
           })
         } else //if(scope.config.continuous)
         {
-          console.log("Here:",i);
           elem.children.forEach((trElement, index)=> {
             if (trElement.children[dataIndex]) {
               let el = trElement.children[dataIndex];
               {
-                console.log("Here1:",dataIndex,adjacentToGroup(index, i));
                 if (previous == adjacentToGroup(index, i)) {
                   $(el).addClass('hidden');
                   if (this.$scope.config.valueTypes) {
@@ -239,7 +236,7 @@ export class AutoGrowingComponent implements OnInit {
       }
       if (this.$scope.config.valueTypes) {
         for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
-          elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+          this.elementFind(elem,i,(index, el)=> {
 
             if ((this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' || this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
               for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
@@ -263,7 +260,7 @@ export class AutoGrowingComponent implements OnInit {
       }
       if (this.$scope.config.dec) {
         for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
-          elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+          this.elementFind(elem,i, (index, el)=> {
             if (this.$scope.config.dec == this.$scope.config.dataElements[i]) {
               $(elem.children[index].children[i]).html(parseFloat($(elem.children[index].children[i]).html()).toFixed(1));
             }
@@ -273,10 +270,10 @@ export class AutoGrowingComponent implements OnInit {
 
       if (this.$scope.config.groupAdd) {
         firstColumnBrakes = [];
-        this.$scope.config.groupAdd.forEach(function (dataElementId) {
-          this.$scope.data.dataElements.forEach(function (dataElement, i) {
+        this.$scope.config.groupAdd.forEach((dataElementId)=> {
+          this.$scope.data.dataElements.forEach((dataElement, i) =>{
             if (dataElementId == dataElement.id) {
-              elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+              this.elementFind(elem,i, (index, el)=> {
                 if (elem.children[index].children[i - 1].getAttribute('rowspan') != null) {
                   var span = parseInt(elem.children[index].children[i - 1].getAttribute('rowspan'));
                   elem.children[index].children[i].setAttribute('rowspan', span);
@@ -296,15 +293,15 @@ export class AutoGrowingComponent implements OnInit {
       }
       //re-calculate indicator values after merging rows
       if (this.$scope.config.indicators) {
-        this.$scope.config.indicators.forEach(function (indicator) {
+        this.$scope.config.indicators.forEach((indicator)=>{
           if (indicator.position) {
             this.$scope.config.dataElements.splice(indicator.position, 0, indicator.position);
           }
         });
-        elem.find("tr").each(function (trIndex, trElement) {
-          this.$scope.config.indicators.forEach(function (indicator) {
+        elem.children.forEach((trElement,trIndex) =>{
+          this.$scope.config.indicators.forEach((indicator)=>{
             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
-            this.$scope.data.dataElements.forEach(function (dataElement) {
+            this.$scope.data.dataElements.forEach((dataElement)=>{
               if (eventIndicator.indexOf(dataElement.id) > -1) {
                 var dataElementIndex = this.$scope.config.dataElements.indexOf(dataElement.id);
                 var value = trElement.children[dataElementIndex].innerText;
@@ -319,19 +316,26 @@ export class AutoGrowingComponent implements OnInit {
           });
         });
       }
-      toFixed.forEach(function (child) {
+      toFixed.forEach((child)=> {
         child.html(parseFloat(child.html()).toFixed(1));
       })
       this.show = true;
     }
   }
 
+  elementFind(elem,i,callback){
+    elem.children.forEach((trElement, index)=> {
+      if (trElement.children[i]) {
+        callback(index,trElement.children[i])
+      }
+    })
+  }
   controller() {
     this.$scope.data = {
       dataElements: [],
       events: []
     };
-    this.$scope.getDataElementName = function (id) {
+    this.$scope.getDataElementName = (id) => {
       var name = "";
       this.$scope.config.dataElementsDetails.forEach( (dataElement)=> {
         if (dataElement.id == id) {
