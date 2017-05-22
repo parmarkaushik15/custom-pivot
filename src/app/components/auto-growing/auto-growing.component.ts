@@ -100,15 +100,16 @@ export class AutoGrowingComponent implements OnInit {
 
   show = false;
 
+  $scope:any;
   mergingCallBack() {
-    let scope:any = this.autogrowing.analytics.merge;
-    this.controller(scope)
+    this.$scope = this.autogrowing.analytics.merge;
+    this.controller()
     return ()=> {
       let elem = this.tbody.nativeElement;
       let dataElementIndexes = [];
-      scope.config.groupBy.forEach(function (group, index) {
-        scope.data.dataElements.forEach(function (dataElement, cindex) {
-          if (scope.config.groupBy[index] == dataElement.id) {
+      this.$scope.config.groupBy.forEach((group, index)=> {
+        this.$scope.data.dataElements.forEach((dataElement, cindex) =>{
+          if (this.$scope.config.groupBy[index] == dataElement.id) {
             dataElementIndexes.push(cindex);
           }
         });
@@ -125,8 +126,8 @@ export class AutoGrowingComponent implements OnInit {
           //if (column > (dataElementIndex + 1))
           {
             elem.children.forEach((trElement, index)=> {
-              if (trElement.children[dataElementIndex + 1]) {
-                let el = trElement.children[dataElementIndex + 1];
+              if (trElement.children[dataElementIndex]) {
+                let el = trElement.children[dataElementIndex];
                 {
                   if (row == index) {
                     adjacentString += $(el).html().trim().toLowerCase();
@@ -134,21 +135,19 @@ export class AutoGrowingComponent implements OnInit {
                 }
               }
             })
-            /*elem.find("td:nth-child(" + (dataElementIndex + 1) + ")").each(function (index, el) {
-
-             })*/
           }
         });
         return adjacentString;
       }
 
-      for (var i = 0; i <= scope.data.dataElements.length; i++) {
+      for (var i = 0; i <= this.$scope.data.dataElements.length; i++) {
         var dataIndex = i;
         if(dataIndex > 0){
           dataIndex = i - 1;
         }
+        console.log("I:",dataIndex,this.$scope.data.dataElements[dataIndex].id);
         var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
-        if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1) {
+        if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
           elem.children.forEach((trElement, index)=> {
             if (trElement.children[i]) {
               let el = trElement.children[i];
@@ -169,16 +168,17 @@ export class AutoGrowingComponent implements OnInit {
           })
         } else //if(scope.config.continuous)
         {
+          console.log("Here:",i);
           elem.children.forEach((trElement, index)=> {
-            if (trElement.children[i]) {
-              let el = trElement.children[i];
+            if (trElement.children[dataIndex]) {
+              let el = trElement.children[dataIndex];
               {
-                console.log("Here")
+                console.log("Here1:",dataIndex,adjacentToGroup(index, i));
                 if (previous == adjacentToGroup(index, i)) {
                   $(el).addClass('hidden');
-                  if (scope.config.valueTypes) {
-                    if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
-                      scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max') {
+                  if (this.$scope.config.valueTypes) {
+                    if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'min' ||
+                      this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'max') {
                       cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                       return;
                     }
@@ -194,18 +194,18 @@ export class AutoGrowingComponent implements OnInit {
                     secondValueSet = true;
                   }
                   try {
-                    if (scope.config.valueTypes) {
-                      if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'int') {
+                    if (this.$scope.config.valueTypes) {
+                      if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'int') {
                         cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
-                      } else if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
-                        scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max') {
+                      } else if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'min' ||
+                        this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'max') {
 
                       } else {
                         cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
                       }
                     } else {
-                      if (scope.config.list) {
-                        if (scope.config.list == scope.config.dataElements[i - 1]) {
+                      if (this.$scope.config.list) {
+                        if (this.$scope.config.list == this.$scope.config.dataElements[i - 1]) {
                           if (firstValue.indexOf(secondValue) == -1) {
                             cellToExtend.html(firstValue + "<br /> " + secondValue);
                           }
@@ -213,7 +213,7 @@ export class AutoGrowingComponent implements OnInit {
                           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
                         }
                       } else {
-                        if (scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE") {
+                        if (this.$scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE") {
                           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
                         } else {
                           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
@@ -237,21 +237,21 @@ export class AutoGrowingComponent implements OnInit {
         }
 
       }
-      if (scope.config.valueTypes) {
-        for (var i = 1; i <= scope.data.dataElements.length; i++) {
+      if (this.$scope.config.valueTypes) {
+        for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
           elem.find("td:nth-child(" + i + ")").each(function (index, el) {
 
-            if ((scope.config.valueTypes[scope.config.dataElements[i]] == 'min' || scope.config.valueTypes[scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
+            if ((this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' || this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
               for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
                 var topHtml = parseFloat($(elem.children[index].children[i]).html());
                 var current = parseFloat($(elem.children[counter].children[i]).html());
 
-                if (scope.config.valueTypes[scope.config.dataElements[i]] == 'min') {
+                if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min') {
                   if (topHtml > current) {
                     $(elem.children[index].children[i]).html(current.toFixed(1));
                   }
                 }
-                if (scope.config.valueTypes[scope.config.dataElements[i]] == 'max') {
+                if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') {
                   if (topHtml < current) {
                     $(elem.children[index].children[i]).html(current.toFixed(1));
                   }
@@ -261,20 +261,20 @@ export class AutoGrowingComponent implements OnInit {
           })
         }
       }
-      if (scope.config.dec) {
-        for (var i = 1; i <= scope.data.dataElements.length; i++) {
+      if (this.$scope.config.dec) {
+        for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
           elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-            if (scope.config.dec == scope.config.dataElements[i]) {
+            if (this.$scope.config.dec == this.$scope.config.dataElements[i]) {
               $(elem.children[index].children[i]).html(parseFloat($(elem.children[index].children[i]).html()).toFixed(1));
             }
           })
         }
       }
 
-      if (scope.config.groupAdd) {
+      if (this.$scope.config.groupAdd) {
         firstColumnBrakes = [];
-        scope.config.groupAdd.forEach(function (dataElementId) {
-          scope.data.dataElements.forEach(function (dataElement, i) {
+        this.$scope.config.groupAdd.forEach(function (dataElementId) {
+          this.$scope.data.dataElements.forEach(function (dataElement, i) {
             if (dataElementId == dataElement.id) {
               elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                 if (elem.children[index].children[i - 1].getAttribute('rowspan') != null) {
@@ -295,18 +295,18 @@ export class AutoGrowingComponent implements OnInit {
         })
       }
       //re-calculate indicator values after merging rows
-      if (scope.config.indicators) {
-        scope.config.indicators.forEach(function (indicator) {
+      if (this.$scope.config.indicators) {
+        this.$scope.config.indicators.forEach(function (indicator) {
           if (indicator.position) {
-            scope.config.dataElements.splice(indicator.position, 0, indicator.position);
+            this.$scope.config.dataElements.splice(indicator.position, 0, indicator.position);
           }
         });
         elem.find("tr").each(function (trIndex, trElement) {
-          scope.config.indicators.forEach(function (indicator) {
+          this.$scope.config.indicators.forEach(function (indicator) {
             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
-            scope.data.dataElements.forEach(function (dataElement) {
+            this.$scope.data.dataElements.forEach(function (dataElement) {
               if (eventIndicator.indexOf(dataElement.id) > -1) {
-                var dataElementIndex = scope.config.dataElements.indexOf(dataElement.id);
+                var dataElementIndex = this.$scope.config.dataElements.indexOf(dataElement.id);
                 var value = trElement.children[dataElementIndex].innerText;
                 eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
               }
@@ -326,14 +326,14 @@ export class AutoGrowingComponent implements OnInit {
     }
   }
 
-  controller($scope:any) {
-    $scope.data = {
+  controller() {
+    this.$scope.data = {
       dataElements: [],
       events: []
     };
-    $scope.getDataElementName = function (id) {
+    this.$scope.getDataElementName = function (id) {
       var name = "";
-      $scope.config.dataElementsDetails.forEach(function (dataElement) {
+      this.$scope.config.dataElementsDetails.forEach( (dataElement)=> {
         if (dataElement.id == id) {
           name = dataElement.name;
         }
@@ -341,11 +341,11 @@ export class AutoGrowingComponent implements OnInit {
       return name;
     };
 
-    if ($scope.config.cumulativeToDate) {
+    if (this.$scope.config.cumulativeToDate) {
       var addDataElements = [];
       var addedIndexes = 0;
-      $scope.config.cumulativeToDate.forEach(function (cumulativeDataElement) {
-        $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
+      this.$scope.config.cumulativeToDate.forEach((cumulativeDataElement)=> {
+        this.$scope.config.dataElementsDetails.forEach((dataElement, index)=>{
           if (cumulativeDataElement.after == dataElement.id) {
             addDataElements.push({
               dataElement: {
@@ -358,16 +358,16 @@ export class AutoGrowingComponent implements OnInit {
           }
         });
       });
-      addDataElements.forEach(function (addDataElements) {
-        $scope.config.dataElementsDetails.splice(addDataElements.index, 0, addDataElements.dataElement)
-        $scope.config.dataElements.splice(addDataElements.index, 0, addDataElements.dataElement.id);
+      addDataElements.forEach((addDataElements)=> {
+        this.$scope.config.dataElementsDetails.splice(addDataElements.index, 0, addDataElements.dataElement)
+        this.$scope.config.dataElements.splice(addDataElements.index, 0, addDataElements.dataElement.id);
       })
     }
     var averagingOccurences = {};
-    if ($scope.config.valueTypes) {
-      $scope.config.dataElementsDetails.forEach(function (dataElement) {
-        if ($scope.config.valueTypes[dataElement.id] == "int") {
-          $scope.config.data.forEach(function (eventData) {
+    if (this.$scope.config.valueTypes) {
+      this.$scope.config.dataElementsDetails.forEach((dataElement) =>{
+        if (this.$scope.config.valueTypes[dataElement.id] == "int") {
+          this.$scope.config.data.forEach((eventData) =>{
             var value = parseInt(eventData[dataElement.name]);
             if (isNaN(value)) {
               value = 0;
@@ -377,21 +377,21 @@ export class AutoGrowingComponent implements OnInit {
         }
       });
     }
-    $scope.config.dataElements.forEach(function (dataElementId) {
-      if ($scope.config.dataElementsDetails) {
-        $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
+    this.$scope.config.dataElements.forEach((dataElementId) =>{
+      if (this.$scope.config.dataElementsDetails) {
+        this.$scope.config.dataElementsDetails.forEach((dataElement, index) =>{
           if (dataElement.id == dataElementId) {
-            $scope.data.dataElements.push(dataElement);
+            this.$scope.data.dataElements.push(dataElement);
             if (dataElement.aggregationType == "AVERAGE") {
-              $scope.config.data.forEach(function (eventData) {
-                if (averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]) {
-                  averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]++;
+              this.$scope.config.data.forEach((eventData) =>{
+                if (averagingOccurences[eventData[this.$scope.config.dataElementsDetails[0].name]]) {
+                  averagingOccurences[eventData[this.$scope.config.dataElementsDetails[0].name]]++;
                 } else {
-                  averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] = 1;
+                  averagingOccurences[eventData[this.$scope.config.dataElementsDetails[0].name]] = 1;
                 }
               });
-              $scope.config.data.forEach(function (eventData) {
-                eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
+              this.$scope.config.data.forEach((eventData)=>{
+                eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[this.$scope.config.dataElementsDetails[0].name]] + ")");
               })
             }
           }
@@ -399,27 +399,27 @@ export class AutoGrowingComponent implements OnInit {
       }
 
     });
-    if ($scope.config.groupBy) {//If grouping is required
-      //$scope.data.groupedEvents = [];
-      $scope.foundDataValues = {};
+    if (this.$scope.config.groupBy) {//If grouping is required
+      //this.$scope.data.groupedEvents = [];
+      this.$scope.foundDataValues = {};
 
 
-      $scope.config.groupBy.forEach(function (group, index) {
+      this.$scope.config.groupBy.forEach((group, index)=>{
         if (index == 0) {
-          //if($scope.config.data)
+          //if(this.$scope.config.data)
           {
-            /*$scope.config.data.forEach(function (eventData) {
-             //$scope.data.events.push(eventData);
-             })*/
+            this.$scope.config.data.forEach((eventData)=>{
+             this.$scope.data.events.push(eventData);
+             })
           }
         }
 
       });
-      if ($scope.config.fourthQuarter) {
-        $scope.config.groupBy.forEach(function (group, index) {
+      if (this.$scope.config.fourthQuarter) {
+        this.$scope.config.groupBy.forEach((group, index)=>{
           if (index == 0) {
-            $scope.config.otherData.forEach(function (eventData) {
-              //$scope.data.events.push(eventData);
+            this.$scope.config.otherData.forEach((eventData)=>{
+              this.$scope.data.events.push(eventData);
             })
           }
 
@@ -427,18 +427,18 @@ export class AutoGrowingComponent implements OnInit {
       }
     } else {
 
-      $scope.data.events = [];
-      $scope.config.data.forEach(function (eventData) {
+      this.$scope.data.events = [];
+      this.$scope.config.data.forEach((eventData)=>{
 
-        if ($scope.config.cumulativeToDate) {
-          var eventName = $scope.getDataElementName($scope.config.dataElements[0]);
-          $scope.config.otherData.forEach(function (otherEvent) {
+        if (this.$scope.config.cumulativeToDate) {
+          var eventName = this.$scope.getDataElementName(this.$scope.config.dataElements[0]);
+          this.$scope.config.otherData.forEach((otherEvent)=>{
             if (otherEvent[eventName] == eventData[eventName]) {
-              $scope.config.cumulativeToDate.forEach(function (cDataElement) {
-                $scope.config.dataElements.forEach(function (dataElementId, index) {
+              this.$scope.config.cumulativeToDate.forEach((cDataElement)=>{
+                this.$scope.config.dataElements.forEach((dataElementId, index)=>{
                   if (dataElementId.indexOf(cDataElement.dataElement) != -1 && cDataElement.dataElement.length < dataElementId.length) {
-                    var otherDataEventName = $scope.getDataElementName(dataElementId);
-                    var initialOtherDataEventName = $scope.getDataElementName(cDataElement.dataElement);
+                    var otherDataEventName = this.$scope.getDataElementName(dataElementId);
+                    var initialOtherDataEventName = this.$scope.getDataElementName(cDataElement.dataElement);
                     if (eventData[otherDataEventName]) {
                       eventData[otherDataEventName] = eval("(" + eventData[otherDataEventName] + "+" + otherEvent[initialOtherDataEventName] + ")").toFixed(1) + "";
                     } else {
@@ -451,19 +451,19 @@ export class AutoGrowingComponent implements OnInit {
           });
         }
 
-        $scope.data.events.push(eventData);
+        this.$scope.data.events.push(eventData);
       })
     }
     //Evaluate indicators if there calculations that need to be made
-    if ($scope.config.indicators) {
+    if (this.$scope.config.indicators) {
 
-      $scope.config.indicators.forEach(function (indicator, index) {
-        $scope.data.dataElements.splice(indicator.position, 0, {name: "Inidicator" + index, valueType: "NUMBER"});
-        //$scope.data.dataElements.push({name: "Inidicator" + index});
-        $scope.data.events.forEach(function (event) {
+      this.$scope.config.indicators.forEach((indicator, index)=>{
+        this.$scope.data.dataElements.splice(indicator.position, 0, {name: "Inidicator" + index, valueType: "NUMBER"});
+        //this.$scope.data.dataElements.push({name: "Inidicator" + index});
+        this.$scope.data.events.forEach((event)=>{
           var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
           //Get indcator dataelements
-          $scope.data.dataElements.forEach(function (dataElement) {
+          this.$scope.data.dataElements.forEach((dataElement)=>{
             if (eventIndicator.indexOf(dataElement.id) > -1) {
               //Replace formula with data value
               var value = "0";
@@ -483,6 +483,17 @@ export class AutoGrowingComponent implements OnInit {
         })
       });
 
+    }
+  }
+  checkHide(index){
+    if(this.$scope.config.hide){
+      if(this.$scope.config.hide.indexOf(index) > -1){
+        return true;
+      }else{
+        return false;
+      }
+    }else{
+      return false;
     }
   }
 }

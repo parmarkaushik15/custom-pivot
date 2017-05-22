@@ -36,6 +36,7 @@ import {AnalyticscreatorService} from "./services/analyticscreator.service";
 import {HttpClientService} from "./services/http-client.service";
 import {FuseSearchPipe} from "./shared/pipes/fuse-search.pipe";
 import { AutoGrowingComponent } from './components/auto-growing/auto-growing.component';
+import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { AutoGrowingComponent } from './components/auto-growing/auto-growing.com
     ClickOutsideDirective,
     Draggable,
     FuseSearchPipe,
-    AutoGrowingComponent
+    AutoGrowingComponent,
+    RemoveNaNPipe
   ],
   imports: [
     BrowserModule,
