@@ -1,8 +1,3 @@
-<app-auto-growing *ngIf="showAutoGrowingTable"
-  [autogrowings]="autoGrowingData"
->
-
-</app-auto-growing>
 <div class="col-md-12" style="padding-left: 10px;" *ngIf="!showTable">
   <h6>Creating Pivot table</h6>
   <ul class="list-unstyled">
@@ -44,4 +39,12 @@
   </table>
 
 
+</div>
+
+<div *ngIf="showAutoGrowingTable">
+  <app-auto-growing *ngFor="let autogrowing of autoGrowingData"
+                    [autogrowing]="autogrowing"
+  >
+
+  </app-auto-growing>
 </div>

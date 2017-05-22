@@ -53,7 +53,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
 })
 export class AutoGrowingComponent implements OnInit {
 
-  @Input() autogrowings:any = null;
+  @Input() autogrowing:any = null;
   tableObject:any = null
 
   constructor(private visualization:VisualizerService) {
@@ -74,13 +74,8 @@ export class AutoGrowingComponent implements OnInit {
       columns: ['dx'],
       displayList: false
     };
-    console.log(this.tableObject)
-    if (this.autogrowings[0]) {
-      this.tableObject = this.visualization.drawAutogrowingTable(this.autogrowings[0].analytics, table_structure);
-      /*let scope ={
-       config:this.autogrowings[0].analytics.merge
-       };*/
-      console.log(this.tableObject);
+    if (this.autogrowing) {
+      this.tableObject = this.visualization.drawAutogrowingTable(this.autogrowing.analytics, table_structure);
       setTimeout(this.mergingCallBack())
     }
   }
@@ -106,12 +101,9 @@ export class AutoGrowingComponent implements OnInit {
   show = false;
 
   mergingCallBack() {
-    let scope:any = this.autogrowings[0].analytics.merge;
-    console.log("Scope:", scope);
+    let scope:any = this.autogrowing.analytics.merge;
     this.controller(scope)
     return ()=> {
-      console.log(this.autogrowings);
-      console.log("TBody:", this.tbody.nativeElement.children);
       let elem = this.tbody.nativeElement;
       let dataElementIndexes = [];
       scope.config.groupBy.forEach(function (group, index) {
@@ -150,16 +142,17 @@ export class AutoGrowingComponent implements OnInit {
         return adjacentString;
       }
 
-      for (var i = 0; i < scope.data.dataElements.length; i++) {
+      for (var i = 0; i <= scope.data.dataElements.length; i++) {
         var dataIndex = i;
+        if(dataIndex > 0){
+          dataIndex = i - 1;
+        }
         var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
-        console.log(scope.data.dataElements,dataIndex)
         if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1) {
           elem.children.forEach((trElement, index)=> {
             if (trElement.children[i]) {
               let el = trElement.children[i];
               {
-                console.log("trElement:\"", $(el).text().trim().toLowerCase(), "\"", previous, $(el).text().trim(), firstColumnBrakes, index);
                 if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
                   $(el).addClass('hidden');
                   cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
@@ -174,26 +167,13 @@ export class AutoGrowingComponent implements OnInit {
               }
             }
           })
-          /*elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-           if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
-           $(el).addClass('hidden');
-           cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-           } else {
-           if ($.inArray(index, firstColumnBrakes) === -1) {
-           firstColumnBrakes.push(index);
-           }
-           rowspan = 1;
-           previous = $(el).text().trim().toLowerCase();
-           cellToExtend = $(el);
-           }
-           })*/
         } else //if(scope.config.continuous)
         {
           elem.children.forEach((trElement, index)=> {
             if (trElement.children[i]) {
               let el = trElement.children[i];
               {
-
+                console.log("Here")
                 if (previous == adjacentToGroup(index, i)) {
                   $(el).addClass('hidden');
                   if (scope.config.valueTypes) {
@@ -254,66 +234,6 @@ export class AutoGrowingComponent implements OnInit {
               }
             }
           })
-          /*elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-
-           if (previous == adjacentToGroup(index, i)) {
-           $(el).addClass('hidden');
-           if (scope.config.valueTypes) {
-           if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
-           scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max') {
-           cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-           return;
-           }
-           }
-           var firstValue = cellToExtend.html(), secondValue = $(el).html();
-           var firstValueSet = false, secondValueSet = false;
-           if (firstValue == "") {
-           firstValue = 0.0;
-           firstValueSet = true;
-           }
-           if (secondValue == "") {
-           secondValue = 0.0;
-           secondValueSet = true;
-           }
-           try {
-           if (scope.config.valueTypes) {
-           if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'int') {
-           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
-           } else if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
-           scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max') {
-
-           } else {
-           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
-           }
-           } else {
-           if (scope.config.list) {
-           if (scope.config.list == scope.config.dataElements[i - 1]) {
-           if (firstValue.indexOf(secondValue) == -1) {
-           cellToExtend.html(firstValue + "<br /> " + secondValue);
-           }
-           } else {
-           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
-           }
-           } else {
-           if (scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE") {
-           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
-           } else {
-           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
-           }
-           }
-           }
-           } catch (e) {
-           //alert("Catch:" + scope.config.dataElements[i]);
-           }
-
-           cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-           } else {
-           rowspan = 1;
-           //previous = $(el).text();
-           previous = adjacentToGroup(index, i).trim().toLowerCase();
-           cellToExtend = $(el);
-           }
-           })*/
         }
 
       }

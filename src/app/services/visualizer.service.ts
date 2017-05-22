@@ -112,8 +112,6 @@ export class VisualizerService {
         return_array.push(item[position]);
       }
     }
-
-    console.log(return_array)
     return return_array;
   }
 
@@ -239,7 +237,6 @@ export class VisualizerService {
 
   getAutoGrowingDataValue ( analyticsObject, dataItems = [] ) {
     let num:any;
-    console.log(dataItems)
 
     for ( let value of analyticsObject.rows) {
       let counter = 0;
@@ -568,7 +565,6 @@ export class VisualizerService {
   }
 
   drawTable ( analyticsObject , tableConfiguration ) {
-    console.log(tableConfiguration);
     let table = {
       'headers': [],
       'columns': [],
@@ -774,7 +770,6 @@ export class VisualizerService {
   }
 
   drawAutogrowingTable ( analyticsObject , tableConfiguration ) {
-    console.log(tableConfiguration);
     let table = {
       'headers': [],
       'columns': [],
