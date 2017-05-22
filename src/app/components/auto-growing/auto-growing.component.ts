@@ -147,22 +147,18 @@ export class AutoGrowingComponent implements OnInit {
         }
         var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
         if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
-          elem.children.forEach((trElement, index)=> {
-            if (trElement.children[i]) {
-              let el = trElement.children[i];
-              {
-                if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
-                  $(el).addClass('hidden');
-                  cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-                } else {
-                  if ($.inArray(index, firstColumnBrakes) === -1) {
-                    firstColumnBrakes.push(index);
-                  }
-                  rowspan = 1;
-                  previous = $(el).text().trim().toLowerCase();
-                  cellToExtend = $(el);
-                }
+
+          this.elementFind(elem,i,(index, el)=> {
+            if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
+              $(el).addClass('hidden');
+              cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+            } else {
+              if ($.inArray(index, firstColumnBrakes) === -1) {
+                firstColumnBrakes.push(index);
               }
+              rowspan = 1;
+              previous = $(el).text().trim().toLowerCase();
+              cellToExtend = $(el);
             }
           })
         } else //if(scope.config.continuous)
@@ -331,6 +327,7 @@ export class AutoGrowingComponent implements OnInit {
     })
   }
   controller() {
+    console.log("Config:",this.$scope.config);
     this.$scope.data = {
       dataElements: [],
       events: []
