@@ -73,7 +73,7 @@ export class PeriodFilterComponent implements OnInit {
 
     this.getSystemSettings().subscribe((value) => {
       // TODO: Find a way to find the relative period dynamic
-      this.activatePer({ id:value.keyAnalysisRelativePeriod, name:"Last 12 Month" })
+      this.activatePer({ id:value.keyAnalysisRelativePeriod, name:"Last 12 Months" })
     })
   }
 
@@ -262,7 +262,7 @@ export class PeriodFilterComponent implements OnInit {
     }else if(type == "Relative Weeks"){
       periods.push({id:'THIS_WEEK',name:'This Week'},{id:'LAST_WEEK',name:'Last Week'},{id:'LAST_4_WEEK',name:'Last 4 Weeks',selected:true},{id:'LAST_12_WEEK',name:'last 12 Weeks'},{id:'LAST_52_WEEK',name:'Last 52 weeks'});
     }else if(type == "RelativeMonth"){
-      periods.push({id:'THIS_MONTH',name:'This Month'},{id:'LAST_MONTH',name:'Last Month'},{id:'LAST_3_MONTHS',name:'Last 3 Month'},{id:'LAST_6_MONTHS',name:'Last 6 Month'},{id:'LAST_12_MONTHS',name:'Last 12 Month',selected:true});
+      periods.push({id:'THIS_MONTH',name:'This Month'},{id:'LAST_MONTH',name:'Last Month'},{id:'LAST_3_MONTHS',name:'Last 3 Months'},{id:'LAST_6_MONTHS',name:'Last 6 Months'},{id:'LAST_12_MONTHS',name:'Last 12 Months',selected:true});
     }else if(type == "Relative Bi-Month"){
       periods.push({id:'THIS_BIMONTH',name:'This Bi-month'},{id:'LAST_BIMONTH',name:'Last Bi-month'},{id:'LAST_6_BIMONTHS',name:'Last 6 bi-month',selected:true});
     }else if(type == "RelativeQuarter"){

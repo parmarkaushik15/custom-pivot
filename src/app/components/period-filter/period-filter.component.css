@@ -3,6 +3,13 @@
   cursor: pointer
 }
 
+.direction-arrows:hover{
+  background-color: rgba(0,0,0,0.2);
+}
+.pointer{
+  cursor: pointer;
+}
+
 .period:hover{
   font-size: 11px;
   cursor: pointer;

@@ -202,9 +202,10 @@ export class AppComponent implements OnInit{
         //////////////////////////////////////////////
       /////////////Dealing with auto-growing/////////
       ///////////////////////////////////////////////
-
+      let counter = 0;
       dimensions.dataItems.forEach( (value) =>{
         if (value.hasOwnProperty('programType')) {
+          counter++;
           let parameters = {
             dx: value.id,
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
@@ -231,7 +232,9 @@ export class AppComponent implements OnInit{
           execute(parameters);
         }
       });
-
+      if(counter == 0){
+        this.loadingAutogrowing = false;
+      }
     }
   }
 

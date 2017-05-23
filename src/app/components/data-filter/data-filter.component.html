@@ -33,13 +33,13 @@
         <th width="50%">
           <ul class="list-inline data-header-list">
             <li>Available <span class="fadeOut">({{(listItems| fuseSearch:searchOptions:listchanges).length }})</span></li>
-            <li class="pull-right pointer"><a (click)="selectAllItems()" title="Select all"><i class="fa fa-angle-double-right"></i></a></li>
+            <li class="pull-right pointer direction-arrows"><a (click)="selectAllItems()" title="Select all"><i class="fa fa-angle-double-right"></i></a></li>
           </ul>
         </th>
         <th width="50%">
           <ul class="list-inline data-header-list">
             <li class="pull-right">Selected <span class="fadeOut">({{ selectedItems.length }})</span></li>
-            <li class="pull-left pointer"><a (click)="deselectAllItems()" title="Remove all selections"><i class="fa fa-angle-double-left"></i></a></li>
+            <li class="pull-left pointer direction-arrows"><a (click)="deselectAllItems()" title="Remove all selections"><i class="fa fa-angle-double-left"></i></a></li>
           </ul>
         </th>
       </tr>

@@ -1,11 +1,13 @@
 import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input} from '@angular/core';
 import {DataService} from "../../services/data.service";
 import * as _ from 'lodash'
+import {FuseSearchPipe} from "../../shared/pipes/fuse-search.pipe";
 
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
-  styleUrls: ['./data-filter.component.css']
+  styleUrls: ['./data-filter.component.css'],
+  providers:[FuseSearchPipe]
 })
 export class DataFilterComponent implements OnInit, AfterViewInit {
 
@@ -69,7 +71,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   k:number = 1;
   need_groups:boolean =true;
   searchOptions:any;
-  constructor( private dataService: DataService) { }
+  constructor( private dataService: DataService, private fusePipe:FuseSearchPipe) { }
 
   ngOnInit() {
     this.searchOptions={
@@ -371,7 +373,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
 
   //selecting all items
   selectAllItems(){
-    this.listItems.forEach((item) => {
+    let newList = this.fusePipe.transform(this.listItems , this.searchOptions , this.listchanges);
+    newList.forEach((item) => {
       if(!this.checkDataAvailabilty(item, this.selectedItems )){
         this.selectedItems.push(item);
       }

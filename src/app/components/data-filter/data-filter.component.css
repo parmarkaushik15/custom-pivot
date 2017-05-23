@@ -1,6 +1,11 @@
 .pointer{
   cursor: pointer;
 }
+
+.direction-arrows:hover{
+  background-color: rgba(0,0,0,0.2);
+}
+
 .pivot-badge {
   font-size: 10px !important;
 }
