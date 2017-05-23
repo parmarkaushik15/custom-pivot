@@ -21,9 +21,9 @@
   </tbody>
   <tbody *ngIf="$scope.config.groupBy" #tbody>
   <tr *ngFor="let event of $scope.data.events">
-    <template ngFor let-dataElement [ngForOf]="$scope.data.dataElements"  let-i="index">
+    <ng-template ngFor let-dataElement [ngForOf]="$scope.data.dataElements"  let-i="index">
       <td [ngClass]="{'hide-text':checkHide(index)}" style="border:1px solid lightgrey" *ngIf="event[dataElement.name] != undefined && dataElement.valueType != 'NA'">{{event[dataElement.name] | removeNaN:dataElement}}</td>
-    </template>
+    </ng-template>
     <td *ngIf="$scope.config.na">N/A</td><td *ngIf="$scope.config.na">N/A</td>
   </tr>
   </tbody>

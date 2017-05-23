@@ -26,9 +26,11 @@ export class DataAreaComponent implements OnInit {
 
   getTitle(){
     let title = [];
+    let prefix = "";
     this.layoutItems.filters.forEach((val) => {
       if(val == 'ou'){
         if(this.dataItems.ou){
+          prefix = this.dataItems.ou.starting_name;
           this.dataItems.ou.items.forEach((ous) => {
             title.push(ous.name);
           });
@@ -42,7 +44,7 @@ export class DataAreaComponent implements OnInit {
         }
       }
     });
-    return title.join(", ");
+    return prefix + " " + title.join(", ");
   }
 
 }

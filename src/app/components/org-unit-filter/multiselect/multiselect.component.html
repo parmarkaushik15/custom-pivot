@@ -1,5 +1,7 @@
 <div class="tree-input" appClickOutside (clickOutside)="hideOptions = true">
   <div class="show_items" (click)="displayPerTree()">
+    <span *ngIf="selected_items.length == 1">{{ prefix }}</span>
+    <span *ngIf="selected_items.length > 1">{{ prefix_multiple }}</span>
     <span *ngIf="selected_items.length > 3">
       <span class="selected-item">
         {{ selected_items[0].name }}

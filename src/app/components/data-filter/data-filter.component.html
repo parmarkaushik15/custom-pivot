@@ -25,7 +25,7 @@
   </div>
 </div>
 </div>
-<input type="text" class="form-control input-sm" *ngIf="listItems.length != 0" (focus)="showBody = true" placeholder="Search" style="margin-top: 4px;" [(ngModel)]="listchanges">
+<input type="text" class="form-control input-sm" (focus)="showBody = true" placeholder="Search" style="margin-top: 4px;" [(ngModel)]="listchanges">
 <div class="row" style="margin-top:2px;padding-left: 15px; padding-right: 15px;max-height: 170px">
   <table class="table table-bordered" >
     <tbody>

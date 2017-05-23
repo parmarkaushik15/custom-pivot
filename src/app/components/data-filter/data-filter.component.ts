@@ -1,28 +1,7 @@
-import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input, ChangeDetectionStrategy} from '@angular/core';
+import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input} from '@angular/core';
 import {DataService} from "../../services/data.service";
 import * as _ from 'lodash'
 
-export const DATA_OPTIONS = [
-  {
-    name: 'All',
-    prefix: 'ALL',
-    selected: true},
-  {
-    name: 'Data Elements',
-    prefix: 'de',
-    selected: false
-  },
-  {
-    name: 'Computed Values',
-    prefix: 'in',
-    selected: false
-  },
-  {
-    name: 'Entry Forms',
-    prefix: 'cv',
-    selected: false
-  }
-]
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
@@ -100,8 +79,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       threshold: 0,
       location: 0,
       distance: 100,
-      maxPatternLength: 32,
-      minMatchCharLength: 1,
+      maxPatternLength: 320,
+      minMatchCharLength: 3,
       keys: [
         "name"
       ]
@@ -136,6 +115,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
    }
 
   toggleDataOption(optionPrefix,event) {
+    let someItems = this.manyItemsSelected(this.dataOptions, optionPrefix);
     if(event.ctrlKey) {
       this.dataOptions.forEach((value) => {
         if( value['prefix'] == optionPrefix ){
@@ -145,7 +125,13 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     } else {
       this.dataOptions.forEach((value) => {
         if( value['prefix'] == optionPrefix ){
-          value['selected'] = !value['selected'];
+
+          console.log(someItems)
+          if(someItems.many && someItems.available){
+            value['selected'] = true;
+          }else{
+            value['selected'] = !value['selected'];
+          }
         }else{
             value['selected'] = false;
 
@@ -156,9 +142,33 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.dataGroups = this.groupList();
     this.listItems = this.dataItemList();
     this.p =1;
+    this.listchanges = '';
+  }
+
+  manyItemsSelected(optios:any, optionPrefix:string){
+    console.log(optios)
+    let selected = {
+      many: false,
+      items: [],
+      available: false
+    };let counter = 0;
+    optios.forEach(( option )=> {
+      if(option['selected']) {
+        counter++;
+        selected.items.push(option);
+        if(option['prefix'] == optionPrefix){
+          selected.available = true;
+        }
+      }
+    })
+    if (counter > 1 ){
+      selected.many = true
+    }
+    return selected;
   }
 
   setSelectedGroup(group) {
+    this.listchanges = '';
     this.selectedGroup = group;
     this.listItems = this.dataItemList();
     this.showGroups = false;

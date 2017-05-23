@@ -61,7 +61,7 @@ export class OrgUnitFilterComponent implements OnInit {
   customTemplateStringOrgunitOptions: any;
 
   user_orgunits_types: Array<any> = [
-    {id:'USER_ORGUNIT', name: 'User org unit', shown: true},
+    {id:'USER_ORGUNIT', name: 'User Admin Unit', shown: true},
     {id:'USER_ORGUNIT_CHILDREN', name: 'User sub-units', shown: true},
     {id:'USER_ORGUNIT_GRANDCHILDREN', name: 'User sub-x2-units', shown: true}
   ];
@@ -252,7 +252,7 @@ export class OrgUnitFilterComponent implements OnInit {
         this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
-    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   };
 
@@ -268,7 +268,7 @@ export class OrgUnitFilterComponent implements OnInit {
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
-    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   };
 
@@ -280,13 +280,13 @@ export class OrgUnitFilterComponent implements OnInit {
   // set selected groups
   setSelectedUserOrg( selected_user_orgunit ){
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
-    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits,name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
   }
 
   // set selected groups
   setSelectedLevels( selected_levels ){
     this.orgunit_model.selected_levels = selected_levels;
-    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
@@ -330,7 +330,7 @@ export class OrgUnitFilterComponent implements OnInit {
 
   updateOrgUnitModel() {
     this.displayOrgTree();
-    this.onOrgUnitUpdate.emit({items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 

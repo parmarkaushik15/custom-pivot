@@ -11,6 +11,8 @@ export class MultiselectComponent implements OnInit {
   @Input() placeholder: string = "Select";
   @Input() starting_items: any[] = [];
   @Input() selected_items: any[] = [];
+  @Input() prefix: string = "";
+  @Input() prefix_multiple: string = "";
   hideOptions: boolean = true;
   @Output() onSelected: EventEmitter<any> = new EventEmitter<any>()
   constructor() { }
