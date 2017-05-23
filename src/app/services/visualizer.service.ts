@@ -220,7 +220,7 @@ export class VisualizerService {
    * @returns {number}
    */
   getDataValue ( analyticsObject, dataItems = [] ) {
-    let num = 0;
+    let num = null;
     for ( let value of analyticsObject.rows) {
       let counter = 0;
       for ( let item of dataItems ){
@@ -229,7 +229,11 @@ export class VisualizerService {
         }
       }
       if ( counter === dataItems.length ) {
-        num += parseFloat( value[this._getTitleIndex( analyticsObject.headers, 'value' )]);
+        if(isNaN(value[this._getTitleIndex( analyticsObject.headers, 'value' )])){
+          num = value[this._getTitleIndex( analyticsObject.headers, 'value' )];
+        }else{
+          num += parseFloat( value[this._getTitleIndex( analyticsObject.headers, 'value' )]);
+        }
       }
     }
     return num;
