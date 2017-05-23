@@ -381,6 +381,6 @@ table * {
   padding-right: 2px;
 }
 .someclass{
-  /*color: rgba(0,0,0,0.1);*/
-  /*background-color: rgba(0,0,0,0.1);*/
+  color: rgba(0,0,0,0.1);
+  background-color: rgba(0,0,0,0.1);
 }

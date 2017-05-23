@@ -2,6 +2,7 @@
 export interface UiState {
     loadingOrganisationUnit:boolean;
     loadingData: boolean;
+    loadingDataMessage: string;
     loadingDataElements:boolean;
     layoutOpened:boolean;
     currentError?: string;
@@ -12,9 +13,10 @@ export interface UiState {
 
 export const INITIAL_UI_STATE: UiState = {
   loadingOrganisationUnit: false,
+  loadingData: false,
+  loadingDataMessage: "",
   loadingDataElements: false,
   layoutOpened: false,
-  loadingData: false,
   dataAreaOpen: true,
   dataAreaOpenState: 'active'
 };

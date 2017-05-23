@@ -9,9 +9,11 @@ export class DataAreaComponent implements OnInit {
 
   @Input() showTable:boolean = false;
   @Input() showAutoGrowingTable:boolean = false;
-  @Input() tableObjects:any[] = [];
+  @Input() loadingAutogrowing:boolean = false;
+  @Input() tableObject:any = null;
   @Input() dataItems:any = null;
   @Input() autoGrowingData:any = null;
+  @Input() uiState:any = null;
   @Input() layoutItems:any = {
     rows: ['pe'],
     columns: ['dx'],

@@ -18,10 +18,22 @@ export const ADD_FUNCTIONS_ACTION = 'ADD_FUNCTIONS';
 export const UPDATE_TABLE_ACTION = 'UPDATE_TABLE_ACTION';
 export const ADD_FUNCTION_MAPPING_ACTION = 'ADD_FUNCTION_MAPPING';
 export const RESET_TABLE_OBJECTS_ACTION = 'RESET_TABLE_OBJECTS_ACTION';
+export const SEND_NORMAL_DATA_LOADING_MESSAGE = 'SEND_NORMAL_DATA_LOADING_MESSAGE';
+export const REMOVE_NORMAL_DATA_LOADING_MESSAGE = 'REMOVE_NORMAL_DATA_LOADING_MESSAGE';
 
 
 export class AddDataAnalyticsAction implements Action {
   type = ADD_DATA_ANALYITICS;
+  constructor ( public payload: any ) {}
+}
+
+export class SendNormalDataLoadingAction implements Action {
+  type = SEND_NORMAL_DATA_LOADING_MESSAGE;
+  constructor ( public payload: any ) {}
+}
+
+export class RemoveNormalDataLoadingAction implements Action {
+  type = REMOVE_NORMAL_DATA_LOADING_MESSAGE;
   constructor ( public payload: any ) {}
 }
 

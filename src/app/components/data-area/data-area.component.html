@@ -1,3 +1,9 @@
+<div class="loadingMessage" *ngIf="uiState.loadingData" >
+  <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px">{{ uiState.loadingDataMessage }}
+</div>
+<div class="loadingAutogrowingMessage" *ngIf="loadingAutogrowing" >
+  <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px"> Loading Auto growing data
+</div>
 <div class="col-md-12" style="padding-left: 10px;" *ngIf="!showTable">
   <h6>Creating Pivot table</h6>
   <ul class="list-unstyled">
@@ -12,8 +18,8 @@
     <li><small>- Click Download to save table data to your computer</small></li>
   </ul>
 </div>
-<h4 *ngIf="dataItems.data.items?.length != 0 && showTable" class="text-center text-muted"> {{ getTitle() }} </h4>
-<div *ngFor="let tableObject of tableObjects" style="padding: 3px">
+<h4 *ngIf="dataItems.data.items?.length != 0 && showTable && !uiState.loadingData" class="text-center text-muted"> {{ getTitle() }} </h4>
+<div *ngIf="tableObject" style="padding: 3px">
   <h3 *ngIf="tableObject.title">{{tableObject.title}} <button class="btn btn-default btn-sm pull-right"><i class="fa fa-file-excel-o"></i> Excel </button></h3>
   <table class="table table-bordered table-responsive table-condensed custom-table"
          *ngIf="tableObject.rows.length != 0">

@@ -192,11 +192,16 @@ export class OrgUnitFilterComponent implements OnInit {
           }
         );
   }
-
   setType(type: string){
     this.orgunit_model.selection_mode = type;
-    if( type == 'Usr_orgUnit' ){
-
+    if( type != 'orgUnit' ){
+      this.orgunit_model.selected_user_orgunit = [];
+    }
+    if( type != 'Level' ){
+      this.orgunit_model.selected_levels = [];
+    }
+    if( type != 'Group' ){
+      this.orgunit_model.selected_groups = [];
     }
   }
   // display Orgunit Tree
@@ -339,16 +344,8 @@ export class OrgUnitFilterComponent implements OnInit {
     let name = "";
     if( this.orgunit_model.selection_mode == "Group" ){
       name = (this.orgunit_model.selected_groups.length == 0)?"":this.orgunit_model.selected_groups.map((group) => group.name).join(", ") + " in";
-    }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT"){
-        name = this.orgunit_model.user_orgunits[0].name;
-      }
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN"){
-        name = this.getOrgUnitName(this.orgunit_model.user_orgunits[0].id)+" sub-units";
-      }
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN"){
-        name = this.getOrgUnitName(this.orgunit_model.user_orgunits[0].id)+" sub-x2-units"
-      }
+    }else if( this.orgunit_model.selected_user_orgunit.length != 0 ){
+      name = (this.orgunit_model.selected_user_orgunit.length == 0)?"":this.orgunit_model.selected_user_orgunit.map((level) => level.name).join(", ")
     }else if( this.orgunit_model.selection_mode == "Level" ){
       name = (this.orgunit_model.selected_levels.length == 0)?"":this.orgunit_model.selected_levels.map((level) => level.name).join(", ") + " in";
     }else{

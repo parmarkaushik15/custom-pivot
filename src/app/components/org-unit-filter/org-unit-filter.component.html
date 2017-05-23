@@ -4,7 +4,7 @@
           <span *ngIf="!orgunit_tree_config.loading">
               {{  getProperPreOrgunitName() }}
           </span>
-      <span *ngIf="orgunit_model.selected_orgunits.length > 10 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+      <span *ngIf="orgunit_model.selected_orgunits.length > 10 && orgunit_model.selected_user_orgunit.length == 0">
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[0].name }}
               <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit" >x</a>
@@ -17,7 +17,7 @@
               &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
             </span>
           </span>
-      <span *ngIf="orgunit_model.selected_orgunits.length <= 10 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+      <span *ngIf="orgunit_model.selected_orgunits.length <= 10 && orgunit_model.selected_user_orgunit.length == 0">
              <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
                <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
@@ -70,7 +70,7 @@
       <!--</form>-->
     <!--</div>-->
     <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
-    <div class="tree-area" [ngClass]="{'someclass': orgunit_model.selection_mode == 'Usr_orgUnit'}">
+    <div class="tree-area" [ngClass]="{'someclass': orgunit_model.selected_user_orgunit.length != 0}">
       <tree-root
         #orgtree
         [nodes]="organisationunits"

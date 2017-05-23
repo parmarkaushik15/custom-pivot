@@ -102,10 +102,12 @@
           <data-area
             [showTable]="showTable"
             [showAutoGrowingTable]="showAutoGrowingTable"
-            [tableObjects]="tableObject$ | async"
+            [tableObject]="tableObject"
             [dataItems] = "dataDimensions$ | async"
-            [autoGrowingData]="autoGrowingData$ | async"
+            [autoGrowingData]="autoGrowingData"
             [layoutItems] = "layout"
+            [uiState]="uiState"
+            [loadingAutogrowing]="loadingAutogrowing"
           ></data-area>
         </div>
       </div>

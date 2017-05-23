@@ -14,7 +14,7 @@ import {
   SelectDataAction, SelectPeriodAction, SelectOrgunitAction, ToggleDataAreaAction, SetLayoutAction,
   AddDataAnalyticsAction, AddEmptyAnalyticsAction, AddSingleEmptyAnalyticsAction, SetOrgunitModelAction, SetYearAction,
   SetPeriodTypeAction, AddFunctionMappingAction, AddFunctionsAction, AddSingleAutogrowingAnalyticsAction,
-  UpdateTableAction, ResetTableObjectAction
+  UpdateTableAction, ResetTableObjectAction, SendNormalDataLoadingAction
 } from "./store/actions";
 import {UiState} from "./store/ui-state";
 import {PeriodFilterComponent} from "./components/period-filter/period-filter.component";
@@ -54,20 +54,21 @@ export class AppComponent implements OnInit{
   dimensions: any;
   dataDimensions$: Observable<any>;
   analyticsItems:any;
-  autoGrowingData$: Observable<any>;
+  autoGrowingData:any[] = [];
   analyticsWithoutData$: Observable<any>;
   visualizationObject$: Observable<any>;
   selectedData$: Observable<any>;
   selectedPeriod$: Observable<any>;
   selectedPeriodType$: Observable<any>;
   selectedPeriodYear$: Observable<any>;
-  tableObject$: Observable<any>;
+  tableObject: any = null;
   layout: any;
   orgunitModel$: Observable<any>;
   functions: any;
   mappings: any;
   showTable: boolean = false;
   showAutoGrowingTable: boolean = false;
+  loadingAutogrowing: boolean = false;
 
   // top data selection area selection
   showDx:boolean = false;
@@ -87,14 +88,13 @@ export class AppComponent implements OnInit{
 
     this.visualizationObject$ = store.select(visualizationObjectSelector);
     this.dataDimensions$ = store.select(dataItemSelector);
-    this.autoGrowingData$ = store.select(analyticsWithDataSelector);
     this.analyticsWithoutData$ = store.select(analyticsWithoutDataSelector);
     this.selectedData$ = store.select(selectedDataSelector);
     this.selectedPeriod$ = store.select(selectedPeriodSelector);
     this.selectedPeriodType$ = store.select(selectedPeriodTypeSelector);
     this.selectedPeriodYear$ = store.select(selectedPeriodYearSelector);
     this.orgunitModel$ = store.select(orgunitModelSelector);
-    this.tableObject$ = store.select(tableObjectSelector);
+    // this.tableObject$ = store.select(tableObjectSelector);
     store.select(functionsSelector).subscribe( functions => this.functions= functions );
     store.select(layoutSelector).subscribe( layout => this.layout= layout );
     store.select(mappingSelector).subscribe( mappings => this.mappings=mappings );
@@ -127,7 +127,8 @@ export class AppComponent implements OnInit{
   }
 
   addAnalytics(dimensions){
-    // Check first if there are any data_element/indicators selected
+    this.autoGrowingData = [];
+    this.loadingAutogrowing = true;
     if(dimensions.dataItems.length > 0){
       // dimensions.dataItems.forEach( (value) => {
       //
@@ -201,6 +202,7 @@ export class AppComponent implements OnInit{
         //////////////////////////////////////////////
       /////////////Dealing with auto-growing/////////
       ///////////////////////////////////////////////
+
       dimensions.dataItems.forEach( (value) =>{
         if (value.hasOwnProperty('programType')) {
           let parameters = {
@@ -212,8 +214,9 @@ export class AppComponent implements OnInit{
 
               this.showTable = true;
               // this.store.dispatch( new UpdateTableAction(tableObject));
-              this.store.dispatch(new AddSingleAutogrowingAnalyticsAction({analytics: results, dataId: value.id}));
+              this.autoGrowingData.push( {analytics: results, dataId: value.id} );
               this.showAutoGrowingTable = true;
+              this.loadingAutogrowing = false;
             },
             error: (error) => {
               console.log('error');
@@ -239,10 +242,12 @@ export class AppComponent implements OnInit{
 
   setLayout( value ){
     this.store.dispatch( new SetLayoutAction( value ) );
+    this.updateTable();
   }
 
   toogleDataArea() {
     this.store.dispatch( new ToggleDataAreaAction() );
+
   }
 
   setSelectedData( value ){
@@ -260,8 +265,9 @@ export class AppComponent implements OnInit{
   }
 
   updateTable() {
-    this.store.dispatch( new ResetTableObjectAction());
-    this.showTable = false;
+    this.tableObject = null;
+    this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
+    // this.showTable = false;
     this.showAutoGrowingTable = false;
     this.analyticsService.prepareAnalytics(this.dimensions.dimensions).subscribe(analytics => {
       // check first if there is normal data selected
@@ -280,10 +286,13 @@ export class AppComponent implements OnInit{
         console.log(analytics);
         const tableObject = this.visualization.drawTable(analytics, table_structure);
         this.showTable = true;
-        this.store.dispatch( new UpdateTableAction(tableObject))
+        this.tableObject = tableObject;
+        this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+      }else{
+        this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
       }
 
-      this.addAnalytics(this.dimensions)
+      this.addAnalytics(this.dimensions);
       this.showTable = true;
     });
     //this.store.dispatch( new AddDataAnalyticsAction())

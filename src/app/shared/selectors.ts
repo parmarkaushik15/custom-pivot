@@ -123,6 +123,7 @@ export function dataDimensionSelector( state: ApplicationState ){
   dimensions.push(otherStore.storeData.selectedOrgUnits);
 
   return {
+    data:otherStore.storeData.selectedData,
     dataItems: otherStore.storeData.selectedDataItems,
     dimensions:dimensions}
     ;

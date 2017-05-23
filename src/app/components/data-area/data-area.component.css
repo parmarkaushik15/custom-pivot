@@ -1,0 +1,9 @@
+.loadingMessage{
+  position: absolute;
+  right: 8px;
+}
+.loadingAutogrowingMessage{
+  position: absolute;
+  right: 8px;
+  top:28px
+}
