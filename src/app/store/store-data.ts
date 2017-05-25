@@ -42,6 +42,7 @@ export interface StoreData {
     currentDataItemList:any[];
     dataOptions: any;
     layout:any;
+    currentAnalyticsParams:string;
     orgunit_model: {
       selection_mode: string,
       selected_levels: any[],
@@ -55,7 +56,17 @@ export interface StoreData {
       selected_user_orgunit: any[]
     },
     mapping:any[],
-    functions:any[]
+    functions:any[],
+  options: {
+    column_totals: boolean,
+    row_totals: boolean,
+    column_sub_total: boolean,
+    row_sub_total: boolean,
+    dimension_labels: boolean,
+    hide_empty_row: boolean,
+    show_hierarchy: boolean,
+    table_title:string
+  }
 
 }
 
@@ -96,6 +107,7 @@ export const INITIAL_STORE_DATA: StoreData = {
   selectedYear: new Date().getFullYear(),
   currentGroupList:[],
   currentDataItemList:[],
+  currentAnalyticsParams:"",
   dataOptions: [
     {
       name: 'All Data',
@@ -148,5 +160,15 @@ export const INITIAL_STORE_DATA: StoreData = {
     selected_user_orgunit: []
   },
   mapping:[],
-  functions:[]
+  functions:[],
+  options: {
+    column_totals: false,
+    row_totals: false,
+    column_sub_total: false,
+    row_sub_total: false,
+    dimension_labels: false,
+    hide_empty_row: false,
+    show_hierarchy: false,
+    table_title:""
+  }
 };

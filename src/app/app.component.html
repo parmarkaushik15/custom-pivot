@@ -85,6 +85,8 @@
             </div>
             <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
             <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
+            <app-options (onOptionUpdate)="updateOptions($event)"></app-options>
+            <button class="btn btn-default btn-sm" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel</button>
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">
             <li><a href="../../../"><span class="glyphicon glyphicon-home"></span> Home</a></li>
@@ -108,6 +110,7 @@
             [layoutItems] = "layout"
             [uiState]="uiState"
             [loadingAutogrowing]="loadingAutogrowing"
+            [needForUpdate]="needForUpdate"
           ></data-area>
         </div>
       </div>

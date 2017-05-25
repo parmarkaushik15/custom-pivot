@@ -8,7 +8,7 @@ import {
   SELECT_DATA_ACTION, SELECT_PERIOD_ACTION, SELECT_ORGANISATION_UNIT_ACTION, SET_LAYOUT_ACTION, ADD_DATA_ANALYITICS,
   ADD_EMPTY_ANALYITICS, ADD_SINGLE_EMPTY_ANALYITICS, SET_ORGANISATION_MODEL_ACTION, SET_PERIOD_TYPE_ACTION,
   SET_YEAR_ACTION, ADD_FUNCTION_MAPPING_ACTION, ADD_FUNCTIONS_ACTION, ADD_SINGLE_AUTOGROWING_ANALYITICS,
-  UPDATE_TABLE_ACTION, RESET_TABLE_OBJECTS_ACTION,
+  UPDATE_TABLE_ACTION, RESET_TABLE_OBJECTS_ACTION, UPDATE_CURRENT_ANALYTICS_OPTIONS_ACTION, UPDATE_OPTIONS_ACTION,
 } from "../actions";
 
 
@@ -32,6 +32,11 @@ export function storeData(state: StoreData, action:Action) : StoreData {
         newStore.selectedData = action.payload;
         newStore.selectedDataItems = action.payload.itemList;
         return newStore;
+
+      case UPDATE_CURRENT_ANALYTICS_OPTIONS_ACTION:
+        let currStore = _.cloneDeep( state );
+        currStore.currentAnalyticsParams = action.payload;
+        return currStore;
 
       case SELECT_PERIOD_ACTION:
         let store = _.cloneDeep( state );
@@ -72,6 +77,11 @@ export function storeData(state: StoreData, action:Action) : StoreData {
         let tbStore = _.cloneDeep( state );
         tbStore.tableObject.push(action.payload);
         return tbStore;
+
+      case UPDATE_OPTIONS_ACTION:
+        let optionStore = _.cloneDeep( state );
+        optionStore.options = action.payload;
+        return optionStore;
 
       case RESET_TABLE_OBJECTS_ACTION:
         let reStore = _.cloneDeep( state );

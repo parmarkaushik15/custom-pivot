@@ -1,0 +1,57 @@
+<a class="btn btn-default btn-sm" tooltip="Change layouts" (click)="showLayout = !showLayout">
+  Options
+</a>
+<div style="position: absolute">
+  <div *ngIf="showLayout" class="layout-block" [ng2-draggable]="true" [ng2DraggableHandle]="elementreference">
+    <h4>Data</h4>
+    <p>
+      <label>
+        <input  type="checkbox" [(ngModel)]="options.column_totals"> Show column totals
+      </label>
+    </p>
+    <p>
+      <label>
+        <input type="checkbox" [(ngModel)]="options.row_totals"> Show row totals
+      </label>
+    </p>
+    <p>
+      <label>
+        <input type="checkbox" [(ngModel)]="options.column_sub_total"> Show column sub-totals
+      </label>
+    </p>
+    <p>
+      <label>
+        <input type="checkbox" [(ngModel)]="options.row_sub_total"> Show row sub-totals
+      </label>
+    </p>
+    <p>
+      <label>
+        <input type="checkbox" [(ngModel)]="options.dimension_labels"> Show dimension labels
+      </label>
+    </p>
+    <p>
+      <label>
+        <input type="checkbox" [(ngModel)]="options.hide_empty_row"> Hide empty rows
+      </label>
+    </p>
+    <h4>Organisation Units</h4>
+    <p>
+      <label>
+        <input type="checkbox" [(ngModel)]="options.show_hierarchy"> Show hierarchy
+      </label>
+    </p>
+    <h4>General</h4>
+    <p>
+      <label>
+        Table Title: <input type="text" class="form-control"  [(ngModel)]="options.table_title">
+      </label>
+    </p>
+    <div class="col-sm-12">
+      <div class="pull-right">
+        <button class="btn btn-default btn-sm" (click)="updateOption()"><i class="fa fa-refresh"></i>Update</button>
+        <button class="btn btn-default btn-sm" (click)="showLayout= false"><i class="fa fa-times"></i>Close</button>
+      </div>
+    </div>
+  </div>
+
+</div>

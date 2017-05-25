@@ -5,5 +5,7 @@
 .loadingAutogrowingMessage{
   position: absolute;
   right: 8px;
-  top:28px
+}
+.update-needed{
+  opacity: 0.6;
 }

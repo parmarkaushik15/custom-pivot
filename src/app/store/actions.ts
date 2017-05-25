@@ -17,13 +17,25 @@ export const ADD_SINGLE_AUTOGROWING_ANALYITICS = 'ADD_SINGLE_AUTOGROWING_ANALYIT
 export const ADD_FUNCTIONS_ACTION = 'ADD_FUNCTIONS';
 export const UPDATE_TABLE_ACTION = 'UPDATE_TABLE_ACTION';
 export const ADD_FUNCTION_MAPPING_ACTION = 'ADD_FUNCTION_MAPPING';
+export const UPDATE_OPTIONS_ACTION = 'UPDATE_OPTIONS_ACTION';
 export const RESET_TABLE_OBJECTS_ACTION = 'RESET_TABLE_OBJECTS_ACTION';
 export const SEND_NORMAL_DATA_LOADING_MESSAGE = 'SEND_NORMAL_DATA_LOADING_MESSAGE';
 export const REMOVE_NORMAL_DATA_LOADING_MESSAGE = 'REMOVE_NORMAL_DATA_LOADING_MESSAGE';
+export const UPDATE_CURRENT_ANALYTICS_OPTIONS_ACTION = 'UPDATE_CURRENT_ANALYTICS_OPTIONS_ACTION';
 
 
 export class AddDataAnalyticsAction implements Action {
   type = ADD_DATA_ANALYITICS;
+  constructor ( public payload: any ) {}
+}
+
+export class UpdateOptionsAction implements Action {
+  type = UPDATE_OPTIONS_ACTION;
+  constructor ( public payload: any ) {}
+}
+
+export class UpdateCurrentAnalyticsOptionsAction implements Action {
+  type = UPDATE_CURRENT_ANALYTICS_OPTIONS_ACTION;
   constructor ( public payload: any ) {}
 }
 

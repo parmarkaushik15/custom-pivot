@@ -10,6 +10,7 @@ export class DataAreaComponent implements OnInit {
   @Input() showTable:boolean = false;
   @Input() showAutoGrowingTable:boolean = false;
   @Input() loadingAutogrowing:boolean = false;
+  @Input() needForUpdate:boolean = false;
   @Input() tableObject:any = null;
   @Input() dataItems:any = null;
   @Input() autoGrowingData:any = null;

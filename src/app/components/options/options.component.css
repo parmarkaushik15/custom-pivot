@@ -1,0 +1,25 @@
+
+.layout-block {
+  padding: 10px;
+  position: absolute;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, .15);
+  min-height: 400px;
+  overflow: hidden;
+  min-width: 260px;
+  width: 260px;
+  z-index: 1000;
+  padding-bottom: 5px;
+  /*margin-left:15; */
+  margin-top: 2px;
+}
+label{
+  font-weight: 200;
+}
+p{
+  margin-bottom: 0px;
+}
+

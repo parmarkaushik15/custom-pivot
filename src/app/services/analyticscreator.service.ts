@@ -7,19 +7,27 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class AnalyticscreatorService {
-
+  public current_normal_analytics:any = null;
   constructor(private constant: Constants, private http: Http,) { }
 
-  prepareAnalytics( dimensions:any ){
-    if(this._checkIfAllDimensionExists(dimensions)){
-      return this.http.get(this._constructAnalyticUrlForExternalSource(dimensions,"skipData=false"))
-        .map(res => res.json() || null);
-    }else{
+  prepareAnalytics( dimensions:any, repeat:boolean = false ){
+    if( repeat ){
       return Observable.create(observor => {
-        observor.next( null );
+        observor.next( this.current_normal_analytics );
         observor.complete();
       })
+    }else{
+      if(this._checkIfAllDimensionExists(dimensions)){
+        return this.http.get(this._constructAnalyticUrlForExternalSource(dimensions,"skipData=false"))
+          .map(res => res.json() || null);
+      }else{
+        return Observable.create(observor => {
+          observor.next( null );
+          observor.complete();
+        })
+      }
     }
+
 
   }
 
@@ -100,8 +108,6 @@ export class AnalyticscreatorService {
     });
   }
 
-
-
   // prepare analytics from a group of dimension object and specify weather to skip data or not
   private _constructAnalyticUrlForExternalSource(sourceObject,showData) {
     let url: string = this.constant.api + "analytics.json?";
@@ -113,6 +119,18 @@ export class AnalyticscreatorService {
       }
     });
     url += '&displayProperty=NAME&hierarchyMeta=true&'+showData;
+
+    return url;
+  }
+
+  getAnalyticsparams( dimensions ){
+    let url: string = "";
+    dimensions.forEach((item, index) => {
+      if(item && item.value ){
+        url += index > 0 ? '&':'';
+        url += 'dimension=' + item.name + ':' + item.value;
+      }
+    });
 
     return url;
   }

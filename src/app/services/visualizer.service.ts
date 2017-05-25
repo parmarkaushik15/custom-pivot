@@ -569,6 +569,7 @@ export class VisualizerService {
   }
 
   drawTable ( analyticsObject , tableConfiguration ) {
+    console.log("Table configurations", tableConfiguration)
     let table = {
       'headers': [],
       'columns': [],

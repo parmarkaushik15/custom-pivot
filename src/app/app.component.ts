@@ -7,14 +7,15 @@ import {
   dataItemSelector, dataOptionsSelector, layoutSelector, visualizationObjectSelector, analyticsWithDataSelector,
   analyticsWithoutDataSelector, dataDimensionSelector, dataItemAnalyticsSelector, selectedDataSelector,
   selectedPeriodSelector, orgunitModelSelector, selectedPeriodTypeSelector, selectedPeriodYearSelector,
-  functionsSelector, mappingSelector, tableObjectSelector
+  functionsSelector, mappingSelector, tableObjectSelector, analyticsParamsSelector, optionsSelector
 } from "./shared/selectors";
 import {
   SelectGroupAction,
   SelectDataAction, SelectPeriodAction, SelectOrgunitAction, ToggleDataAreaAction, SetLayoutAction,
   AddDataAnalyticsAction, AddEmptyAnalyticsAction, AddSingleEmptyAnalyticsAction, SetOrgunitModelAction, SetYearAction,
   SetPeriodTypeAction, AddFunctionMappingAction, AddFunctionsAction, AddSingleAutogrowingAnalyticsAction,
-  UpdateTableAction, ResetTableObjectAction, SendNormalDataLoadingAction
+  UpdateTableAction, ResetTableObjectAction, SendNormalDataLoadingAction, UpdateCurrentAnalyticsOptionsAction,
+  UpdateOptionsAction
 } from "./store/actions";
 import {UiState} from "./store/ui-state";
 import {PeriodFilterComponent} from "./components/period-filter/period-filter.component";
@@ -28,6 +29,7 @@ import {
 import {AnalyticscreatorService} from "./services/analyticscreator.service";
 import {DataService} from "./services/data.service";
 import {VisualizerService} from "./services/visualizer.service";
+import {Angular2Csv} from "angular2-csv";
 
 @Component({
   selector: 'app-root',
@@ -63,6 +65,8 @@ export class AppComponent implements OnInit{
   selectedPeriodYear$: Observable<any>;
   tableObject: any = null;
   layout: any;
+  options: any;
+  lastAnalyticsParams: any;
   orgunitModel$: Observable<any>;
   functions: any;
   mappings: any;
@@ -79,7 +83,7 @@ export class AppComponent implements OnInit{
 
   @ViewChild(PeriodFilterComponent)
   public periodComponent1: PeriodFilterComponent;
-
+  needForUpdate:boolean = false;
   constructor( private store: Store<ApplicationState>,
                private analyticsService: AnalyticscreatorService,
                private dataService: DataService,
@@ -96,6 +100,8 @@ export class AppComponent implements OnInit{
     this.orgunitModel$ = store.select(orgunitModelSelector);
     // this.tableObject$ = store.select(tableObjectSelector);
     store.select(functionsSelector).subscribe( functions => this.functions= functions );
+    store.select(analyticsParamsSelector).subscribe( params => this.lastAnalyticsParams = params );
+    store.select(optionsSelector).subscribe( options => this.options = options );
     store.select(layoutSelector).subscribe( layout => this.layout= layout );
     store.select(mappingSelector).subscribe( mappings => this.mappings=mappings );
     store.select(state => state.uiState).subscribe(uiState => this.uiState =  _.cloneDeep(uiState) );
@@ -106,7 +112,6 @@ export class AppComponent implements OnInit{
   ngOnInit() {
     //set initial layout
     this.currentLayout = this.layout;
-
     this.dataService.getMapping().subscribe((val) => {
       this.store.dispatch( new AddFunctionMappingAction(val) );
     });
@@ -119,6 +124,7 @@ export class AppComponent implements OnInit{
 
   setSelectedOrgunit( value ){
     this.store.dispatch( new SelectOrgunitAction( value ) );
+    this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     // this.addAnalytics(this.dimensions)
   }
 
@@ -235,16 +241,24 @@ export class AppComponent implements OnInit{
       if(counter == 0){
         this.loadingAutogrowing = false;
       }
+    }else{
+      this.loadingAutogrowing = false;
     }
   }
 
   setSelectedPeriod( value ){
     this.store.dispatch( new SelectPeriodAction( value ) );
+    this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     // this.addAnalytics(this.dimensions)
   }
 
   setLayout( value ){
     this.store.dispatch( new SetLayoutAction( value ) );
+    this.updateTable();
+  }
+
+  updateOptions( value ){
+    this.store.dispatch( new UpdateOptionsAction( value ) );
     this.updateTable();
   }
 
@@ -254,8 +268,10 @@ export class AppComponent implements OnInit{
   }
 
   setSelectedData( value ){
+
     this.store.dispatch( new SelectDataAction( value ) );
-    // this.addAnalytics(this.dimensions);
+    console.log(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions))
+    this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     this.hideMonth = value.hideMonth;
     this.hideQuarter = value.hideQuarter;
     if(this.periodComponent){
@@ -267,21 +283,27 @@ export class AppComponent implements OnInit{
     }
   }
 
+
+
   updateTable() {
     this.tableObject = null;
     this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
     // this.showTable = false;
     this.showAutoGrowingTable = false;
-    this.analyticsService.prepareAnalytics(this.dimensions.dimensions).subscribe(analytics => {
+    let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
+    this.needForUpdate = false;
+    this.analyticsService.prepareAnalytics(this.dimensions.dimensions, new_update_available).subscribe(analytics => {
       // check first if there is normal data selected
+      this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
+      this.analyticsService.current_normal_analytics = analytics;
       if(analytics){
         let table_structure = {
-          showColumnTotal: false,
-          showRowTotal: false,
-          showRowSubtotal: false,
-          showDimensionLabels: false,
-          hideEmptyRows: false,
-          showHierarchy: false,
+          showColumnTotal: this.options.column_totals,
+          showRowTotal: this.options.hide_empty_row,
+          showRowSubtotal: this.options.row_sub_total,
+          showDimensionLabels: this.options.dimension_labels,
+          hideEmptyRows: this.options.hide_empty_row,
+          showHierarchy: this.options.show_hierarchy,
           rows: this.layout.rows,
           columns: this.layout.columns,
           displayList: false,
@@ -304,6 +326,60 @@ export class AppComponent implements OnInit{
      * @type {Array}
      */
 
+  }
+
+  downloadExcel(){
+    let headers = [];
+    let newRows = _.cloneDeep(this.tableObject);
+    this.tableObject.headers.forEach((header) => {
+      let someItems = [];
+      header.items.forEach((item) => {
+        for( let i=0;i<item.span; i++){
+          someItems.push(item.name)
+        }
+      });
+      headers.push(someItems)
+    });
+
+    let length = newRows.rows[0].items.length;
+    newRows.rows.forEach((row) => {
+      console.log(length-row.items.length);
+      for(let k=0; k < length-row.items.length; k++){
+          row.items.unshift({name:"",value:""})
+      }
+    });
+    let csvHeaders = [];
+    headers.forEach((header) => {
+      header.forEach((singleHeader, index) => {
+        if(csvHeaders[index]){
+          csvHeaders[index] += " "+singleHeader;
+        }else{
+          csvHeaders[index] = singleHeader;
+        }
+      });
+    });
+    csvHeaders = newRows.titles.rows.concat(csvHeaders);
+    let dataValues = [];
+    newRows.rows.forEach((row) => {
+      console.log(row)
+      let dataObject = {}
+      csvHeaders.forEach((header,index) => {
+        dataObject[header] = (row.items[index].val)?row.items[index].val:"";
+      });
+      dataValues.push(dataObject);
+    });
+    let options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalseparator: '.',
+      showLabels: true,
+      showTitle: false
+    };
+    new Angular2Csv(dataValues, 'My Report',options);
+    return {
+      headers: csvHeaders,
+      data: dataValues
+    }
   }
 
   addParentToAnalytics(analytics){

@@ -62,6 +62,18 @@ export function orgunitModelSelector( state: ApplicationState ){
   return otherStore.storeData.orgunit_model;
 }
 
+// select last analytics parameters to check if there are changes
+export function analyticsParamsSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.currentAnalyticsParams;
+}
+
+// select the selected options
+export function optionsSelector( state: ApplicationState ){
+  let otherStore = _.cloneDeep(state);
+  return otherStore.storeData.options;
+}
+
 export function functionsSelector( state: ApplicationState ){
   let otherStore = _.cloneDeep(state);
   return otherStore.storeData.functions;

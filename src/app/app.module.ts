@@ -37,6 +37,8 @@ import {HttpClientService} from "./services/http-client.service";
 import {FuseSearchPipe} from "./shared/pipes/fuse-search.pipe";
 import { AutoGrowingComponent } from './components/auto-growing/auto-growing.component';
 import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
+import { OptionsComponent } from './components/options/options.component';
+import { OrderByPipe } from './pipes/order-by.pipe';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,9 @@ import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
     Draggable,
     FuseSearchPipe,
     AutoGrowingComponent,
-    RemoveNaNPipe
+    RemoveNaNPipe,
+    OptionsComponent,
+    OrderByPipe
   ],
   imports: [
     BrowserModule,
