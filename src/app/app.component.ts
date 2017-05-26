@@ -10,11 +10,8 @@ import {
   functionsSelector, mappingSelector, tableObjectSelector, analyticsParamsSelector, optionsSelector
 } from "./shared/selectors";
 import {
-  SelectGroupAction,
-  SelectDataAction, SelectPeriodAction, SelectOrgunitAction, ToggleDataAreaAction, SetLayoutAction,
-  AddDataAnalyticsAction, AddEmptyAnalyticsAction, AddSingleEmptyAnalyticsAction, SetOrgunitModelAction, SetYearAction,
-  SetPeriodTypeAction, AddFunctionMappingAction, AddFunctionsAction, AddSingleAutogrowingAnalyticsAction,
-  UpdateTableAction, ResetTableObjectAction, SendNormalDataLoadingAction, UpdateCurrentAnalyticsOptionsAction,
+  SelectDataAction, SelectPeriodAction, SelectOrgunitAction, ToggleDataAreaAction, SetLayoutAction, SetOrgunitModelAction,
+  AddFunctionMappingAction, AddFunctionsAction,  SendNormalDataLoadingAction, UpdateCurrentAnalyticsOptionsAction,
   UpdateOptionsAction
 } from "./store/actions";
 import {UiState} from "./store/ui-state";
@@ -304,6 +301,7 @@ export class AppComponent implements OnInit{
           showDimensionLabels: this.options.dimension_labels,
           hideEmptyRows: this.options.hide_empty_row,
           showHierarchy: this.options.show_hierarchy,
+          title: this.options.table_title,
           rows: this.layout.rows,
           columns: this.layout.columns,
           displayList: false,
@@ -361,8 +359,7 @@ export class AppComponent implements OnInit{
     csvHeaders = newRows.titles.rows.concat(csvHeaders);
     let dataValues = [];
     newRows.rows.forEach((row) => {
-      console.log(row)
-      let dataObject = {}
+      let dataObject = {};
       csvHeaders.forEach((header,index) => {
         dataObject[header] = (row.items[index].val)?row.items[index].val:"";
       });

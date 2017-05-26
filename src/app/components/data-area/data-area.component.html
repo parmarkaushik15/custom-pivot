@@ -18,26 +18,40 @@
     <li><small>- Click Download to save table data to your computer</small></li>
   </ul>
 </div>
-<small *ngIf="needForUpdate && showTable">There are a changes in selections hit update to see the latest changes.</small>
-<h4 *ngIf="dataItems.data.items?.length != 0 && showTable && !uiState.loadingData" class="text-center text-muted"> {{ getTitle() }} </h4>
+<small *ngIf="needForUpdate && showTable">There are a changes in selections hit update to see the latest changes.
+  <button class="btn btn-default btn-xs" (click)="needForUpdate = false">cancel</button>
+  <!--<button class="btn btn-default btn-xs" (click)="update()">Update</button>-->
+</small>
+
 <div *ngIf="tableObject" style="padding: 3px" [ngClass]="{'update-needed': needForUpdate}">
-  <h3 *ngIf="tableObject.title">{{tableObject.title}} <button class="btn btn-default btn-sm pull-right"><i class="fa fa-file-excel-o"></i> Excel </button></h3>
+  <h4 *ngIf="tableObject.rows.length != 0" class="text-center" style="margin-bottom: 0px">{{tableObject?.title}}
+    <button class="btn btn-default btn-sm pull-right" style="margin-bottom: 10px" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel </button>
+  </h4>
   <table class="table table-bordered table-responsive table-condensed custom-table"
          *ngIf="tableObject.rows.length != 0">
     <thead>
-    <tr *ngFor="let header of tableObject.headers; let j = index">
+    <!--title-->
+    <tr  *ngIf="dataItems.data.items?.length != 0 && showTable && !uiState.loadingData" class="table-title">
+      <th [attr.colspan]="tableObject.rows[0].items.length">
+        <h4 style="margin: 0px" class="text-center">{{ getTitle() }} </h4>
+      </th>
+    </tr>
+    <!--headers-->
+    <tr *ngFor="let header of tableObject.headers; let j = index" class="header-column">
       <th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">
         {{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}
       </th>
-      <th *ngFor="let header_column of header.items" [colSpan]="header_column.span"
-          style="text-align: center">
+      <th *ngFor="let header_column of header.items; let i=index" [colSpan]="header_column.span"
+          style="text-align: center" (click)="sortData(tableObject,i+tableObject.columns.length,j+1==tableObject.headers.length)">
         {{ header_column.name }}
+        <span *ngIf="j+1==tableObject.headers.length && current_sorting[i+tableObject.columns.length] && sort_direction[i+tableObject.columns.length] == 'asc'" class="glyphicon glyphicon-triangle-top pull-right"></span>
+        <span *ngIf="j+1==tableObject.headers.length && current_sorting[i+tableObject.columns.length] && sort_direction[i+tableObject.columns.length] == 'desc'" class="glyphicon glyphicon-triangle-bottom pull-right"></span>
       </th>
     </tr>
     </thead>
-    <tbody>
+    <tbody  id="myPivotTable">
     <tr *ngFor="let row of tableObject.rows">
-      <td *ngFor="let header_column of row.items" style="text-align: center;vertical-align: middle"
+      <td *ngFor="let header_column of row.items;let i = index" [ngClass]="{'header-column': header_column.name != ''}"style="text-align: center;vertical-align: middle"
           [attr.rowspan]="header_column.row_span">
         {{ header_column.val }}
       </td>
