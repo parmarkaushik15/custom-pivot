@@ -140,15 +140,17 @@ export class AutoGrowingComponent implements OnInit {
         return adjacentString;
       }
 
-      for (var i = 0; i <= this.$scope.data.dataElements.length; i++) {
-        var dataIndex = i;
+      for (var i = 0; i < this.$scope.data.dataElements.length; i++) {
+        /*var dataIndex = i;
         if(dataIndex > 0){
           dataIndex = i - 1;
-        }
+        }*/
+        var dataIndex = i;
         var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
         if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
 
           this.elementFind(elem,i,(index, el)=> {
+            console.log("The Index:",this.$scope.config.programId,index,previous,$(el).text().trim().toLowerCase(),JSON.stringify(firstColumnBrakes));
             if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
               $(el).addClass('hidden');
               cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
@@ -164,8 +166,8 @@ export class AutoGrowingComponent implements OnInit {
         } else //if(scope.config.continuous)
         {
           elem.children.forEach((trElement, index)=> {
-            if (trElement.children[dataIndex]) {
-              let el = trElement.children[dataIndex];
+            if (trElement.children[i]) {
+              let el = trElement.children[i];
               {
                 if (previous == adjacentToGroup(index, i)) {
                   $(el).addClass('hidden');
