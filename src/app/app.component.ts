@@ -129,87 +129,74 @@ export class AppComponent implements OnInit{
     this.store.dispatch( new SetOrgunitModelAction( value ) );
   }
 
-  addAnalytics(dimensions){
+  performFunctionCalculations(dimensions,analytics,table_structure){
+    this.analyticsService.analytics_lists = [];
+    if(!analytics && dimensions.data.need_functions.length == 0){
+      this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+    }
+    if( dimensions.data.need_functions.length > 0 ) {
+      let counter = 0;
+      dimensions.data.need_functions.forEach( (value) => {
+
+          // Constructing analytics parameters to pass on the function call
+          let parameters = {
+            dx: value.id,
+            ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
+            pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
+            success: (results) => {
+              // This will run on successfull function return, which will save the result to the data store for analytics
+              console.log(results);
+              counter++;
+              this.analyticsService.analytics_lists.push(results);
+              if(counter == dimensions.data.need_functions.length ){
+                if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
+                const tableObject = this.visualization.drawTable(this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists), table_structure);
+                this.showTable = true;
+                this.tableObject = tableObject;
+                this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+              }
+              // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
+            },
+            error: (error) => {
+              console.log('error');
+            },
+            progress: (progress) => {
+              console.log('progress');
+            }
+          };
+          // check if the data element is in function and if so return the mapping object
+          let mapped = _.find(this.mappings, ['id', value.id]);
+          if (mapped) {
+            // If there is a function for a data find the function and run it.
+            let use_function = _.find(this.functions, ['id', mapped['function']]);
+            let execute = Function('parameters', use_function['function']);
+            execute(parameters);
+          }
+      });
+
+    }else{
+      if(analytics){
+        this.analyticsService.analytics_lists.push(analytics)
+        const tableObject = this.visualization.drawTable(analytics, table_structure);
+        this.showTable = true;
+        this.tableObject = tableObject;
+        this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+      }
+    }
+  }
+
+  loadAutoGrowing (dimensions) {
     this.autoGrowingData = [];
     this.loadingAutogrowing = true;
-    if(dimensions.dataItems.length > 0){
-      // dimensions.dataItems.forEach( (value) => {
-      //
-      //   // check first if the item is autogrowing
-      //   if (!value.hasOwnProperty('programType')) {
-      //     // Constructing analytics parameters to pass on the function call
-      //     let parameters = {
-      //       dx: _.find(dimensions.dimensions, ['name', 'dx'])['value'],
-      //       ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
-      //       pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
-      //       success: (results) => {
-      //         // This will run on successfull function return, which will save the result to the data store for analytics
-      //         console.log(results);
-      //         this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
-      //       },
-      //       error: (error) => {
-      //         console.log('error');
-      //       },
-      //       progress: (progress) => {
-      //         console.log('progress');
-      //       }
-      //     };
-      //     // check if the data element is in function and if so return the mapping object
-      //     let mapped = _.find(this.mappings, ['id', value.id]);
-      //     if (mapped) {
-      //       // If there is a function for a data find the function and run it.
-      //       let use_function = _.find(this.functions, ['id', mapped['function']]);
-      //       let execute = Function('parameters', use_function['function']);
-      //       execute(parameters);
-      //     }
-      //   }
-      // });
-      //
-      // //select first data and construct its analytics
-      //   let count = 0;
-      //   dimensions.dataItems.forEach( (value) => {
-      //
-      //     // check first if item is not an auto growing
-      //     if (!value.hasOwnProperty('programType')) {
-      //       if (_.find(this.mappings, ['id', value.id])) {
-      //       }
-      //       else {
-      //         // this will ensure that the analytics call is called only once and then just use the same to update all others
-      //         if (count == 0) {
-      //           count++;
-      //           let newDimension = _.cloneDeep(dimensions.dimensions);
-      //           newDimension.splice(0, 1, {name: 'dx', value: value.id});
-      //           this.analyticsService.prepareEmptyAnalytics(newDimension).subscribe(emptyAnalytics => {
-      //             this.store.dispatch(new AddSingleEmptyAnalyticsAction({
-      //               analytics: emptyAnalytics,
-      //               dataId: dimensions.dataItems[0].id
-      //             }));
-      //             dimensions.dataItems.forEach((value) => {
-      //               // check first if the data is from function or otherwise
-      //               if (_.find(this.mappings, ['id', value.id])) {
-      //               }
-      //               else {
-      //                 // Duplicate the  same analytics to save calling the same analytics call again and again
-      //                 this.store.dispatch(new AddSingleEmptyAnalyticsAction({
-      //                   analytics: this.analyticsService.duplicateAnalytics(emptyAnalytics, value, dimensions.dataItems[0].id),
-      //                   dataId: value.id
-      //                 }));
-      //               }
-      //             });
-      //           });
-      //         }
-      //       }
-      //     }
-      //   });
-
-        //////////////////////////////////////////////
-      /////////////Dealing with auto-growing/////////
-      ///////////////////////////////////////////////
+      //Dealing with auto-growing
       let counter = 0;
-      dimensions.dataItems.forEach( (value) =>{
-        if (value.hasOwnProperty('programType')) {
-          counter++;
-          let parameters = {
+      if(dimensions.data.auto_growing.length == 0){
+        this.loadingAutogrowing = false;
+      }else{
+
+      }
+      dimensions.data.auto_growing.forEach( (value) =>{
+        let parameters = {
             dx: value.id,
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
@@ -233,14 +220,7 @@ export class AppComponent implements OnInit{
           let use_function = _.find(this.functions, ['id', 'DDtZTbdxMsQ']);
           let execute = Function('parameters', use_function['function']);
           execute(parameters);
-        }
       });
-      if(counter == 0){
-        this.loadingAutogrowing = false;
-      }
-    }else{
-      this.loadingAutogrowing = false;
-    }
   }
 
   setSelectedPeriod( value ){
@@ -261,11 +241,10 @@ export class AppComponent implements OnInit{
 
   toogleDataArea() {
     this.store.dispatch( new ToggleDataAreaAction() );
-
   }
 
   setSelectedData( value ){
-
+    console.log("emited value",value)
     this.store.dispatch( new SelectDataAction( value ) );
     console.log(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions))
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
@@ -293,30 +272,25 @@ export class AppComponent implements OnInit{
       // check first if there is normal data selected
       this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
       this.analyticsService.current_normal_analytics = analytics;
-      if(analytics){
-        let table_structure = {
-          showColumnTotal: this.options.column_totals,
-          showRowTotal: this.options.hide_empty_row,
-          showRowSubtotal: this.options.row_sub_total,
-          showDimensionLabels: this.options.dimension_labels,
-          hideEmptyRows: this.options.hide_empty_row,
-          showHierarchy: this.options.show_hierarchy,
-          title: this.options.table_title,
-          rows: this.layout.rows,
-          columns: this.layout.columns,
-          displayList: false,
-        };
-        console.log(analytics);
-        const tableObject = this.visualization.drawTable(analytics, table_structure);
-        this.showTable = true;
-        this.tableObject = tableObject;
-        this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
-      }else{
-        this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
-      }
+      let table_structure = {
+        showColumnTotal: this.options.column_totals,
+        showRowTotal: this.options.hide_empty_row,
+        showRowSubtotal: this.options.row_sub_total,
+        showDimensionLabels: this.options.dimension_labels,
+        hideEmptyRows: this.options.hide_empty_row,
+        showHierarchy: this.options.show_hierarchy,
+        title: this.options.table_title,
+        rows: this.layout.rows,
+        columns: this.layout.columns,
+        displayList: false,
+      };
+      //loading additional functions
+      this.performFunctionCalculations(this.dimensions,analytics,table_structure);
 
-      this.addAnalytics(this.dimensions);
-      this.showTable = true;
+
+      //loading autogrowing tables
+      this.loadAutoGrowing(this.dimensions);
+
     });
     //this.store.dispatch( new AddDataAnalyticsAction())
     /**

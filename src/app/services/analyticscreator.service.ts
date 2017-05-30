@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 @Injectable()
 export class AnalyticscreatorService {
   public current_normal_analytics:any = null;
+  public analytics_lists = [];
   constructor(private constant: Constants, private http: Http,) { }
 
   prepareAnalytics( dimensions:any, repeat:boolean = false ){

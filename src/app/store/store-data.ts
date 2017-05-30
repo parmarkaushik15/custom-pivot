@@ -24,6 +24,7 @@ export interface StoreData {
       value:string},
     selectedData: {
       auto_growing:any[],
+      need_functions:any[],
       itemList:any[],
       selectedData:any,
       hideQuarter:boolean,
@@ -88,6 +89,7 @@ export const INITIAL_STORE_DATA: StoreData = {
     value: null},
   selectedData: {
     auto_growing:[],
+    need_functions:[],
     itemList:[],
     selectedData: {
       items: null,
