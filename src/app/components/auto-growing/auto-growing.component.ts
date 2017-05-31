@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, ViewChild,ElementRef} from '@angular/core';
 import {VisualizerService} from "../../services/visualizer.service";
-declare var $:any, HTMLCollection:any, Element:any, NodeList:any;
+import {ExcelDownloadService} from "../../services/excel-download.service";
+declare var $:any, HTMLCollection:any, Element:any, NodeList:any,unescape:any;
 
 HTMLCollection.prototype.sort = function (callback) {
   //this.slice(callback);
@@ -64,11 +65,12 @@ export class AutoGrowingComponent implements OnInit {
   @Input() title:string = "";
   tableObject:any = null;
 
-  constructor(private visualization:VisualizerService) {
+  constructor(private visualization:VisualizerService,private excelDownloadService:ExcelDownloadService) {
 
   }
 
   @ViewChild('tbody') private tbody:ElementRef;
+  @ViewChild('autogrowingTable') private autogrowingTable:ElementRef;
 
   ngOnInit() {
     let table_structure = {
@@ -110,6 +112,7 @@ export class AutoGrowingComponent implements OnInit {
 
   $scope:any;
   mergingCallBack() {
+    console.log()
     this.$scope = this.autogrowing.analytics.merge;
     this.controller()
     return ()=> {
@@ -504,5 +507,18 @@ export class AutoGrowingComponent implements OnInit {
     }else{
       return false;
     }
+  }
+
+  downloadExcel(){
+    var date = new Date();
+    var dateStr:any = date.getDate();
+    if(dateStr < 10){
+      dateStr = "0" + dateStr;
+    }
+    var monthStr:any = date.getDate() + 1;
+    if(monthStr < 10){
+      monthStr = "0" + monthStr;
+    }
+    this.excelDownloadService.download("Name " + dateStr + "-" + monthStr + "-" + date.getFullYear(),this.autogrowingTable.nativeElement);
   }
 }

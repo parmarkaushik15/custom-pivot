@@ -2,11 +2,12 @@
   <img src="assets/img/balls-5.svg"/>
   Merging Autogrowing
 </div>
-<table [ngClass]="{'show':show,'hide':!show}" class="table table-bordered table-responsive table-condensed custom-table"
+<button class="btn btn-default btn-sm pull-right" style="margin-bottom: 10px" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel </button>
+<table #autogrowingTable [ngClass]="{'show':show,'hide':!show}" class="table"
        *ngIf="tableObject.rows.length != 0">
   <thead>
   <tr class="table-title">
-    <th colspan="100%">
+    <th  [colSpan]="tableObject.headers[0].items.length">
       <h4 class="text-center" style="margin: 0px">
         <span *ngFor="let ou of autogrowing.analytics.metaData.ou; let i = index">
           <span *ngIf="autogrowing.analytics.metaData.names[ou]"><span *ngIf="i > 0">,</span>{{autogrowing.analytics.metaData.names[ou]}}</span>
@@ -31,7 +32,7 @@
   </thead>
   <tbody *ngIf="!$scope.config.groupBy" #tbody>
   <tr *ngFor="let event of $scope.data.events">
-    <td *ngFor="let dataElement of data.dataElements"> {{event[dataElement.name]}}</td>
+    <td *ngFor="let dataElement of data.dataElements">{{event[dataElement.name]}}</td>
   </tr>
   </tbody>
   <tbody *ngIf="$scope.config.groupBy" #tbody>
