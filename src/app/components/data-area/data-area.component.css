@@ -1,16 +1,19 @@
 .loadingMessage{
-  position: absolute;
-  right: 8px;
+  position: relative;
+  text-align: center;
 }
 .loadingAutogrowingMessage{
-  position: absolute;
-  right: 8px;
+  position: relative;
+  text-align: center;
 }
 .update-needed{
   opacity: 0.8;
 }
 .header-column{
   background-color: rgb(218,230,248);
+}
+.sub-total{
+  background-color: rgba(218,230,248,0.4);
 }
 .table-title{
   background-color: rgb(199,213,233);

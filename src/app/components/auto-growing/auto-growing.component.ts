@@ -54,7 +54,15 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
 export class AutoGrowingComponent implements OnInit {
 
   @Input() autogrowing:any = null;
-  tableObject:any = null
+  @Input() dataItems:any = null;
+  @Input() layoutItems:any = {
+    rows: ['pe'],
+    columns: ['dx'],
+    filters: ['ou'],
+    excluded:['co']
+  };
+  @Input() title:string = "";
+  tableObject:any = null;
 
   constructor(private visualization:VisualizerService) {
 
@@ -150,7 +158,6 @@ export class AutoGrowingComponent implements OnInit {
         if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
 
           this.elementFind(elem,i,(index, el)=> {
-            console.log("The Index:",this.$scope.config.programId,index,previous,$(el).text().trim().toLowerCase(),JSON.stringify(firstColumnBrakes));
             if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
               $(el).addClass('hidden');
               cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
@@ -329,7 +336,6 @@ export class AutoGrowingComponent implements OnInit {
     })
   }
   controller() {
-    console.log("Config:",this.$scope.config);
     this.$scope.data = {
       dataElements: [],
       events: []

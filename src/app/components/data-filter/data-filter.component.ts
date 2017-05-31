@@ -46,6 +46,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   @Output() selected_group: EventEmitter<any> = new EventEmitter<any>();
   @Output() onDataUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Input() selectedItems:any[] = [];
+  @Input() functionMappings:any[] = [];
   querystring: string = null;
   listchanges: string = null;
   showGroups:boolean = false;
@@ -330,6 +331,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.getSelectedPeriods();
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
+      need_functions: this.getFunctions(this.selectedItems),
       auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
@@ -347,15 +349,15 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     return autogrowings;
   }
 
-  gettables(selections){
-    let autogrowings = [];
+  getFunctions(selections){
+    let mappings = [];
     selections.forEach((value) => {
-      if(value.hasOwnProperty('programType')){
-      }else{
-        autogrowings.push(value);
+      let mapped = _.find(this.functionMappings, ['id', value.id]);
+      if(mapped){
+        mappings.push(mapped)
       }
-    })
-    return autogrowings;
+    });
+    return mappings;
   }
 
   // Remove selected Item
@@ -364,6 +366,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.getSelectedPeriods();
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
+      need_functions: this.getFunctions(this.selectedItems),
       auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
@@ -381,6 +384,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     });
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
+      need_functions: this.getFunctions(this.selectedItems),
       auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
@@ -393,6 +397,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.selectedItems = [];
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
+      need_functions: this.getFunctions(this.selectedItems),
       auto_growing: this.getAutogrowingTables(this.selectedItems),
       selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
       hideQuarter:this.hideQuarter,
@@ -421,6 +426,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       this.insertData( data.dragData, current, number);
       this.onDataUpdate.emit({
         itemList: this.selectedItems,
+        need_functions: this.getFunctions(this.selectedItems),
         auto_growing: this.getAutogrowingTables(this.selectedItems),
         selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
         hideQuarter:this.hideQuarter,
@@ -511,10 +517,15 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
 
   getDataForAnalytics(selectedData) {
     let dataForAnalytics = "";
-    selectedData.forEach((dataValue, dataIndex) => {
+    let counter = 0;
+    selectedData.forEach((dataValue) => {
       if(dataValue.hasOwnProperty('programType')){
       }else{
-        dataForAnalytics += dataIndex == 0 ? dataValue.id : ';' + dataValue.id;
+        let mapped = _.find(this.functionMappings, ['id', dataValue.id]);
+        if(mapped){}else{
+          dataForAnalytics += counter == 0 ? dataValue.id : ';' + dataValue.id;
+          counter++;
+        }
       }
     });
     return dataForAnalytics;
