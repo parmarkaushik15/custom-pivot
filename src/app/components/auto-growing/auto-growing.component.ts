@@ -515,10 +515,27 @@ export class AutoGrowingComponent implements OnInit {
     if(dateStr < 10){
       dateStr = "0" + dateStr;
     }
-    var monthStr:any = date.getDate() + 1;
+    var monthStr:any = date.getMonth() + 1;
     if(monthStr < 10){
       monthStr = "0" + monthStr;
     }
-    this.excelDownloadService.download("Name " + dateStr + "-" + monthStr + "-" + date.getFullYear(),this.autogrowingTable.nativeElement);
+    let fileName = this.autogrowing.analytics.metaData.names[this.$scope.config.programId] + " ";
+    this.autogrowing.analytics.metaData.ou.forEach((ou,index)=>{
+      if(index > 0){
+        fileName += ","
+      }
+      fileName += this.autogrowing.analytics.metaData.names[ou];
+    })
+
+    this.autogrowing.analytics.metaData.pe.forEach((pe,index)=>{
+      if(this.autogrowing.analytics.metaData.names[pe]){
+        if(index > 0){
+          fileName += ","
+        }
+        fileName += this.autogrowing.analytics.metaData.names[pe];
+      }
+    })
+    fileName += " downloaded_on_" + dateStr + "-" + monthStr + "-" + date.getFullYear();
+    this.excelDownloadService.download(fileName,this.autogrowingTable.nativeElement);
   }
 }
