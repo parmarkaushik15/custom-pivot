@@ -3,7 +3,13 @@
 </div>
 <table [ngClass]="{'show':show,'hide':!show}" class="table table-bordered table-responsive table-condensed custom-table"
        *ngIf="tableObject.rows.length != 0">
-  <thead>
+  <thead class="table-title">
+  <!--title-->
+  <tr class="table-title">
+    <th [attr.colspan]="tableObject.headers[0].items.length">
+      <h4 style="margin: 0px" class="text-center">{{ title }} </h4>
+    </th>
+  </tr>
   <tr *ngFor="let header of tableObject.headers; let j = index">
     <!--<th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">-->
       <!--{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}-->

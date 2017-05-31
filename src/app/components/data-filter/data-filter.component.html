@@ -48,7 +48,7 @@
           <ul class="list-unstyled metadata-list scrollable">
             <li *ngIf="listItems.length == 0">Loading...</li>
             <li *ngFor="let item of listItems | fuseSearch:searchOptions:listchanges | paginate: { id: 'foo',
-                                                      itemsPerPage: 100,
+                                                      itemsPerPage: 40,
                                                       currentPage: p };trackBy: trackByFn "
                 (click)="addSelected(item)"
                 [ngClass]="{'hiddenTree': inSelected(item, selectedItems)}"
@@ -61,7 +61,9 @@
                                     maxSize="0">
               </pagination-controls>
             </li>
+
           </ul>
+
         </td>
         <td width="50%">
           <ul class="list-unstyled metadata-list scrollable">

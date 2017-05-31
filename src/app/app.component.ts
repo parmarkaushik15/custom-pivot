@@ -117,6 +117,7 @@ export class AppComponent implements OnInit{
       this.store.dispatch( new AddFunctionsAction(val) );
 
     });
+    // this.analyticsService.addRowSubtotal("");
   }
 
   setSelectedOrgunit( value ){
@@ -179,7 +180,7 @@ export class AppComponent implements OnInit{
         this.analyticsService.analytics_lists.push(analytics)
         const tableObject = this.visualization.drawTable(analytics, table_structure);
         this.showTable = true;
-        this.tableObject = tableObject;
+        this.tableObject = this.analyticsService.addRowTotal(tableObject);
         this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
       }
     }

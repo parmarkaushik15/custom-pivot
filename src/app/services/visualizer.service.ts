@@ -717,7 +717,7 @@ export class VisualizerService {
           };
           for (let val of rowItem) {
             if (counter === 0 || counter % val.dimensions.col_span === 0) {
-              item.items.push({'name': val.uid, 'val': val.name, 'row_span': val.dimensions.col_span});
+              item.items.push({'name': val.uid, 'val': val.name, 'row_span': val.dimensions.col_span,header:true});
             }
           }
           for (let colItem of table_columns_array) {

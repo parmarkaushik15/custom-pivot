@@ -54,7 +54,15 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
 export class AutoGrowingComponent implements OnInit {
 
   @Input() autogrowing:any = null;
-  tableObject:any = null
+  @Input() dataItems:any = null;
+  @Input() layoutItems:any = {
+    rows: ['pe'],
+    columns: ['dx'],
+    filters: ['ou'],
+    excluded:['co']
+  };
+  @Input() title:string = "";
+  tableObject:any = null;
 
   constructor(private visualization:VisualizerService) {
 

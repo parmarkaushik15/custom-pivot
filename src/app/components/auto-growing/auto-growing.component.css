@@ -1,6 +1,10 @@
 .show{
-  display:block;
+  /*display:block;*/
 }
 .hide{
   display:none;
+}
+
+.table-title{
+  background-color: rgb(199,213,233);
 }
