@@ -1,12 +1,27 @@
 <div [ngClass]="{'show':!show,'hide':show}" style="text-align: center;">
   <img src="assets/img/balls-5.svg"/>
+  Merging Autogrowing
 </div>
 <table [ngClass]="{'show':show,'hide':!show}" class="table table-bordered table-responsive table-condensed custom-table"
        *ngIf="tableObject.rows.length != 0">
   <thead>
-  <tr *ngFor="let header of tableObject.headers; let j = index">
+  <tr class="table-title">
+    <th colspan="100%">
+      <h4 class="text-center" style="margin: 0px">
+        <span *ngFor="let ou of autogrowing.analytics.metaData.ou; let i = index">
+          <span *ngIf="autogrowing.analytics.metaData.names[ou]"><span *ngIf="i > 0">,</span>{{autogrowing.analytics.metaData.names[ou]}}</span>
+        </span>
+       <span *ngIf="autogrowing.analytics.metaData.pe.length > 0">
+         <span *ngFor="let pe of autogrowing.analytics.metaData.pe; let i = index">
+           <span *ngIf="autogrowing.analytics.metaData.names[pe]"><span *ngIf="i > 0">,</span>{{autogrowing.analytics.metaData.names[pe]}}</span>
+         </span>
+       </span>
+      </h4>
+    </th>
+  </tr>
+  <tr class="header-column" *ngFor="let header of tableObject.headers; let j = index">
     <!--<th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">-->
-      <!--{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}-->
+    <!--{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}-->
     <!--</th>-->
     <th *ngFor="let header_column of header.items" [colSpan]="header_column.span"
         style="text-align: center">
@@ -21,10 +36,14 @@
   </tbody>
   <tbody *ngIf="$scope.config.groupBy" #tbody>
   <tr *ngFor="let event of $scope.data.events">
-    <ng-template ngFor let-dataElement [ngForOf]="$scope.data.dataElements"  let-i="index">
-      <td [ngClass]="{'hide-text':checkHide(index)}" style="border:1px solid lightgrey" *ngIf="event[dataElement.name] != undefined && dataElement.valueType != 'NA'">{{event[dataElement.name] | removeNaN:dataElement}}</td>
+    <ng-template ngFor let-dataElement [ngForOf]="$scope.data.dataElements" let-i="index">
+      <td [ngClass]="{'hide-text':checkHide(index)}" style="border:1px solid lightgrey"
+          *ngIf="event[dataElement.name] != undefined && dataElement.valueType != 'NA'">{{event[dataElement.name] |
+        removeNaN:dataElement}}
+      </td>
     </ng-template>
-    <td *ngIf="$scope.config.na">N/A</td><td *ngIf="$scope.config.na">N/A</td>
+    <td *ngIf="$scope.config.na">N/A</td>
+    <td *ngIf="$scope.config.na">N/A</td>
   </tr>
   </tbody>
 </table>
