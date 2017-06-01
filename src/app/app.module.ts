@@ -39,6 +39,7 @@ import { AutoGrowingComponent } from './components/auto-growing/auto-growing.com
 import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
 import { OptionsComponent } from './components/options/options.component';
 import { OrderByPipe } from './pipes/order-by.pipe';
+import {ExcelDownloadService} from "./services/excel-download.service";
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { OrderByPipe } from './pipes/order-by.pipe';
   ],
   providers: [
     OrgUnitService,
+    ExcelDownloadService,
     LocalStorageService,
     DataService,
     VisualizerService,

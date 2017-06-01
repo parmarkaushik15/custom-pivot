@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, ViewChild,ElementRef} from '@angular/core';
 import {VisualizerService} from "../../services/visualizer.service";
-declare var $:any, HTMLCollection:any, Element:any, NodeList:any;
+import {ExcelDownloadService} from "../../services/excel-download.service";
+declare var $:any, HTMLCollection:any, Element:any, NodeList:any,unescape:any;
 
 HTMLCollection.prototype.sort = function (callback) {
   //this.slice(callback);
@@ -64,11 +65,12 @@ export class AutoGrowingComponent implements OnInit {
   @Input() title:string = "";
   tableObject:any = null;
 
-  constructor(private visualization:VisualizerService) {
+  constructor(private visualization:VisualizerService,private excelDownloadService:ExcelDownloadService) {
 
   }
 
   @ViewChild('tbody') private tbody:ElementRef;
+  @ViewChild('autogrowingTable') private autogrowingTable:ElementRef;
 
   ngOnInit() {
     let table_structure = {
@@ -110,6 +112,7 @@ export class AutoGrowingComponent implements OnInit {
 
   $scope:any;
   mergingCallBack() {
+    console.log()
     this.$scope = this.autogrowing.analytics.merge;
     this.controller()
     return ()=> {
@@ -158,7 +161,6 @@ export class AutoGrowingComponent implements OnInit {
         if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
 
           this.elementFind(elem,i,(index, el)=> {
-            console.log("The Index:",this.$scope.config.programId,index,previous,$(el).text().trim().toLowerCase(),JSON.stringify(firstColumnBrakes));
             if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
               $(el).addClass('hidden');
               cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
@@ -337,7 +339,6 @@ export class AutoGrowingComponent implements OnInit {
     })
   }
   controller() {
-    console.log("Config:",this.$scope.config);
     this.$scope.data = {
       dataElements: [],
       events: []
@@ -506,5 +507,35 @@ export class AutoGrowingComponent implements OnInit {
     }else{
       return false;
     }
+  }
+
+  downloadExcel(){
+    var date = new Date();
+    var dateStr:any = date.getDate();
+    if(dateStr < 10){
+      dateStr = "0" + dateStr;
+    }
+    var monthStr:any = date.getMonth() + 1;
+    if(monthStr < 10){
+      monthStr = "0" + monthStr;
+    }
+    let fileName = this.autogrowing.analytics.metaData.names[this.$scope.config.programId] + " ";
+    this.autogrowing.analytics.metaData.ou.forEach((ou,index)=>{
+      if(index > 0){
+        fileName += ","
+      }
+      fileName += this.autogrowing.analytics.metaData.names[ou];
+    })
+
+    this.autogrowing.analytics.metaData.pe.forEach((pe,index)=>{
+      if(this.autogrowing.analytics.metaData.names[pe]){
+        if(index > 0){
+          fileName += ","
+        }
+        fileName += this.autogrowing.analytics.metaData.names[pe];
+      }
+    })
+    fileName += " downloaded_on_" + dateStr + "-" + monthStr + "-" + date.getFullYear();
+    this.excelDownloadService.download(fileName,this.autogrowingTable.nativeElement);
   }
 }
