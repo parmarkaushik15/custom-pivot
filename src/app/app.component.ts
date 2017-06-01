@@ -127,6 +127,7 @@ export class AppComponent implements OnInit{
   }
 
   setOrgunitModel( value ){
+    // console.log(value)
     this.store.dispatch( new SetOrgunitModelAction( value ) );
   }
 

@@ -81,6 +81,7 @@ export class OrgUnitFilterComponent implements OnInit {
     }
   }
   ngOnInit() {
+    console.log("orgunitMOdel",this.orgunit_model)
     if(this.orgunit_tree_config.multiple) {
       if(this.orgunit_tree_config.multiple_key == "none"){
         let actionMapping:IActionMapping = {
@@ -146,6 +147,7 @@ export class OrgUnitFilterComponent implements OnInit {
               userOrgunit => {
                 let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
                 this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
+                console.log(this.orgunit_model.user_orgunits)
                 this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
                 if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
                   this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
@@ -280,12 +282,14 @@ export class OrgUnitFilterComponent implements OnInit {
   // set selected groups
   setSelectedGroups( selected_groups ){
     this.orgunit_model.selected_groups = selected_groups;
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
   // set selected groups
   setSelectedUserOrg( selected_user_orgunit ){
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
     this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
   // set selected groups
