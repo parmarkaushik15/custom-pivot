@@ -54,7 +54,7 @@ export class DataService {
   }
 
   getOrganisationUnits(): Observable<OrganisationUnit[]>{
-    return this.http.get("../../../api/organisationUnits.json?fields=id,name,children,parent&paging=false")
+    return this.http.get("../../../api/organisationUnits.json?fields=id,name,children,parent,path&paging=false")
       .map(res => res.json().organisationUnits || [])
   }
 
