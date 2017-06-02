@@ -4,10 +4,10 @@
 </div>
 <button class="btn btn-default btn-sm pull-right" style="margin-bottom: 10px" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel </button>
 <table #autogrowingTable [ngClass]="{'show':show,'hide':!show}" class="table"
-       *ngIf="tableObject.rows.length != 0">
+       *ngIf="$scope.data.dataElements.length != 0">
   <thead>
   <tr class="table-title">
-    <th  [colSpan]="tableObject.headers[0].items.length">
+    <th  [colSpan]="$scope.data.dataElements.length">
       <h4 class="text-center" style="margin: 0px">
         <span *ngFor="let ou of autogrowing.analytics.metaData.ou; let i = index">
           <span *ngIf="autogrowing.analytics.metaData.names[ou]"><span *ngIf="i > 0">,</span>{{autogrowing.analytics.metaData.names[ou]}}</span>
@@ -20,19 +20,28 @@
       </h4>
     </th>
   </tr>
-  <tr class="header-column" *ngFor="let header of tableObject.headers; let j = index">
-    <!--<th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">-->
-    <!--{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}-->
-    <!--</th>-->
+  <!--<tr class="header-column" *ngFor="let header of tableObject.headers; let j = index">
+    &lt;!&ndash;<th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">&ndash;&gt;
+    &lt;!&ndash;{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}&ndash;&gt;
+    &lt;!&ndash;</th>&ndash;&gt;
     <th *ngFor="let header_column of header.items" [colSpan]="header_column.span"
         style="text-align: center">
       {{ header_column.name }}
+    </th>
+  </tr>-->
+  <tr class="header-column">
+    <!--<th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">-->
+    <!--{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}-->
+    <!--</th>-->
+    <th *ngFor="let dataElement of $scope.data.dataElements"
+        style="text-align: center">
+      {{ dataElement.name }}
     </th>
   </tr>
   </thead>
   <tbody *ngIf="!$scope.config.groupBy" #tbody>
   <tr *ngFor="let event of $scope.data.events">
-    <td *ngFor="let dataElement of data.dataElements">{{event[dataElement.name]}}</td>
+    <td *ngFor="let dataElement of $scope.data.dataElements">{{event[dataElement.name]}}</td>
   </tr>
   </tbody>
   <tbody *ngIf="$scope.config.groupBy" #tbody>

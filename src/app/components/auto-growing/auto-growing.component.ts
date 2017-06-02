@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, ViewChild,ElementRef} from '@angular/core';
 import {VisualizerService} from "../../services/visualizer.service";
 import {ExcelDownloadService} from "../../services/excel-download.service";
+import {LocalStorageService} from "../../services/local-storage.service";
 declare var $:any, HTMLCollection:any, Element:any, NodeList:any,unescape:any;
 
 HTMLCollection.prototype.sort = function (callback) {
@@ -65,7 +66,7 @@ export class AutoGrowingComponent implements OnInit {
   @Input() title:string = "";
   tableObject:any = null;
 
-  constructor(private visualization:VisualizerService,private excelDownloadService:ExcelDownloadService) {
+  constructor(private localDbService: LocalStorageService,private excelDownloadService:ExcelDownloadService) {
 
   }
 
@@ -85,11 +86,56 @@ export class AutoGrowingComponent implements OnInit {
       displayList: false
     };
     if (this.autogrowing) {
-      this.tableObject = this.visualization.drawAutogrowingTable(this.autogrowing.analytics, table_structure);
-      setTimeout(this.mergingCallBack())
+      this.autogrowing.analytics.merge.config.dataElements.unshift("eventdate");
+      this.autogrowing.analytics.merge.config.groupBy.unshift("eventdate");
+      this.autogrowing.analytics.merge.config.dataElementsDetails.unshift({id:"eventdate",name:"Period",valueType:"TEXT",aggregationType: "NONE"});
+
+      this.autogrowing.analytics.merge.config.dataElements.unshift("ouname");
+      this.autogrowing.analytics.merge.config.groupBy.unshift("ouname");
+      this.autogrowing.analytics.merge.config.dataElementsDetails.unshift({id:"ouname",name:"Organisation unit name",valueType:"TEXT",aggregationType: "NONE"});
+      this.autogrowing.analytics.merge.config.dataElementsDetails.forEach(function(dataElementDetails:any,index){
+        dataElementDetails.sortOrder = index;
+      })
+
+      this.$scope = this.autogrowing.analytics.merge;
+      this.controller();
+      var orgUnitIds:Array<any> = [];
+      this.autogrowing.analytics.merge.config.data.forEach((event)=>{
+        if(orgUnitIds.indexOf(event["Organisation unit"]) == -1){
+          orgUnitIds.push(event["Organisation unit"]);
+        }
+      })
+      console.log(JSON.stringify(this.autogrowing.analytics.merge.config.data));
+      this.localDbService.getByKeys('organisation-units',orgUnitIds).subscribe((results)=>{
+        console.log("Results:",results);
+        var newData = []
+        this.autogrowing.analytics.metaData.ou.forEach((ou)=>{
+          this.autogrowing.analytics.merge.config.data.forEach((event)=>{
+            results.some((eventOU)=>{
+              if(event["Organisation unit"] == eventOU.id){
+                if(eventOU.path.indexOf(ou) > -1){
+                  console.log("Isue:",this.autogrowing.analytics.metaData.names[ou]);
+                  event["Period"] = event["Event date"]
+                  event["Organisation unit name"] = this.autogrowing.analytics.metaData.names[ou];
+                  newData.push(event);
+                }
+                return true;
+              }
+            })
+          })
+        })
+        this.autogrowing.analytics.merge.config.data = newData;
+        //this.mergingCallBack()();
+        setTimeout(this.mergingCallBack())
+      })
+      //this.tableObject = this.visualization.drawAutogrowingTable(this.autogrowing.analytics, table_structure);
+      //setTimeout(this.mergingCallBack())
     }
   }
 
+  getOrganisationUnits(ids){
+
+  }
   dynamicSort(property) {
     return (obj1, obj2) =>{
       return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
@@ -112,9 +158,7 @@ export class AutoGrowingComponent implements OnInit {
 
   $scope:any;
   mergingCallBack() {
-    console.log()
-    this.$scope = this.autogrowing.analytics.merge;
-    this.controller()
+
     return ()=> {
       let elem = this.tbody.nativeElement;
       let dataElementIndexes = [];

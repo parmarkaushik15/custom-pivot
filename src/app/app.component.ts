@@ -111,9 +111,9 @@ export class AppComponent implements OnInit{
     //set initial layout
     this.dataService.getDataFromLocalDatabase(ORGANISATION_UNIT_KEY).subscribe();
     this.currentLayout = this.layout;
-    this.dataService.getMapping().subscribe((val) => {
+    /*this.dataService.getMapping().subscribe((val) => {
       this.store.dispatch( new AddFunctionMappingAction(val) );
-    });
+    });*/
 
     this.dataService.getFunctions().subscribe((val) => {
       this.store.dispatch( new AddFunctionsAction(val) );

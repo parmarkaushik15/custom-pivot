@@ -135,6 +135,19 @@ export class LocalStorageService {
     });
   }
 
+  getByKeys( table: string, keys:Array<any> ): Observable<any> {
+    return Observable.create(observer => {
+      this._initiateStoreObjects().then(() => {
+        this.db.getByKeys(table, keys).then((items) => {
+          observer.next(items);
+          observer.complete();
+        }, (error) => {
+          observer.error(error);
+        });
+      });
+    });
+  }
+
 
   /**
    * get all items in a store
