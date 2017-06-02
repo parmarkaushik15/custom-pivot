@@ -87,4 +87,42 @@ export class PeriodService {
     }
     return name;
   }
+  getPeriodType(period){if(period.indexOf("Q") > -1){
+      return "Quarterly";
+    }else if(period.indexOf("July") > -1){
+      return "FinancialJuly";
+    }else{
+      return "Monthly";
+    }
+  }
+  isDateInPeriod(date,period){
+    var theDate = new Date(date);
+    var periodStartDate = new Date();
+    var periodEndDate = new Date();
+
+    if(period.indexOf("Q") > -1){
+      periodStartDate = new Date(parseInt(period.substr(0,4)),(parseInt(period.substr(5))-1) * 3);
+      periodEndDate = new Date(parseInt(period.substr(0,4)),((parseInt(period.substr(5))-1) * 3) + 3,0)
+    }else if(period.indexOf("July") > -1){
+      periodStartDate = new Date(parseInt(period.substr(0,4)),6);
+      periodEndDate = new Date(parseInt(period.substr(0,4)) + 1,6,0)
+    }else{
+      periodStartDate = new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4))-1);
+      periodEndDate = new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4)),0)
+    }
+
+    return (periodStartDate.getTime() <= theDate.getTime() && periodEndDate.getTime() >= theDate.getTime());
+  }
+  convertDateToPeriod(date,periodType){
+    var period = date;
+    var theDate = new Date(date);
+    if(periodType == "Quarterly"){
+      period = theDate.getFullYear() + "Q" + Math.ceil((theDate.getMonth() + 1)/3)
+    }else if(periodType == "FinancialJuly"){
+      period =  (theDate.getMonth() < 6? theDate.getFullYear() - 1:theDate.getFullYear())+ "July"
+    }else if(periodType == "Monthly"){
+      period =  theDate.getFullYear() + (theDate.getMonth() < 9? "0":"")+ theDate.getMonth() + 1;
+    }
+    return period;
+  }
 }

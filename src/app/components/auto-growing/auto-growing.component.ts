@@ -106,20 +106,19 @@ export class AutoGrowingComponent implements OnInit {
           orgUnitIds.push(event["Organisation unit"]);
         }
       })
-      console.log(JSON.stringify(this.autogrowing.analytics.merge.config.data));
       this.localDbService.getByKeys('organisation-units',orgUnitIds).subscribe((results)=>{
-        console.log("Results:",this.autogrowing.analytics.metaData);
         var newData = [];
         this.autogrowing.analytics.metaData.pe.forEach((pe)=>{
           this.autogrowing.analytics.metaData.names[pe] = this.periodService.getPeriodName(pe);
-          console.log("Wowo:",this.autogrowing.analytics.metaData.names[pe],this.autogrowing.analytics.metaData.ou,this.autogrowing.analytics.merge.config.data);
           this.autogrowing.analytics.metaData.ou.forEach((ou)=>{
             this.autogrowing.analytics.merge.config.data.forEach((event)=>{
+              //var event = Object.assign({}, e)
               results.some((eventOU)=>{
-                if(event["Organisation unit"] == eventOU.id){
+                if(event["Organisation unit"] == eventOU.id && this.periodService.isDateInPeriod(event["Event date"],pe)){
                   if(eventOU.path.indexOf(ou) > -1){
-                    console.log("Isue:",this.autogrowing.analytics.metaData.names[ou]);
-                    event["Period"] = event["Event date"]
+                    console.log(event["Event date"],this.periodService.getPeriodName(this.periodService.convertDateToPeriod(event["Event date"],this.periodService.getPeriodType(pe))));
+                    event["Period"] = this.periodService.getPeriodName(this.periodService.convertDateToPeriod(event["Event date"],this.periodService.getPeriodType(pe)));
+                    //event["Period"] = event["Event date"];
                     event["Organisation unit name"] = this.autogrowing.analytics.metaData.names[ou];
                     newData.push(event);
                   }
@@ -143,6 +142,17 @@ export class AutoGrowingComponent implements OnInit {
   }
   dynamicSort(property) {
     return (obj1, obj2) =>{
+      if(!obj1.children[property] && !obj2.children[property]){
+        console.log("0",property,obj1);
+        console.log("0",property,obj2);
+        return 0;
+      }else if(!obj1.children[property]){
+        console.log("-1",property,obj1);
+        return -1;
+      }else if(!obj2.children[property]){
+        console.log("1",property,obj2);
+        return 1;
+      }
       return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
         : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
     }
