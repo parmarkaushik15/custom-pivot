@@ -40,6 +40,7 @@ import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
 import { OptionsComponent } from './components/options/options.component';
 import { OrderByPipe } from './pipes/order-by.pipe';
 import {ExcelDownloadService} from "./services/excel-download.service";
+import {PeriodService} from "./services/period.service";
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import {ExcelDownloadService} from "./services/excel-download.service";
     AnalyticsService,
     Constants,
     AnalyticscreatorService,
-    HttpClientService
+    HttpClientService,
+    PeriodService
   ],
   bootstrap: [
     AppComponent,

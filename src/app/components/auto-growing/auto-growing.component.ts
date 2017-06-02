@@ -2,6 +2,7 @@ import {Component, OnInit, Input, ViewChild,ElementRef} from '@angular/core';
 import {VisualizerService} from "../../services/visualizer.service";
 import {ExcelDownloadService} from "../../services/excel-download.service";
 import {LocalStorageService} from "../../services/local-storage.service";
+import {PeriodService} from "../../services/period.service";
 declare var $:any, HTMLCollection:any, Element:any, NodeList:any,unescape:any;
 
 HTMLCollection.prototype.sort = function (callback) {
@@ -66,7 +67,7 @@ export class AutoGrowingComponent implements OnInit {
   @Input() title:string = "";
   tableObject:any = null;
 
-  constructor(private localDbService: LocalStorageService,private excelDownloadService:ExcelDownloadService) {
+  constructor(private localDbService: LocalStorageService,private excelDownloadService:ExcelDownloadService,private periodService:PeriodService) {
 
   }
 
@@ -107,20 +108,24 @@ export class AutoGrowingComponent implements OnInit {
       })
       console.log(JSON.stringify(this.autogrowing.analytics.merge.config.data));
       this.localDbService.getByKeys('organisation-units',orgUnitIds).subscribe((results)=>{
-        console.log("Results:",results);
-        var newData = []
-        this.autogrowing.analytics.metaData.ou.forEach((ou)=>{
-          this.autogrowing.analytics.merge.config.data.forEach((event)=>{
-            results.some((eventOU)=>{
-              if(event["Organisation unit"] == eventOU.id){
-                if(eventOU.path.indexOf(ou) > -1){
-                  console.log("Isue:",this.autogrowing.analytics.metaData.names[ou]);
-                  event["Period"] = event["Event date"]
-                  event["Organisation unit name"] = this.autogrowing.analytics.metaData.names[ou];
-                  newData.push(event);
+        console.log("Results:",this.autogrowing.analytics.metaData);
+        var newData = [];
+        this.autogrowing.analytics.metaData.pe.forEach((pe)=>{
+          this.autogrowing.analytics.metaData.names[pe] = this.periodService.getPeriodName(pe);
+          console.log("Wowo:",this.autogrowing.analytics.metaData.names[pe],this.autogrowing.analytics.metaData.ou,this.autogrowing.analytics.merge.config.data);
+          this.autogrowing.analytics.metaData.ou.forEach((ou)=>{
+            this.autogrowing.analytics.merge.config.data.forEach((event)=>{
+              results.some((eventOU)=>{
+                if(event["Organisation unit"] == eventOU.id){
+                  if(eventOU.path.indexOf(ou) > -1){
+                    console.log("Isue:",this.autogrowing.analytics.metaData.names[ou]);
+                    event["Period"] = event["Event date"]
+                    event["Organisation unit name"] = this.autogrowing.analytics.metaData.names[ou];
+                    newData.push(event);
+                  }
+                  return true;
                 }
-                return true;
-              }
+              })
             })
           })
         })
