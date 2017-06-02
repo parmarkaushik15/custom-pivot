@@ -1,5 +1,5 @@
 <div class="container-fluid" style="border: 1px solid rgba(0,0,0,0.2); padding-left: 3px;padding-right: 3px">
-    <div class="data-filter  left-block" [@heroState]="uiState.dataAreaOpenState" >
+    <div class="left-block col-xs-4" [@heroState]="uiState.dataAreaOpenState" >
       <nav class="navbar navbar-default top-bar" style="margin-bottom: 5px">
         <div class="container-fluid" style="padding-left: 3px;padding-right: 3px">
           <div class="col-sm-10" style="padding: 0px">
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="data-view right-block" [ngClass]="{'data-view-full': !uiState.dataAreaOpen}">
+    <div class="right-block col-xs-8" [ngClass]="{'col-xs-12': !uiState.dataAreaOpen}">
       <nav class="navbar navbar-default top-bar">
         <div class="container-fluid" style="padding-top: 4px;padding-left: 3px;padding-right: 3px">
           <div class="navbar-header">
