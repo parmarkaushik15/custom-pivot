@@ -116,7 +116,6 @@ export class AutoGrowingComponent implements OnInit {
               results.some((eventOU)=>{
                 if(event["Organisation unit"] == eventOU.id && this.periodService.isDateInPeriod(event["Event date"],pe)){
                   if(eventOU.path.indexOf(ou) > -1){
-                    console.log(event["Event date"],this.periodService.getPeriodName(this.periodService.convertDateToPeriod(event["Event date"],this.periodService.getPeriodType(pe))));
                     event["Period"] = this.periodService.getPeriodName(this.periodService.convertDateToPeriod(event["Event date"],this.periodService.getPeriodType(pe)));
                     //event["Period"] = event["Event date"];
                     event["Organisation unit name"] = this.autogrowing.analytics.metaData.names[ou];
@@ -143,14 +142,10 @@ export class AutoGrowingComponent implements OnInit {
   dynamicSort(property) {
     return (obj1, obj2) =>{
       if(!obj1.children[property] && !obj2.children[property]){
-        console.log("0",property,obj1);
-        console.log("0",property,obj2);
         return 0;
       }else if(!obj1.children[property]){
-        console.log("-1",property,obj1);
         return -1;
       }else if(!obj2.children[property]){
-        console.log("1",property,obj2);
         return 1;
       }
       return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
