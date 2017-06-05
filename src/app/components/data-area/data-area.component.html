@@ -1,5 +1,5 @@
 <div class="loadingMessage" *ngIf="uiState.loadingData" >
-  <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px">{{ uiState.loadingDataMessage }}
+  <img src="assets/img/balls-5.svg" style="height: 40px; width: 40px">{{ uiState.loadingDataMessage }}
 </div>
 <p *ngIf="!allDimensionAvailable"> Please make sure you have selected at least data, period, and Admin Unit</p>
 <div class="col-md-12" style="padding-left: 10px;" *ngIf="!showTable">
@@ -65,7 +65,7 @@
 
 <!--loading autogrowing-->
 <div class="loadingAutogrowingMessage" *ngIf="loadingAutogrowing && !uiState.loadingData" >
-  <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px"> Loading Auto growing data
+  <img src="assets/img/balls-5.svg" style="height: 40px; width: 40px"> Loading Auto growing data
 </div>
 
 <div *ngIf="showAutoGrowingTable">
