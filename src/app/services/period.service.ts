@@ -62,35 +62,41 @@ export class PeriodService {
     return periods;
   }
   getPeriodName(period){
-    var name = "";
+    var name = "",periodType="",year="";
     if(period.indexOf("Q") > -1){
-      var quarters = this.getPeriodArray("Quarterly",period.substr(0,4));
-      quarters.forEach((quarter)=>{
-        if(quarter.id == period){
-          name = quarter.name;
-        }
-      })
+      periodType = "Quarterly";
+      year = period.substr(0,4);
     }else if(period.indexOf("July") > -1){
-      var julyYears = this.getPeriodArray("FinancialJuly",period.substr(0,4));
-      julyYears.forEach((julyYear)=>{
-        if(julyYear.id == period){
-          name = julyYear.name;
-        }
-      })
+      periodType = "FinancialJuly";
+      year = period.substr(0,4);
+    }else if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH"].indexOf(period) > -1 ){
+      periodType = "RelativeMonth";
+      year = period;
+    }else if(["THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS"].indexOf(period) > -1 ){
+      periodType = "RelativeQuarter";
+      year = period;
+    }else if(["THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(period) > -1 ){
+      periodType = "RelativeFinancialYear";
+      year = period;
     }else{
-      var months = this.getPeriodArray("Monthly",period.substr(0,4));
-      months.forEach((month)=>{
-        if(month.id == period){
-          name = month.name;
-        }
-      })
+      periodType = "Monthly";
+      year = period.substr(0,4);
     }
+    var name = "";
+    this.getPeriodArray(periodType,year).forEach((p)=>{
+      if(p.id == period){
+        name = p.name;
+      }
+    })
     return name;
   }
-  getPeriodType(period){if(period.indexOf("Q") > -1){
+  getPeriodType(period){
+    if(period.indexOf("Q") > -1){
       return "Quarterly";
     }else if(period.indexOf("July") > -1){
       return "FinancialJuly";
+    }else if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH","THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS","THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(period) > -1){
+      return period;
     }else{
       return "Monthly";
     }
@@ -106,11 +112,43 @@ export class PeriodService {
     }else if(period.indexOf("July") > -1){
       periodStartDate = new Date(parseInt(period.substr(0,4)),6);
       periodEndDate = new Date(parseInt(period.substr(0,4)) + 1,6,0)
+    }else if(period == "LAST_12_MONTHS"){
+      periodStartDate = new Date((new Date()).getFullYear(),(new Date()).getMonth() - 12,1);
+      periodEndDate = new Date((new Date()).getFullYear(),(new Date()).getMonth(),0)
+    }else if(period == "LAST_6_MONTHS"){
+      periodStartDate = new Date((new Date()).getFullYear(),(new Date()).getMonth() - 6,1);
+      periodEndDate = new Date((new Date()).getFullYear(),(new Date()).getMonth(),0)
+    }else if(period == "LAST_3_MONTHS"){
+      periodStartDate = new Date((new Date()).getFullYear(),(new Date()).getMonth() - 3,1);
+      periodEndDate = new Date((new Date()).getFullYear(),(new Date()).getMonth(),0)
+    }else if(period == "LAST_MONTH"){
+      periodStartDate = new Date((new Date()).getFullYear(),(new Date()).getMonth() - 1,1);
+      periodEndDate = new Date((new Date()).getFullYear(),(new Date()).getMonth(),0)
+    }else if(period == "THIS_MONTH"){
+      periodStartDate = new Date((new Date()).getFullYear(),(new Date()).getMonth(),1);
+      periodEndDate = new Date((new Date()).getFullYear(),(new Date()).getMonth() + 1,0)
+    }else if(period == "THIS_QUARTER"){
+      periodStartDate = new Date((new Date()).getFullYear(),(Math.floor((new Date()).getMonth()/3) * 3),1);
+      periodEndDate = new Date((new Date()).getFullYear(),(Math.floor((new Date()).getMonth()/3) * 3) + 3,0);
+    }else if(period == "LAST_QUARTER"){
+      periodStartDate = new Date((new Date()).getFullYear(),((Math.floor((new Date()).getMonth()/3) - 1) * 3),1);
+      periodEndDate = new Date((new Date()).getFullYear(),((Math.floor((new Date()).getMonth()/3) - 1) * 3) + 3,0);
+    }else if(period == "LAST_4_QUARTERS"){
+      periodStartDate = new Date((new Date()).getFullYear(),((Math.floor((new Date()).getMonth()/3) - 4) * 3),1);
+      periodEndDate = new Date((new Date()).getFullYear(),((Math.floor((new Date()).getMonth()/3) - 1) * 3) + 3,0);
+    }else if(period == "THIS_FINANCIAL_YEAR"){
+      periodStartDate = new Date((new Date()).getFullYear() - ((new Date()).getMonth() >= 6?0:1),6,1);
+      periodEndDate = new Date((new Date()).getFullYear() + ((new Date()).getMonth() >= 6?1:0),6,0);
+    }else if(period == "LAST_FINANCIAL_YEAR"){
+      periodStartDate = new Date((new Date()).getFullYear() - ((new Date()).getMonth() >= 6?0:1) - 1,6,1);
+      periodEndDate = new Date((new Date()).getFullYear() + ((new Date()).getMonth() >= 6?1:0) - 1,6,0);
+    }else if(period == "LAST_5_FINANCIAL_YEARS"){
+      periodStartDate = new Date((new Date()).getFullYear() - ((new Date()).getMonth() >= 6?0:1) - 5,6,1);
+      periodEndDate = new Date((new Date()).getFullYear() + ((new Date()).getMonth() >= 6?1:0) - 5,6,0);
     }else{
       periodStartDate = new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4))-1);
       periodEndDate = new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4)),0)
     }
-
     return (periodStartDate.getTime() <= theDate.getTime() && periodEndDate.getTime() >= theDate.getTime());
   }
   convertDateToPeriod(date,periodType){
@@ -122,6 +160,8 @@ export class PeriodService {
       period =  (theDate.getMonth() < 6? theDate.getFullYear() - 1:theDate.getFullYear())+ "July"
     }else if(periodType == "Monthly"){
       period =  theDate.getFullYear() + (theDate.getMonth() < 9? "0":"")+ theDate.getMonth() + 1;
+    }else if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH","THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS","THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(periodType) > -1){
+      period =  periodType;
     }
     return period;
   }
