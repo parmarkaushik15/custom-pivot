@@ -352,9 +352,9 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   getFunctions(selections){
     let mappings = [];
     selections.forEach((value) => {
-      let mapped = _.find(this.functionMappings, ['id', value.id]);
-      if(mapped){
-        mappings.push(mapped)
+
+      if(_.includes(this.functionMappings,value.id )){
+        mappings.push(value.id)
       }
     });
     return mappings;

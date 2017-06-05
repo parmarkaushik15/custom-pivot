@@ -111,7 +111,7 @@ export class AppComponent implements OnInit{
     //set initial layout
     this.dataService.getDataFromLocalDatabase(ORGANISATION_UNIT_KEY).subscribe();
     this.currentLayout = this.layout;
-    this.dataService.getMapping().subscribe((val) => {
+    this.dataService.getAllMappings().subscribe((val) => {
       this.store.dispatch( new AddFunctionMappingAction(val) );
     });
 
@@ -140,8 +140,9 @@ export class AppComponent implements OnInit{
     }
     if( dimensions.data.need_functions.length > 0 ) {
       let counter = 0;
-      dimensions.data.need_functions.forEach( (value) => {
-
+      dimensions.data.need_functions.forEach( (mapping) => {
+        console.log(mapping)
+        this.dataService.getMapping(mapping).subscribe( (value) => {
           // Constructing analytics parameters to pass on the function call
           let parameters = {
             dx: value.id,
@@ -149,7 +150,7 @@ export class AppComponent implements OnInit{
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-              // console.log(results);
+
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
@@ -168,14 +169,13 @@ export class AppComponent implements OnInit{
               console.log('progress');
             }
           };
-          // check if the data element is in function and if so return the mapping object
-          let mapped = _.find(this.mappings, ['id', value.id]);
-          if (mapped) {
+          console.log(value)
             // If there is a function for a data find the function and run it.
-            let use_function = _.find(this.functions, ['id', mapped['function']]);
+            let use_function = _.find(this.functions, ['id', value.function]);
             let execute = Function('parameters', use_function['function']);
             execute(parameters);
-          }
+        })
+
       });
 
     }else{
@@ -274,7 +274,7 @@ export class AppComponent implements OnInit{
     this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
     // this.showTable = false;
     this.showAutoGrowingTable = false;
-    //let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
+    // let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
     this.needForUpdate = false;
     this.analyticsService.prepareAnalytics(this.layout,this.dimensions.dimensions, false).subscribe(analytics => {
       // check first if there is normal data selected

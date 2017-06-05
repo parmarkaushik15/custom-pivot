@@ -92,6 +92,9 @@ export class AnalyticscreatorService {
           }
         })
       }
+      analytic.rows.forEach( (row) => {
+        combined_analytics.rows.push(row);
+      })
     });
     return combined_analytics;
   }
@@ -115,7 +118,8 @@ export class AnalyticscreatorService {
     let url: string = this.constant.api + "analytics.json?";
 
     sourceObject.forEach((item, index) => {
-      let textToUse = (layout.filters.indexOf(item.name) == -1)?"dimension=":"filter=";
+      // let textToUse = (layout.filters.indexOf(item.name) == -1)?"dimension=":"filter=";
+      let textToUse = "dimension=";
       if(item && item.value ){
         url += index > 0 ? '&':'';
         url += textToUse + item.name + ':' + item.value;

@@ -91,21 +91,9 @@ export class DataService {
   getFunctions(){
     return new Observable((observ)=>{
       this.http.get("../../../api/dataStore/functions").map(res=>res.json()).subscribe((results)=>{
-          observ.next(results);
-          observ.complete();
-      },(error)=>{
-
-      })
-    })
-
-  }
-
-  getMapping(){
-    return new Observable((observ)=>{
-      this.http.get("../../../api/dataStore/functionMapper").map(res=>res.json()).subscribe((results)=>{
         let observable = [];
         results.forEach((id)=>{
-          observable.push(this.http.get("../../../api/dataStore/functionMapper/" + id).map(res=>res.json()))
+          observable.push(this.http.get("../../../api/dataStore/functions/" + id).map(res=>res.json()))
         });
         Observable.forkJoin(observable).subscribe((responses:any)=>{
           let functions = [];
@@ -115,13 +103,38 @@ export class DataService {
           observ.next(functions);
           observ.complete();
         },(error)=>{
-          observ.error();
+
         })
+      },(error)=>{
+
+      })
+    })
+
+  }
+
+
+
+  getAllMappings(){
+    return new Observable((observ)=>{
+      this.http.get("../../../api/dataStore/functionMapper").map(res=>res.json()).subscribe((results)=>{
+        observ.next(results);
+        observ.complete();
       },(error)=>{
         observ.error();
       })
     })
 
+  }
+
+  getMapping(id): any{
+    return new Observable((observ)=>{
+      this.http.get("../../../api/dataStore/functionMapper/" + id).map(res=>res.json()).subscribe((results)=>{
+        observ.next(results);
+        observ.complete();
+      },(error)=>{
+        observ.error();
+      })
+    })
   }
 
   /**
