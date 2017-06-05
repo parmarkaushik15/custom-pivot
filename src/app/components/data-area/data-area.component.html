@@ -1,9 +1,7 @@
 <div class="loadingMessage" *ngIf="uiState.loadingData" >
   <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px">{{ uiState.loadingDataMessage }}
 </div>
-<div class="loadingAutogrowingMessage" *ngIf="loadingAutogrowing && !uiState.loadingData" >
-  <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px"> Loading Auto growing data
-</div>
+<p *ngIf="!allDimensionAvailable"> Please make sure you have selected at least data, period, and Admin Unit</p>
 <div class="col-md-12" style="padding-left: 10px;" *ngIf="!showTable">
   <h6>Creating Pivot table</h6>
   <ul class="list-unstyled">
@@ -19,7 +17,8 @@
   </ul>
 </div>
 <small *ngIf="needForUpdate && showTable">There are a changes in selections hit update to see the latest changes.
-  <button class="btn btn-default btn-xs" (click)="needForUpdate = false">cancel</button>
+  <button class="btn btn-default btn-xs" (click)="needForUpdate = false">Hide</button>
+  <button class="btn btn-default btn-xs" (click)="updateTable()">Update</button>
   <!--<button class="btn btn-default btn-xs" (click)="update()">Update</button>-->
 </small>
 
@@ -27,7 +26,7 @@
   <h4 *ngIf="tableObject.rows.length != 0" class="text-center" style="margin-bottom: 0px">{{tableObject?.title}}
     <button class="btn btn-default btn-sm pull-right" style="margin-bottom: 10px" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel </button>
   </h4>
-  <table class="table table-bordered table-responsive table-condensed custom-table"
+  <table #autogrowingTable class="table table-bordered table-responsive table-condensed custom-table"
          *ngIf="tableObject.rows.length != 0">
     <thead>
     <!--title-->
@@ -62,6 +61,11 @@
   </table>
 
 
+</div>
+
+<!--loading autogrowing-->
+<div class="loadingAutogrowingMessage" *ngIf="loadingAutogrowing && !uiState.loadingData" >
+  <img src="../../../assets/img/balls-5.svg" style="height: 40px; width: 40px"> Loading Auto growing data
 </div>
 
 <div *ngIf="showAutoGrowingTable">

@@ -311,7 +311,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     const options = this.getSelectedOption();
     const data = this.getData();
 
-    currentGroupList.push(...[{id:'ALL',name:'ALL'}]);
+    currentGroupList.push(...[{id:'ALL',name:'All Data'}]);
     if(_.includes(options, 'ALL') || _.includes(options,'de')){
 
       currentGroupList.push(...data.dx)

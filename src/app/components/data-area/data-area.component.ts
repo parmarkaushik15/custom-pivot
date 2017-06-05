@@ -1,6 +1,7 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
 import {Angular2Csv} from "angular2-csv";
 import * as _ from "lodash"
+import {ExcelDownloadService} from "../../services/excel-download.service";
 
 @Component({
   selector: 'data-area',
@@ -17,13 +18,16 @@ export class DataAreaComponent implements OnInit {
   @Input() dataItems:any = null;
   @Input() autoGrowingData:any = null;
   @Input() uiState:any = null;
+  @Input() allDimensionAvailable:boolean = false;
+  @Output() onTableUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Input() layoutItems:any = {
     rows: ['pe'],
     columns: ['dx'],
     filters: ['ou'],
     excluded:['co']
   };
-  constructor(  ) { }
+  @ViewChild('autogrowingTable') private autogrowingTable:ElementRef;
+  constructor(private excelDownloadService:ExcelDownloadService  ) { }
 
   ngOnInit() {
     console.log("data-area",this.autoGrowingData)
@@ -133,7 +137,14 @@ export class DataAreaComponent implements OnInit {
 
   }
 
+  updateTable(){
+    this.onTableUpdate.emit("")
+  }
+
   downloadExcel(){
+    this.excelDownloadService.download("My Report",this.autogrowingTable.nativeElement);
+  }
+downloadExcel1(){
     let headers = [];
     let newRows = _.cloneDeep(this.tableObject);
     this.tableObject.headers.forEach((header) => {

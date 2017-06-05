@@ -111,9 +111,9 @@ export class AppComponent implements OnInit{
     //set initial layout
     this.dataService.getDataFromLocalDatabase(ORGANISATION_UNIT_KEY).subscribe();
     this.currentLayout = this.layout;
-    /*this.dataService.getMapping().subscribe((val) => {
+    this.dataService.getMapping().subscribe((val) => {
       this.store.dispatch( new AddFunctionMappingAction(val) );
-    });*/
+    });
 
     this.dataService.getFunctions().subscribe((val) => {
       this.store.dispatch( new AddFunctionsAction(val) );
@@ -149,7 +149,7 @@ export class AppComponent implements OnInit{
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-              console.log(results);
+              // console.log(results);
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
@@ -183,7 +183,11 @@ export class AppComponent implements OnInit{
         this.analyticsService.analytics_lists.push(analytics)
         const tableObject = this.visualization.drawTable(analytics, table_structure);
         this.showTable = true;
-        this.tableObject = this.analyticsService.addRowTotal(tableObject);
+        this.tableObject = tableObject;
+        this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
+        this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
+        this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
+        this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
         this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
       }
     }
@@ -264,20 +268,26 @@ export class AppComponent implements OnInit{
   }
 
 
-
+  allDimensionAvailable = false;
   updateTable() {
     this.tableObject = null;
     this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
     // this.showTable = false;
     this.showAutoGrowingTable = false;
-    let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
+    //let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
     this.needForUpdate = false;
-    this.analyticsService.prepareAnalytics(this.dimensions.dimensions, new_update_available).subscribe(analytics => {
+    this.analyticsService.prepareAnalytics(this.layout,this.dimensions.dimensions, false).subscribe(analytics => {
       // check first if there is normal data selected
       this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
       this.analyticsService.current_normal_analytics = analytics;
+      if(analytics){
+        this.allDimensionAvailable = true;
+      }else{
+        this.allDimensionAvailable = false;
+      }
       let table_structure = {
         showColumnTotal: this.options.column_totals,
+        showColumnSubTotal: this.options.column_sub_total,
         showRowTotal: this.options.hide_empty_row,
         showRowSubtotal: this.options.row_sub_total,
         showDimensionLabels: this.options.dimension_labels,
@@ -319,7 +329,6 @@ export class AppComponent implements OnInit{
 
     let length = newRows.rows[0].items.length;
     newRows.rows.forEach((row) => {
-      console.log(length-row.items.length);
       for(let k=0; k < length-row.items.length; k++){
           row.items.unshift({name:"",value:""})
       }

@@ -11,7 +11,8 @@ export class AnalyticscreatorService {
   public analytics_lists = [];
   constructor(private constant: Constants, private http: Http,) { }
 
-  prepareAnalytics( dimensions:any, repeat:boolean = false ){
+  prepareAnalytics(layout, dimensions:any, repeat:boolean = false ){
+    console.log(layout)
     if( repeat ){
       return Observable.create(observor => {
         observor.next( this.current_normal_analytics );
@@ -19,7 +20,7 @@ export class AnalyticscreatorService {
       })
     }else{
       if(this._checkIfAllDimensionExists(dimensions)){
-        return this.http.get(this._constructAnalyticUrlForExternalSource(dimensions,"skipData=false"))
+        return this.http.get(this._constructAnalyticUrlForExternalSource(layout,dimensions,"skipData=false"))
           .map(res => res.json() || null);
       }else{
         return Observable.create(observor => {
@@ -35,7 +36,7 @@ export class AnalyticscreatorService {
   // a function that will return analytics without data for data drawing.
   prepareEmptyAnalytics( dimensions:any ){
     if(this._checkIfAllDimensionExists(dimensions)){
-      return this.http.get(this._constructAnalyticUrlForExternalSource(dimensions,"skipData=true"))
+      return this.http.get(this._constructAnalyticUrlForExternalSource("",dimensions,"skipData=true"))
         .map(res => res.json() || null);
     }else{
       return Observable.create(observor => {
@@ -110,17 +111,18 @@ export class AnalyticscreatorService {
   }
 
   // prepare analytics from a group of dimension object and specify weather to skip data or not
-  private _constructAnalyticUrlForExternalSource(sourceObject,showData) {
+  private _constructAnalyticUrlForExternalSource(layout,sourceObject,showData) {
     let url: string = this.constant.api + "analytics.json?";
 
     sourceObject.forEach((item, index) => {
+      let textToUse = (layout.filters.indexOf(item.name) == -1)?"dimension=":"filter=";
       if(item && item.value ){
         url += index > 0 ? '&':'';
-        url += 'dimension=' + item.name + ':' + item.value;
+        url += textToUse + item.name + ':' + item.value;
       }
     });
     url += '&displayProperty=NAME&hierarchyMeta=true&'+showData;
-
+    console.log("url:",url);
     return url;
   }
 
