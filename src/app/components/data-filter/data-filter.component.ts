@@ -354,7 +354,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     selections.forEach((value) => {
 
       if(_.includes(this.functionMappings,value.id.replace(".","_") )){
-        mappings.push(value.id)
+        mappings.push(value.id.replace(".","_"))
       }
     });
     return mappings;
