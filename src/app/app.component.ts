@@ -71,7 +71,7 @@ export class AppComponent implements OnInit{
   showTable: boolean = false;
   showAutoGrowingTable: boolean = false;
   loadingAutogrowing: boolean = false;
-
+  selected_orgunit_model:any;
   // top data selection area selection
   showDx:boolean = false;
   showPe:boolean = false;
@@ -122,14 +122,16 @@ export class AppComponent implements OnInit{
     // this.analyticsService.addRowSubtotal("");
   }
 
+  selected_orgunits: any;
   setSelectedOrgunit( value ){
+    this.selected_orgunits = value.items;
     this.store.dispatch( new SelectOrgunitAction( value ) );
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     // this.addAnalytics(this.dimensions)
   }
 
   setOrgunitModel( value ){
-    // console.log(value)
+    this.selected_orgunit_model = value;
     this.store.dispatch( new SetOrgunitModelAction( value ) );
   }
 
@@ -231,7 +233,9 @@ export class AppComponent implements OnInit{
       });
   }
 
+  selected_periods:any;
   setSelectedPeriod( value ){
+    this.selected_periods = value.items;
     this.store.dispatch( new SelectPeriodAction( value ) );
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     // this.addAnalytics(this.dimensions)
@@ -252,9 +256,7 @@ export class AppComponent implements OnInit{
   }
 
   setSelectedData( value ){
-    console.log("emited value",value)
     this.store.dispatch( new SelectDataAction( value ) );
-    console.log(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions))
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     this.hideMonth = value.hideMonth;
     this.hideQuarter = value.hideQuarter;
@@ -267,10 +269,18 @@ export class AppComponent implements OnInit{
     }
   }
 
+  allAvailable( dimensions ):boolean{
+    let checker = true;
+    if(dimensions.data.itemList.length == 0 || this.selected_orgunits.length == 0 || this.selected_periods.length == 0){
+      checker = false;
+    }
+    return checker;
+  }
 
   allDimensionAvailable = false;
   updateTable() {
     this.tableObject = null;
+    this.allDimensionAvailable = this.allAvailable(this.dimensions);
     this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
     // this.showTable = false;
     this.showAutoGrowingTable = false;
@@ -280,11 +290,6 @@ export class AppComponent implements OnInit{
       // check first if there is normal data selected
       this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
       this.analyticsService.current_normal_analytics = analytics;
-      if(analytics){
-        this.allDimensionAvailable = true;
-      }else{
-        this.allDimensionAvailable = false;
-      }
       let table_structure = {
         showColumnTotal: this.options.column_totals,
         showColumnSubTotal: this.options.column_sub_total,

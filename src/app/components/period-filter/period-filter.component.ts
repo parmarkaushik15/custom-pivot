@@ -96,6 +96,12 @@ export class PeriodFilterComponent implements OnInit {
       let number = (this.getPeriodPosition(data.dragData.id) > this.getPeriodPosition(current.id))?0:1;
       this.deletePeriod( data.dragData );
       this.insertPeriod( data.dragData, current, number);
+      this.onPeriodUpdate.emit({
+        items: this.selected_periods,
+        type: this.period_type,
+        starting_year: this.starting_year,
+        name: 'pe',
+        value: this.getPeriodsForAnalytics(this.selected_periods)});
     }
   }
 
@@ -143,18 +149,18 @@ export class PeriodFilterComponent implements OnInit {
 
   pushPeriodForward(){
     this.year += 1;
-    this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.periods = this.getFinencialPeriodArray(this.period_type,this.year);
     this.onYearUpdate.emit(this.year);
   }
 
   pushPeriodBackward(){
     this.year -= 1;
-    this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.periods = this.getFinencialPeriodArray(this.period_type,this.year);
     this.onYearUpdate.emit(this.year);
   }
 
   changePeriodType(){
-    this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.periods = this.getFinencialPeriodArray(this.period_type,this.year);
     this.onTypeUpdate.emit(this.period_type);
   }
 
@@ -215,7 +221,7 @@ export class PeriodFilterComponent implements OnInit {
     }
 
 
-    this.periods = this.getPeriodArray(this.period_type,this.year);
+    this.periods = this.getFinencialPeriodArray(this.period_type,this.year);
   }
 
 
@@ -277,6 +283,48 @@ export class PeriodFilterComponent implements OnInit {
     return periods;
   }
 
+  getFinencialPeriodArray(type,year){
+    let periods = [];
+    let last_yaer = parseInt(year) - 1;
+    if(type == "Monthly"){
+      periods.push(
+        {id:year+'07',name:'July '+last_yaer},
+        {id:year+'08',name:'August '+last_yaer},
+        {id:year+'09',name:'September '+last_yaer},
+        {id:year+'10',name:'October '+last_yaer},
+        {id:year+'11',name:'November '+last_yaer},
+        {id:year+'12',name:'December '+last_yaer},
+        {id:year+'01',name:'January '+year,selected:true},
+        {id:year+'02',name:'February '+year},
+        {id:year+'03',name:'March '+year},
+        {id:year+'04',name:'April '+year},
+        {id:year+'05',name:'May '+year},
+        {id:year+'06',name:'June '+year}
+        )
+    }else if(type == "Quarterly"){
+      periods.push(
+        {id:year+'Q3',name:'July - September '+last_yaer},
+        {id:year+'Q4',name:'October - December '+last_yaer},
+        {id:year+'Q1',name:'January - March '+year,selected:true},
+        {id:year+'Q2',name:'April - June '+year}
+        )
+    }else if(type == "FinancialJuly"){
+      for (let i = 0; i <= 10; i++) {
+        let useYear = parseInt(year) - i;
+        let currentYear = useYear + 1;
+        periods.push({id:useYear+'July',name:'July '+useYear+' - June '+ currentYear})
+      }
+    }else if(type == "RelativeMonth"){
+      periods.push({id:'THIS_MONTH',name:'This Month'},{id:'LAST_MONTH',name:'Last Month'},{id:'LAST_3_MONTHS',name:'Last 3 Months'},{id:'LAST_6_MONTHS',name:'Last 6 Months'},{id:'LAST_12_MONTHS',name:'Last 12 Months',selected:true});
+    }else if(type == "RelativeQuarter"){
+      periods.push({id:'THIS_QUARTER',name:'This Quarter'},{id:'LAST_QUARTER',name:'Last Quarter'},{id:'LAST_4_QUARTERS',name:'Last 4 Quarters',selected:true});
+    }else if(type == "RelativeFinancialYear"){
+      periods.push({id:'THIS_FINANCIAL_YEAR',name:'This Financial Year'},{id:'LAST_FINANCIAL_YEAR',name:'Last Financial Year',selected:true},{id:'LAST_5_FINANCIAL_YEARS',name:'Last 5 Financial Years'});
+    }else if(type == "RelativeYear"){
+      periods.push({id:'THIS_YEAR',name:'This Year'},{id:'LAST_YEAR',name:'Last Year',selected:true},{id:'LAST_5_YEARS',name:'Last 5 Five Years'});
+    }
+    return periods;
+  }
   getLastPeriod(period: any, period_type:string ="Quarterly" ):any{
     if(period_type == "Weekly"){
 
