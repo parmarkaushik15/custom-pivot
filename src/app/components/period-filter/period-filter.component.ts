@@ -111,11 +111,25 @@ export class PeriodFilterComponent implements OnInit {
       if(!this.checkPeriodAvailabilty(item, this.selected_periods )){
         this.selected_periods.push(item);
       }
-    })
+    });
+    this.onPeriodUpdate.emit({
+      items: this.selected_periods,
+      type: this.period_type,
+      starting_year: this.starting_year,
+      name: 'pe',
+      value: this.getPeriodsForAnalytics(this.selected_periods)
+    });
   }
 
   deselectAllItems(){
     this.selected_periods = [];
+    this.onPeriodUpdate.emit({
+      items: this.selected_periods,
+      type: this.period_type,
+      starting_year: this.starting_year,
+      name: 'pe',
+      value: this.getPeriodsForAnalytics(this.selected_periods)
+    });
   }
 
   // helper method to find the index of dragged item
