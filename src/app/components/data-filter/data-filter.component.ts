@@ -521,7 +521,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     selectedData.forEach((dataValue) => {
       if(dataValue.hasOwnProperty('programType')){
       }else{
-        let mapped = _.find(this.functionMappings, ['id', dataValue.id]);
+        let mapped = _.includes(this.functionMappings,dataValue.id );
         if(mapped){}else{
           dataForAnalytics += counter == 0 ? dataValue.id : ';' + dataValue.id;
           counter++;

@@ -143,7 +143,6 @@ export class AppComponent implements OnInit{
     if( dimensions.data.need_functions.length > 0 ) {
       let counter = 0;
       dimensions.data.need_functions.forEach( (mapping) => {
-        console.log(mapping)
         this.dataService.getMapping(mapping).subscribe( (value) => {
           // Constructing analytics parameters to pass on the function call
           let parameters = {
@@ -152,11 +151,12 @@ export class AppComponent implements OnInit{
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-
+              console.log("returned analytics",results)
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
                 if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
+                console.log("returned analytics11",this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists))
                 const tableObject = this.visualization.drawTable(this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists), table_structure);
                 this.showTable = true;
                 this.tableObject = tableObject;

@@ -194,6 +194,13 @@ export class OrgUnitFilterComponent implements OnInit {
           }
         );
   }
+
+  clearAll(){
+    for (let active_orgunit of this.orgunit_model.selected_orgunits) {
+      this.deActivateNode(active_orgunit.id, this.orgtree,null);
+    }
+  }
+
   setType(type: string){
     this.orgunit_model.selection_mode = type;
     if( type != 'orgUnit' ){

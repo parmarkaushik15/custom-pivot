@@ -288,12 +288,12 @@ export class PeriodFilterComponent implements OnInit {
     let last_yaer = parseInt(year) - 1;
     if(type == "Monthly"){
       periods.push(
-        {id:year+'07',name:'July '+last_yaer},
-        {id:year+'08',name:'August '+last_yaer},
-        {id:year+'09',name:'September '+last_yaer},
-        {id:year+'10',name:'October '+last_yaer},
-        {id:year+'11',name:'November '+last_yaer},
-        {id:year+'12',name:'December '+last_yaer},
+        {id:last_yaer+'07',name:'July '+last_yaer},
+        {id:last_yaer+'08',name:'August '+last_yaer},
+        {id:last_yaer+'09',name:'September '+last_yaer},
+        {id:last_yaer+'10',name:'October '+last_yaer},
+        {id:last_yaer+'11',name:'November '+last_yaer},
+        {id:last_yaer+'12',name:'December '+last_yaer},
         {id:year+'01',name:'January '+year,selected:true},
         {id:year+'02',name:'February '+year},
         {id:year+'03',name:'March '+year},
@@ -303,8 +303,8 @@ export class PeriodFilterComponent implements OnInit {
         )
     }else if(type == "Quarterly"){
       periods.push(
-        {id:year+'Q3',name:'July - September '+last_yaer},
-        {id:year+'Q4',name:'October - December '+last_yaer},
+        {id:last_yaer+'Q3',name:'July - September '+last_yaer},
+        {id:last_yaer+'Q4',name:'October - December '+last_yaer},
         {id:year+'Q1',name:'January - March '+year,selected:true},
         {id:year+'Q2',name:'April - June '+year}
         )
