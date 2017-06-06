@@ -159,7 +159,7 @@ export class PeriodService {
     }else if(periodType == "FinancialJuly"){
       period =  (theDate.getMonth() < 6? theDate.getFullYear() - 1:theDate.getFullYear())+ "July"
     }else if(periodType == "Monthly"){
-      period =  theDate.getFullYear() + (theDate.getMonth() < 9? "0":"")+ theDate.getMonth() + 1;
+      period =  theDate.getFullYear() + (theDate.getMonth() < 9? "0":"")+ (theDate.getMonth() + 1);
     }else if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH","THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS","THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(periodType) > -1){
       period =  periodType;
     }
