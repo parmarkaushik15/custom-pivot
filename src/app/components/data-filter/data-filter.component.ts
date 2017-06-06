@@ -353,7 +353,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     let mappings = [];
     selections.forEach((value) => {
 
-      if(_.includes(this.functionMappings,value.id )){
+      if(_.includes(this.functionMappings,value.id.replace(".","_") )){
         mappings.push(value.id)
       }
     });
@@ -521,7 +521,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     selectedData.forEach((dataValue) => {
       if(dataValue.hasOwnProperty('programType')){
       }else{
-        let mapped = _.includes(this.functionMappings,dataValue.id );
+        let mapped = _.includes(this.functionMappings,dataValue.id.replace(".","_") );
         if(mapped){}else{
           dataForAnalytics += counter == 0 ? dataValue.id : ';' + dataValue.id;
           counter++;
