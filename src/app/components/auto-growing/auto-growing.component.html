@@ -9,6 +9,13 @@
   <tr class="table-title">
     <th  [colSpan]="$scope.data.dataElements.length">
       <h4 class="text-center" style="margin: 0px">
+        {{autogrowing.analytics.metaData.names[$scope.config.programId]}}
+      </h4>
+    </th>
+  </tr>
+  <tr class="table-title">
+    <th  [colSpan]="$scope.data.dataElements.length">
+      <h4 class="text-center" style="margin: 0px">
         <span *ngFor="let ou of autogrowing.analytics.metaData.ou; let i = index">
           <span *ngIf="autogrowing.analytics.metaData.names[ou]"><span *ngIf="i > 0">,</span>{{autogrowing.analytics.metaData.names[ou]}}</span>
         </span>
