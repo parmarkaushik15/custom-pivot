@@ -41,6 +41,7 @@ import { OptionsComponent } from './components/options/options.component';
 import { OrderByPipe } from './pipes/order-by.pipe';
 import {ExcelDownloadService} from "./services/excel-download.service";
 import {PeriodService} from "./services/period.service";
+import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {PeriodService} from "./services/period.service";
     AutoGrowingComponent,
     RemoveNaNPipe,
     OptionsComponent,
-    OrderByPipe
+    OrderByPipe,
+    FilterLevelPipe
   ],
   imports: [
     BrowserModule,

@@ -149,7 +149,7 @@ export class OrgUnitService {
   generateUrlBasedOnLevels (level){
     let childrenLevels = "[]";
     for (let i = 1; i < level+1; i++) {
-      childrenLevels = childrenLevels.replace("[]", "[id,name,children[]]")
+      childrenLevels = childrenLevels.replace("[]", "[id,name,level,children[]]")
     }
     let new_string = childrenLevels.substring(1);
     new_string = new_string.replace(",children[]]","");
@@ -236,7 +236,7 @@ export class OrgUnitService {
         observer.next(this.initial_orgunits);
         observer.complete();
       } else {
-        this.http.get('../../../api/organisationUnits.json?fields=id,name,children[id,name]&filter=id:in:['+orgunits.join(",")+']&paging=false')
+        this.http.get('../../../api/organisationUnits.json?fields=id,name,level,children[id,name]&filter=id:in:['+orgunits.join(",")+']&paging=false')
           .map((response: Response) => response.json())
           .catch( this.handleError )
           .subscribe((nodes: any) => {
