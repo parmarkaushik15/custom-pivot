@@ -357,7 +357,7 @@ export class AutoGrowingComponent implements OnInit {
       if (this.$scope.config.indicators) {
         this.$scope.config.indicators.forEach((indicator)=>{
           if (indicator.position) {
-            this.$scope.config.dataElements.splice(indicator.position, 0, indicator.position);
+            this.$scope.config.dataElements.splice(indicator.position + 2, 0, indicator.position + 2);
           }
         });
         elem.children.forEach((trElement,trIndex) =>{
@@ -371,10 +371,11 @@ export class AutoGrowingComponent implements OnInit {
               }
             });
             var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
+            console.log("eventIndicator:",valueCalculated);
             if (isNaN(valueCalculated)) {
               valueCalculated = "";
             }
-            trElement.children[indicator.position].innerText = valueCalculated;
+            trElement.children[indicator.position + 2].innerText = valueCalculated;
           });
         });
       }
