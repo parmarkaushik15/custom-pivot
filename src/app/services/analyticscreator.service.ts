@@ -3,13 +3,14 @@ import {Constants} from "./constants";
 import {Http} from "@angular/http";
 import {Observable} from "rxjs";
 import * as _ from 'lodash';
+import {SpecificPeriodService} from "../components/period-filter/period.service";
 
 
 @Injectable()
 export class AnalyticscreatorService {
   public current_normal_analytics:any = null;
   public analytics_lists = [];
-  constructor(private constant: Constants, private http: Http,) { }
+  constructor(private constant: Constants, private http: Http,private periodService:SpecificPeriodService) { }
 
   prepareAnalytics(layout, dimensions:any, repeat:boolean = false ){
     console.log(layout)
@@ -83,6 +84,7 @@ export class AnalyticscreatorService {
       analytic.metaData.pe.forEach((val) => {
         if(!_.includes(combined_analytics.metaData.pe, val)){
           combined_analytics.metaData.pe.push( val );
+          combined_analytics.metaData.names[val] = this.periodService.getPeriodName(val);
         }
       });
       if(analytic.metaData.co){

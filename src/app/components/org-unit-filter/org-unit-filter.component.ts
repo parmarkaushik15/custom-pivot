@@ -261,7 +261,6 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
-    $event.node.isFocused = false;
     this.period_selector.reset();
     if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
       this.orgunit_model.selection_mode = "orgUnit";
@@ -272,8 +271,11 @@ export class OrgUnitFilterComponent implements OnInit {
         this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
+
     this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+
+    // $event.node.isFocused = false;
   };
 
   // add item to array of selected items when item is selected

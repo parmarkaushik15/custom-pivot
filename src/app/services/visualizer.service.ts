@@ -577,7 +577,8 @@ export class VisualizerService {
       'titles': {
         'rows': [],
         'column': []
-      }
+      },
+      titlesAvailable:false
     };
     if(tableConfiguration.hasOwnProperty('title')){
       table['title'] = tableConfiguration.title;
@@ -589,14 +590,14 @@ export class VisualizerService {
       };
       tableConfiguration.columns[tableConfiguration.columns.indexOf('pe')] = 'eventdate';
       tableConfiguration.columns[tableConfiguration.columns.indexOf('ou')] = 'ouname';
-      for ( let item of tableConfiguration.columns ){
-        table.headers[0].items.push(
-          {
-            name: analyticsObject.headers[this._getTitleIndex(analyticsObject.headers,item)].column,
-            span: 1
-          }
-        )
-      }
+        for ( let item of tableConfiguration.columns ){
+          table.headers[0].items.push(
+            {
+              name: analyticsObject.headers[this._getTitleIndex(analyticsObject.headers,item)].column,
+              span: 1
+            }
+          )
+        }
       for( let item of analyticsObject.rows ){
         let column_items = [];
         for ( let col of tableConfiguration.columns ){
@@ -618,11 +619,14 @@ export class VisualizerService {
       }
     } else {
       // add names to titles array
-      for (let item of tableConfiguration.columns) {
-        table.titles.column.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
-      }
-      for (let item of tableConfiguration.rows) {
-        table.titles.rows.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+      if(tableConfiguration.showDimensionLabels) {
+        table.titlesAvailable = true;
+        for (let item of tableConfiguration.columns) {
+          table.titles.column.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+        }
+        for (let item of tableConfiguration.rows) {
+          table.titles.rows.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+        }
       }
       for (let columnItem of tableConfiguration.columns) {
         let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.columns, columnItem);
@@ -736,6 +740,7 @@ export class VisualizerService {
             });
           }
           if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            console.log(item.items);
             if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
               table.rows.push(item);
             }
@@ -763,6 +768,7 @@ export class VisualizerService {
             });
           }
           if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            console.log(item.items);
             if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
               table.rows.push(item);
             }
@@ -941,6 +947,7 @@ export class VisualizerService {
             });
           }
           if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            console.log(item.items);
             if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
               table.rows.push(item);
             }
@@ -968,6 +975,7 @@ export class VisualizerService {
             });
           }
           if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            console.log(item.items);
             if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
               table.rows.push(item);
             }
@@ -982,7 +990,7 @@ export class VisualizerService {
   checkZeros(stating_length,  array ): boolean{
     let checker = true;
     for (let  i =stating_length; i<array.length; i++){
-      if( parseInt(array[i].val) != 0 ){
+      if( array[i].name == "" && array[i].val != null ){
         checker = false
       }
     }

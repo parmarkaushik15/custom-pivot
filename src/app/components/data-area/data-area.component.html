@@ -38,7 +38,7 @@
     <!--headers-->
     <tr *ngFor="let header of tableObject.headers; let j = index" class="header-column">
       <th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">
-        <span *ngIf="i==tableObject.columns.length-1 && j==tableObject.headers.length-1">{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}</span>
+        <span *ngIf="i==tableObject.columns.length-1 && j==tableObject.headers.length-1 && tableObject.titlesAvailable">{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}</span>
         <span *ngIf="i != tableObject.columns.length-1">{{ tableObject.titles.rows[i] }}</span>
         <span *ngIf="j != tableObject.headers.length-1">{{ tableObject.titles.column[j] }}</span>
       </th>

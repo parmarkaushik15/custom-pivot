@@ -151,15 +151,18 @@ export class AppComponent implements OnInit{
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-              console.log("returned analytics",results)
+              // console.log("returned analytics",results)
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
                 if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
-                console.log("returned analytics11",this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists))
                 const tableObject = this.visualization.drawTable(this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists), table_structure);
                 this.showTable = true;
                 this.tableObject = tableObject;
+                this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
+                this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
+                this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
+                this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
                 this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
               }
               // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
@@ -293,10 +296,10 @@ export class AppComponent implements OnInit{
       let table_structure = {
         showColumnTotal: this.options.column_totals,
         showColumnSubTotal: this.options.column_sub_total,
-        showRowTotal: this.options.hide_empty_row,
+        showRowTotal: this.options.row_totals,
         showRowSubtotal: this.options.row_sub_total,
         showDimensionLabels: this.options.dimension_labels,
-        hideEmptyRows: this.options.hide_empty_row,
+        hide_zeros: this.options.hide_empty_row,
         showHierarchy: this.options.show_hierarchy,
         title: this.options.table_title,
         rows: this.layout.rows,

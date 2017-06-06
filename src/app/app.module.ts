@@ -42,6 +42,7 @@ import { OrderByPipe } from './pipes/order-by.pipe';
 import {ExcelDownloadService} from "./services/excel-download.service";
 import {PeriodService} from "./services/period.service";
 import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
+import {SpecificPeriodService} from "./components/period-filter/period.service";
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
     Constants,
     AnalyticscreatorService,
     HttpClientService,
-    PeriodService
+    PeriodService,
+    SpecificPeriodService
   ],
   bootstrap: [
     AppComponent,
