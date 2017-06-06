@@ -172,8 +172,10 @@ export class OrgUnitFilterComponent implements OnInit {
 
                         //activate organisation units
                         for (let active_orgunit of this.orgunit_model.selected_orgunits) {
-                          this.activateNode(active_orgunit.id, this.orgtree);
+                          this.activateNode(active_orgunit.id, this.orgtree,true);
+
                         }
+
 
                         this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
                       },
@@ -223,11 +225,14 @@ export class OrgUnitFilterComponent implements OnInit {
     });
   }
 
-  activateNode(nodeId:any, nodes){
+  activateNode(nodeId:any, nodes,first){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
         node.setIsActive(true, true);
+      if(first){
+        node.toggleExpanded()
+      }
     }, 0);
   }
 
