@@ -128,11 +128,9 @@ export class AutoGrowingComponent implements OnInit {
           })
         })
         this.autogrowing.analytics.merge.config.data = newData;
-        //this.mergingCallBack()();
         setTimeout(this.mergingCallBack())
+
       })
-      //this.tableObject = this.visualization.drawAutogrowingTable(this.autogrowing.analytics, table_structure);
-      //setTimeout(this.mergingCallBack())
     }
   }
 
@@ -204,6 +202,7 @@ export class AutoGrowingComponent implements OnInit {
         });
         return adjacentString;
       }
+
 
       for (var i = 0; i < this.$scope.data.dataElements.length; i++) {
         /*var dataIndex = i;
@@ -341,10 +340,11 @@ export class AutoGrowingComponent implements OnInit {
                   elem.children[index].children[i].setAttribute('rowspan', span);
                   var previousVal = "";
                   for (var counter = 1; counter < span; counter++) {
-                    $(elem.children[index + counter].children[i]).addClass('hidden');
-                    if (elem.children[index + counter].children[i + 1].innerHTML != previousVal) {
+                    if (elem.children[index + counter].children[i + 1].innerHTML != previousVal && !$(elem.children[index + counter].children[i]).hasClass('hidden'))
+                    {
                       elem.children[index].children[i].innerHTML = (parseFloat(elem.children[index].children[i].innerHTML) + parseFloat(elem.children[index + counter].children[i].innerHTML)).toFixed(1);
                     }
+                    $(elem.children[index + counter].children[i]).addClass('hidden');
                     previousVal = elem.children[index + counter].children[i + 1].innerHTML;
                   }
                 }
