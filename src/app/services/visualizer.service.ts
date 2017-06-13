@@ -578,7 +578,8 @@ export class VisualizerService {
         'rows': [],
         'column': []
       },
-      titlesAvailable:false
+      titlesAvailable:false,
+      hasParentOu: false
     };
     if(tableConfiguration.hasOwnProperty('title')){
       table['title'] = tableConfiguration.title;
@@ -721,7 +722,12 @@ export class VisualizerService {
           };
           for (let val of rowItem) {
             if (counter === 0 || counter % val.dimensions.col_span === 0) {
-              item.items.push({'name': val.uid, 'val': val.name, 'row_span': val.dimensions.col_span,header:true});
+              item.items.push({
+                'type':val.type,
+                'name': val.uid,
+                'val': val.name,
+                'row_span': val.dimensions.col_span,header:true
+              });
             }
           }
           for (let colItem of table_columns_array) {

@@ -4,13 +4,18 @@ import {Http} from "@angular/http";
 import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import {SpecificPeriodService} from "../components/period-filter/period.service";
+import {LocalStorageService, ORGANISATION_UNIT_KEY} from "./local-storage.service";
 
 
 @Injectable()
 export class AnalyticscreatorService {
   public current_normal_analytics:any = null;
   public analytics_lists = [];
-  constructor(private constant: Constants, private http: Http,private periodService:SpecificPeriodService) { }
+  constructor(private constant: Constants,
+              private http: Http,
+              private periodService:SpecificPeriodService,
+              private localStorageService:LocalStorageService
+  ) { }
 
   prepareAnalytics(layout, dimensions:any, repeat:boolean = false ){
     console.log(layout)
@@ -376,6 +381,60 @@ export class AnalyticscreatorService {
       columns : data.columns,
       titles : data.titles,
       title : data.title
+    };
+
+  }
+
+  addParentOu( tableObject ){
+    let data = _.cloneDeep(tableObject);
+    let some_rows = [];
+    let counter = 1;
+    let sum_rows = [];
+    let row_items = [];
+    if(data.columns[0] == "ou"){
+      data.hasParentOu = true;
+      data.rows.forEach( (row) => {
+        if(row.items[0]['type'] == "ou"){
+          this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,row.items[0].name).subscribe(orgunit => {
+            if(orgunit && orgunit.hasOwnProperty('parent')){
+              this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,orgunit.parent.id).subscribe(parent => {
+                row.items.unshift({
+                  "type": "",
+                  "name": "drHchnPFUa9",
+                  "val": parent.name,
+                  "row_span": row.items[0].row_span,
+                  "header": true
+                })
+              });
+            }else{
+              row.items.unshift({
+                "type": "",
+                "name": "drHchnPFUa9",
+                "val": "",
+                "row_span": row.items[0].row_span,
+                "header": true
+              })
+            }
+
+          });
+
+        }
+        some_rows.push(row);
+      });
+    }else{
+      data.rows.forEach( (row) => {
+        some_rows.push(row);
+      });
+    }
+
+    return {
+      headers : data.headers,
+      rows : some_rows,
+      columns : data.columns,
+      titles : data.titles,
+      title : data.title,
+      titlesAvailable:data.itlesAvailable,
+      hasParentOu:data.hasParentOu
     };
 
   }

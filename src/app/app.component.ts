@@ -119,7 +119,7 @@ export class AppComponent implements OnInit{
       this.store.dispatch( new AddFunctionsAction(val) );
 
     });
-    // this.analyticsService.addRowSubtotal("");
+    // this.analyticsService.addParentOu("");
   }
 
   selected_orgunits: any;
@@ -188,7 +188,8 @@ export class AppComponent implements OnInit{
         this.analyticsService.analytics_lists.push(analytics)
         const tableObject = this.visualization.drawTable(analytics, table_structure);
         this.showTable = true;
-        this.tableObject = tableObject;
+        this.tableObject = this.analyticsService.addParentOu(tableObject);
+
         this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
         this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
         this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
