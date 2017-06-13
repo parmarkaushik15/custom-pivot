@@ -37,6 +37,7 @@ testem.log
 /e2e/*.js
 /e2e/*.map
 proxy-config.json
+upload.sh
 
 # System Files
 .DS_Store
