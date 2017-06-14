@@ -38,11 +38,12 @@ import {FuseSearchPipe} from "./shared/pipes/fuse-search.pipe";
 import { AutoGrowingComponent } from './components/auto-growing/auto-growing.component';
 import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
 import { OptionsComponent } from './components/options/options.component';
-import { OrderByPipe } from './pipes/order-by.pipe';
 import {ExcelDownloadService} from "./services/excel-download.service";
 import {PeriodService} from "./services/period.service";
 import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
 import {SpecificPeriodService} from "./components/period-filter/period.service";
+import {OrderPipe} from "./pipes/order-by.pipe";
+import { WebWorkerService } from 'angular2-web-worker';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,7 @@ import {SpecificPeriodService} from "./components/period-filter/period.service";
     AutoGrowingComponent,
     RemoveNaNPipe,
     OptionsComponent,
-    OrderByPipe,
+    OrderPipe,
     FilterLevelPipe
   ],
   imports: [
@@ -88,7 +89,8 @@ import {SpecificPeriodService} from "./components/period-filter/period.service";
     AnalyticscreatorService,
     HttpClientService,
     PeriodService,
-    SpecificPeriodService
+    SpecificPeriodService,
+    WebWorkerService
   ],
   bootstrap: [
     AppComponent,

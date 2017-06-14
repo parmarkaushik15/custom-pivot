@@ -184,6 +184,68 @@ export class DataService {
             dataStream$.subscribe(
               (data) => {
                 data.forEach((val) => {
+                  console.log(val)
+                  this.localDbService.add(key, val).subscribe((v) => null);
+                });
+                observer.next( data );
+                observer.complete();
+              },
+              (error) => observer.error(error)
+            )
+          }
+        },
+        error => observer.error(error)
+      )
+    });
+  }
+
+/**
+   * This function will be used to return all needed metadata either from offline or if not available the online
+   * @param key
+   * @returns {any}
+   */
+  AddDataToLocalDatabase( key:string ): Observable<any>{
+    return Observable.create(observer => {
+      this.localDbService.getAll(key).subscribe(
+        (items) => {
+          if( items.length != 0){
+            observer.next( items );
+            observer.complete();
+          }else{
+            let dataStream$ = null;
+            switch (key){
+              case DATAELEMENT_KEY:
+                dataStream$ = this.getDataElements();
+                break;
+              case DATASET_KEY:
+                dataStream$ = this.getDataSets();
+                break;
+              case ORGANISATION_UNIT_KEY:
+                dataStream$ = this.getOrganisationUnits();
+                break;
+              case CATEGORY_COMBOS_KEY:
+                dataStream$ = this.getCategoryCombos();
+                break;
+              case INDICATOR_KEY:
+                dataStream$ = this.getIndicators();
+                break;
+              case INDICATOR_GROUP_KEY:
+                dataStream$ = this.getIndicatorGroups();
+                break;
+              case DATAELEMENT_GROUP_KEY:
+                dataStream$ = this.getDataElementGroups();
+                break;
+              case PROGRAM_KEY:
+                dataStream$ = this.getPrograms();
+                break;
+              default:
+                console.error("The key passed is not recognized");
+                break;
+
+            }
+            dataStream$.subscribe(
+              (data) => {
+                data.forEach((val) => {
                   this.localDbService.add(key, val).subscribe((v) => null);
                 });
                 observer.next( data );

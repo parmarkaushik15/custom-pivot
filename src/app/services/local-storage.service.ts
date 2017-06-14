@@ -70,6 +70,7 @@ export class LocalStorageService {
           observer.next(value);
           observer.complete();
         }, (error) => {
+          console.log("an error occuers")
           observer.error(error);
         });
       });

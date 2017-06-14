@@ -1,76 +1,124 @@
-import {Pipe, PipeTransform} from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({name: 'orderBy', pure: false})
-export class OrderByPipe implements PipeTransform {
+@Pipe({
+  name: 'orderBy'
+})
+export class OrderPipe implements PipeTransform {
 
-  static _orderByComparator(a:any, b:any):number{
-
-    if( (a === null || a === undefined) && (b === null || b === undefined) )
-      return 0;
-
-    if (a === null || a === undefined)
-      a = ( isNaN(parseFloat(b)) || !isFinite(b) ) ? '' : 0;
-
-    if (b === null || b === undefined)
-      b = ( isNaN(parseFloat(a)) || !isFinite(a) ) ? '' : 0;
-
-    if ( (isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b)) ) {
-//Isn't a number so lowercase the string to properly compare
-      if (a.toLowerCase() < b.toLowerCase()) return -1;
-      if (a.toLowerCase() > b.toLowerCase()) return 1;
-    }
-    else {
-//Parse strings as numbers to compare properly
-      if (parseFloat(a) < parseFloat(b)) return -1;
-      if (parseFloat(a) > parseFloat(b)) return 1;
+  transform(value: any | any[], expression?: any, reverse?: boolean): any {
+    if (!value) {
+      return value;
     }
 
-    return 0; //equal each other
+    const isArray = value instanceof Array;
+
+    if (isArray) {
+      return this.sortArray(value, expression, reverse);
+    }
+
+    if (typeof value === 'object') {
+      return this.transformObject(value, expression, reverse);
+    }
+
+    return value;
   }
 
-  transform(input:any, [config = '+']): any{
-
-    if(!Array.isArray(input)) return input;
-
-    if(!Array.isArray(config) || (Array.isArray(config) && config.length == 1)){
-      let propertyToCheck:string = !Array.isArray(config) ? config : config[0];
-      let desc = propertyToCheck.substr(0, 1) == '-';
-
-      //Basic array
-      if(!propertyToCheck || propertyToCheck == '-' || propertyToCheck == '+'){
-        return !desc ? input.sort() : input.sort().reverse();
+  /**
+   * Sort array
+   *
+   * @param value
+   * @param expression
+   * @param reverse
+   * @returns {any[]}
+   */
+  private sortArray(value: any[], expression?: any, reverse?: boolean): any[] {
+    let array: any[] = value.sort((a: any, b: any): number => {
+      if (!expression) {
+        return a > b ? 1 : -1;
       }
-      else {
-        let property:string = propertyToCheck.substr(0, 1) == '+' || propertyToCheck.substr(0, 1) == '-'
-          ? propertyToCheck.substr(1)
-          : propertyToCheck;
 
-        return input.sort(function(a:any,b:any){
-          return !desc
-            ? OrderByPipe._orderByComparator(a[property], b[property])
-              : -OrderByPipe._orderByComparator(a[property], b[property]);
-        });
+      return a[expression] > b[expression] ? 1 : -1;
+    });
+
+    if (reverse) {
+      return array.reverse();
+    }
+
+    return array;
+  }
+
+
+  /**
+   * Transform Object
+   *
+   * @param value
+   * @param expression
+   * @param reverse
+   * @returns {any[]}
+   */
+  private transformObject(value: any | any[], expression?: any, reverse?: boolean): any {
+    let parsedExpression = OrderPipe.parseExpression(expression);
+    let lastPredicate = parsedExpression.pop();
+    let oldValue = OrderPipe.getValue(value, parsedExpression);
+
+    if (!(oldValue instanceof Array)) {
+      parsedExpression.push(lastPredicate);
+      lastPredicate = null;
+      oldValue = OrderPipe.getValue(value, parsedExpression);
+    }
+
+    if (!oldValue) {
+      return value;
+    }
+
+    const newValue = this.transform(oldValue, lastPredicate, reverse);
+    OrderPipe.setValue(value, newValue, parsedExpression);
+    return value;
+  }
+
+  /**
+   * Parse expression, split into items
+   * @param expression
+   * @returns {string[]}
+   */
+  private static parseExpression(expression: string): string[] {
+    expression = expression.replace(/\[(\w+)\]/g, '.$1');
+    expression = expression.replace(/^\./, '');
+    return expression.split('.');
+  }
+
+  /**
+   * Get value by expression
+   *
+   * @param object
+   * @param expression
+   * @returns {any}
+   */
+  private static getValue(object: any, expression: string[]) {
+    for (let i = 0, n = expression.length; i < n; ++i) {
+      const k = expression[i];
+      if (!(k in object)) {
+        return;
       }
+      object = object[k];
     }
-    else {
-      //Loop over property of the array in order and sort
-      return input.sort(function(a:any,b:any){
-        for(let i:number = 0; i < config.length; i++){
-          let desc = config[i].substr(0, 1) == '-';
-          let property = config[i].substr(0, 1) == '+' || config[i].substr(0, 1) == '-'
-            ? config[i].substr(1)
-            : config[i];
 
-          let comparison = !desc
-            ? OrderByPipe._orderByComparator(a[property], b[property])
-              : -OrderByPipe._orderByComparator(a[property], b[property]);
+    return object;
+  }
 
-          //Don't return 0 yet in case of needing to sort by next property
-          if(comparison != 0) return comparison;
-        }
-
-        return 0; //equal each other
-      });
+  /**
+   * Set value by expression
+   *
+   * @param object
+   * @param value
+   * @param expression
+   */
+  private static setValue(object: any, value: any, expression: string[]) {
+    let i;
+    for (i = 0; i < expression.length - 1; i++) {
+      object = object[expression[i]];
     }
+
+    object[expression[i]] = value;
   }
 }

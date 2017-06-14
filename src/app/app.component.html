@@ -19,6 +19,7 @@
           <div class="panel panel-default data-component-area">
             <div class="panel-body" style="padding: 3px">
               <app-data-filter
+                *ngIf="uiState.dataAreaOpen"
                 (onDataUpdate)="setSelectedData($event)"
                 [selectedItems]="selectedData$ | async"
                 [functionMappings]="mappings"
@@ -52,7 +53,7 @@
               <i class="fa fa-angle-double-right"  style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></i>
             </a>
             <!--data-->
-            <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showDx = false" >
+            <div *ngIf="!uiState.dataAreaOpen" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showDx = false" >
               <a class="btn btn-sm btn-default" (click)="showDx = !showDx">Data</a>
               <div [ngClass]="{'hideData': !showDx}" class="dropdownField">
                 <app-data-filter
@@ -85,6 +86,7 @@
                 ></div>
               </div>
             </div>
+
             <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
             <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
             <app-options (onOptionUpdate)="updateOptions($event)"></app-options>

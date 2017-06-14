@@ -20,7 +20,7 @@
   <div class="panel-body" style="padding: 5px;">
     <input type="search" class="form-control input-sm" placeholder="Search" style="margin-bottom: 5px;" [(ngModel)]="querystring">
     <ul class="list-unstyled metadata-list  tree-area1">
-      <li *ngFor="let item of dataGroups | fuseSearch:searchOptions:querystring" (click)="setSelectedGroup(item)">{{ item.name }}</li>
+      <li *ngFor="let item of dataGroups | fuseSearch:searchOptions:querystring | orderBy: 'name':false" (click)="setSelectedGroup(item)">{{ item.name }}</li>
     </ul>
   </div>
 </div>
@@ -47,15 +47,15 @@
         <td width="50%" style="height: 90%">
           <ul class="list-unstyled metadata-list scrollable">
             <li *ngIf="listItems.length == 0">Loading...</li>
-            <li *ngFor="let item of listItems | fuseSearch:searchOptions:listchanges | paginate: { id: 'foo',
-                                                      itemsPerPage: 40,
-                                                      currentPage: p };trackBy: trackByFn "
+            <li *ngFor="let item of listItems | fuseSearch:searchOptions:listchanges |  paginate: { id: 'foo',
+                                                      itemsPerPage: 30,
+                                                      currentPage: p }"
                 (click)="addSelected(item)"
                 [ngClass]="{'hiddenTree': inSelected(item, selectedItems)}"
                 title="Click to select item">
               {{ item.name }}
             </li>
-            <li *ngIf="(listItems| fuseSearch:searchOptions:listchanges).length >= 100">
+            <li *ngIf="(listItems| fuseSearch:searchOptions:listchanges).length >= 10">
               <pagination-controls  id="foo"
                                     (pageChange)="p = $event"
                                     maxSize="0">

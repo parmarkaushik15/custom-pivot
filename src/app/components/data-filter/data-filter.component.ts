@@ -2,12 +2,13 @@ import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input} from '@an
 import {DataService} from "../../services/data.service";
 import * as _ from 'lodash'
 import {FuseSearchPipe} from "../../shared/pipes/fuse-search.pipe";
+import {OrderPipe} from "../../pipes/order-by.pipe";
 
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
   styleUrls: ['./data-filter.component.css'],
-  providers:[FuseSearchPipe]
+  providers:[FuseSearchPipe,OrderPipe]
 })
 export class DataFilterComponent implements OnInit, AfterViewInit {
 
@@ -72,24 +73,27 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   k:number = 1;
   need_groups:boolean =true;
   searchOptions:any;
-  constructor( private dataService: DataService, private fusePipe:FuseSearchPipe) { }
+  constructor( private dataService: DataService, private fusePipe:FuseSearchPipe, private orderPipe:OrderPipe) { }
 
   ngOnInit() {
     this.searchOptions={
       shouldSort: true,
       tokenize: true,
-      findAllMatches: true,
+      matchAllToken: true,
+      findAllMatches: false,
       threshold: 0,
       location: 0,
+      sort: true,
       distance: 100,
-      maxPatternLength: 320,
-      minMatchCharLength: 3,
+      maxPatternLength: 60,
+      minMatchCharLength: 1,
       keys: [
         "name"
       ]
     };
     this.dataService.initiateData().subscribe(
       (items ) => {
+
         this.metaData = {
           dataElements: items[0],
           indicators: items[1],
@@ -300,6 +304,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'at')){
       currentList.push(...data.at);
     }
+    // return this.orderPipe.transform(currentList,'name',false);
     return currentList;
 
   }
@@ -322,7 +327,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }if(_.includes(options,'at')){
       this.need_groups = false;
     }
-    return currentGroupList;
+    return this.orderPipe.transform(currentGroupList,'name',false);
+    // return currentGroupList;
   }
 
   // this will add a selected item in a list function
