@@ -73,6 +73,7 @@ export class AutoGrowingComponent implements OnInit {
 
   @ViewChild('tbody') private tbody:ElementRef;
   @ViewChild('autogrowingTable') private autogrowingTable:ElementRef;
+  @ViewChild('autogrowingRawTable') private autogrowingRawTable:ElementRef;
 
   ngOnInit() {
     let table_structure = {
@@ -563,7 +564,8 @@ export class AutoGrowingComponent implements OnInit {
     }
   }
 
-  downloadExcel(){
+  downloadExcel(table){
+    console.log(table);
     var date = new Date();
     var dateStr:any = date.getDate();
     if(dateStr < 10){
@@ -590,6 +592,6 @@ export class AutoGrowingComponent implements OnInit {
       }
     })
     fileName += " downloaded_on_" + dateStr + "-" + monthStr + "-" + date.getFullYear();
-    this.excelDownloadService.download(fileName,this.autogrowingTable.nativeElement);
+    this.excelDownloadService.download(fileName,this[table].nativeElement);
   }
 }
