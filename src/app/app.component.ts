@@ -153,13 +153,14 @@ export class AppComponent implements OnInit{
       dimensions.data.need_functions.forEach( (mapping) => {
         this.dataService.getMapping(mapping).subscribe( (value) => {
           // Constructing analytics parameters to pass on the function call
+          console.log("period passed",_.find(dimensions.dimensions, ['name', 'pe'])['value']);
           let parameters = {
             dx: value.id,
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-              // console.log("returned analytics",results)
+              console.log("returned analytics",results)
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
@@ -193,6 +194,7 @@ export class AppComponent implements OnInit{
 
     }else{
       if(analytics){
+        console.log("naanza kufanya kazi")
         this.analyticsService.analytics_lists.push(analytics)
         const tableObject = this.visualization.drawTable(analytics, table_structure);
         this.showTable = true;
@@ -252,7 +254,7 @@ export class AppComponent implements OnInit{
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-
+              // console.log(results)
               this.showTable = true;
               // this.store.dispatch( new UpdateTableAction(tableObject));
               this.autoGrowingData.push( {analytics: results, dataId: value.id} );

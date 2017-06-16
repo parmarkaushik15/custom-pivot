@@ -43,7 +43,6 @@ import {PeriodService} from "./services/period.service";
 import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
 import {SpecificPeriodService} from "./components/period-filter/period.service";
 import {OrderPipe} from "./pipes/order-by.pipe";
-import { WebWorkerService } from 'angular2-web-worker';
 
 @NgModule({
   declarations: [
@@ -89,8 +88,7 @@ import { WebWorkerService } from 'angular2-web-worker';
     AnalyticscreatorService,
     HttpClientService,
     PeriodService,
-    SpecificPeriodService,
-    WebWorkerService
+    SpecificPeriodService
   ],
   bootstrap: [
     AppComponent,
