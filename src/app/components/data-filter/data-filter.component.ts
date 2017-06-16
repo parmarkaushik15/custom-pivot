@@ -3,12 +3,13 @@ import {DataService} from "../../services/data.service";
 import * as _ from 'lodash'
 import {FuseSearchPipe} from "../../shared/pipes/fuse-search.pipe";
 import {OrderPipe} from "../../pipes/order-by.pipe";
+import {FilterByNamePipe} from "../../shared/pipes/filter-by-name.pipe";
 
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
   styleUrls: ['./data-filter.component.css'],
-  providers:[FuseSearchPipe,OrderPipe]
+  providers:[FuseSearchPipe,OrderPipe,FilterByNamePipe]
 })
 export class DataFilterComponent implements OnInit, AfterViewInit {
 
@@ -73,12 +74,11 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   k:number = 1;
   need_groups:boolean =true;
   searchOptions:any;
-  constructor( private dataService: DataService, private fusePipe:FuseSearchPipe, private orderPipe:OrderPipe) { }
+  constructor( private dataService: DataService, private filterByName:FilterByNamePipe, private fusePipe:FuseSearchPipe, private orderPipe:OrderPipe) { }
 
   ngOnInit() {
     this.searchOptions={
       shouldSort: true,
-      tokenize: true,
       matchAllToken: true,
       findAllMatches: false,
       threshold: 0,
@@ -91,6 +91,18 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         "name"
       ]
     };
+    // this.searchOptions={
+    //   shouldSort: true,
+    //   threshold: 0.6,
+    //   location: 0,
+    //   distance: 100,
+    //   maxPatternLength: 32,
+    //   minMatchCharLength: 1,
+    //   keys: [
+    //     "name",
+    //     "organization"
+    //   ]
+    // };
     this.dataService.initiateData().subscribe(
       (items ) => {
 
@@ -382,7 +394,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
 
   //selecting all items
   selectAllItems(){
-    let newList = this.fusePipe.transform(this.listItems , this.searchOptions , this.listchanges);
+    let newList = this.filterByName.transform(this.listItems ,this.listchanges);
     newList.forEach((item) => {
       if(!this.checkDataAvailabilty(item, this.selectedItems )){
         this.selectedItems.push(item);

@@ -93,6 +93,10 @@
             <!--<button class="btn btn-default btn-sm" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel</button>-->
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">
+            <li>
+              <span title="Updating store..." *ngIf="updatingStore"><img src="assets/img/balls-5.svg" style="height: 40px">Updating Metadata({{ updatingParcentage}}%) </span>
+              <a *ngIf="!updatingStore" (click)="updateStore()" style="cursor: pointer" title="Update metadata"><span class="glyphicon glyphicon-refresh"></span></a>
+            </li>
             <li><a href="../../../"><span class="glyphicon glyphicon-home"></span> Home</a></li>
           </ul>
         </div>

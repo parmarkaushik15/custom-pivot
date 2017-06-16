@@ -204,14 +204,10 @@ export class DataService {
    * @param key
    * @returns {any}
    */
-  AddDataToLocalDatabase( key:string ): Observable<any>{
+  addDataToLocalDatabase( key:string ): Observable<any>{
     return Observable.create(observer => {
       this.localDbService.getAll(key).subscribe(
         (items) => {
-          if( items.length != 0){
-            observer.next( items );
-            observer.complete();
-          }else{
             let dataStream$ = null;
             switch (key){
               case DATAELEMENT_KEY:
@@ -246,14 +242,14 @@ export class DataService {
             dataStream$.subscribe(
               (data) => {
                 data.forEach((val) => {
-                  this.localDbService.add(key, val).subscribe((v) => null);
+                  console.log(val);
+                  this.localDbService.add(key, val).subscribe((v) => null,error=> console.log("Available"));
                 });
                 observer.next( data );
                 observer.complete();
               },
               (error) => observer.error(error)
             )
-          }
         },
         error => observer.error(error)
       )

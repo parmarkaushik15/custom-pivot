@@ -27,7 +27,11 @@ import {AnalyticscreatorService} from "./services/analyticscreator.service";
 import {DataService} from "./services/data.service";
 import {VisualizerService} from "./services/visualizer.service";
 import {Angular2Csv} from "angular2-csv";
-import {ORGANISATION_UNIT_KEY} from "./services/local-storage.service";
+import {
+  CATEGORY_COMBOS_KEY,
+  DATAELEMENT_GROUP_KEY, DATAELEMENT_KEY, DATASET_KEY, INDICATOR_GROUP_KEY, INDICATOR_KEY,
+  ORGANISATION_UNIT_KEY, PROGRAM_KEY
+} from "./services/local-storage.service";
 
 @Component({
   selector: 'app-root',
@@ -197,6 +201,20 @@ export class AppComponent implements OnInit{
         this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
       }
     }
+  }
+
+  updatingStore:boolean = false;
+  updatingParcentage = 0;
+  updateStore(){
+    let num = 0;
+    this.updatingStore = true;
+    this.dataService.addDataToLocalDatabase(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
   }
 
   loadAutoGrowing (dimensions) {

@@ -32,7 +32,7 @@
       <tr>
         <th width="50%">
           <ul class="list-inline data-header-list">
-            <li>Available <span class="fadeOut">({{(listItems| fuseSearch:searchOptions:listchanges).length }})</span></li>
+            <li>Available <span class="fadeOut">({{(listItems| filterByName:listchanges).length }})</span></li>
             <li class="pull-right pointer direction-arrows"><a (click)="selectAllItems()" title="Select all"><i class="fa fa-angle-double-right"></i></a></li>
           </ul>
         </th>
@@ -44,25 +44,27 @@
         </th>
       </tr>
       <tr>
-        <td width="50%" style="height: 90%">
+        <td style="height: 120px;width: 50%;">
+
           <ul class="list-unstyled metadata-list scrollable">
-            <li *ngIf="listItems.length == 0">Loading...</li>
-            <li *ngFor="let item of listItems | fuseSearch:searchOptions:listchanges |  paginate: { id: 'foo',
-                                                      itemsPerPage: 30,
-                                                      currentPage: p }"
+            <li *ngIf="loading">Loading...</li>
+            <li *ngIf="!loading && (listItems| filterByName:listchanges).length == 0">No items</li>
+            <li *ngFor="let item of listItems
+              | filterByName:listchanges
+              |  paginate: { id: 'foo',itemsPerPage: 25, currentPage: p }"
                 (click)="addSelected(item)"
                 [ngClass]="{'hiddenTree': inSelected(item, selectedItems)}"
                 title="Click to select item">
               {{ item.name }}
             </li>
-            <li *ngIf="(listItems| fuseSearch:searchOptions:listchanges).length >= 10">
+            <li *ngIf="(listItems| filterByName:listchanges).length >= 25">
               <pagination-controls  id="foo"
                                     (pageChange)="p = $event"
                                     maxSize="0">
               </pagination-controls>
             </li>
-
           </ul>
+
 
         </td>
         <td width="50%">
