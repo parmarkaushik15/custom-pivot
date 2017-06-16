@@ -84,6 +84,7 @@
                 <div app-org-unit-filter *ngIf="!uiState.dataAreaOpen"
                      (onOrgUnitUpdate)="setSelectedOrgunit($event)"
                      (onOrgUnitModelUpdate)="setOrgunitModel($event)"
+                     [orgunit_model]="selected_orgunit_model"
                 ></div>
               </div>
             </div>

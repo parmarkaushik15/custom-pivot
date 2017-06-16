@@ -1,7 +1,7 @@
 <ul class="list-inline" *ngIf="dataOptions.length != 0">
   <li *ngFor="let option of dataOptions" style="padding-right: 0px">
     <a (click)="toggleDataOption(option.prefix, $event)"
-       class="btn btn-sm {{option.selected ? 'btn-info' : 'btn-default'}}"
+       class="btn btn-sm {{option.selected ? 'btn-info' : 'btn-default'}} {{option.name =='Auto Growing' ? 'auto-growing' : ''}}"
        style="height: 32px; border-radius: 16px;padding: 5px 5px"
        title="Click to see {{option.name}}"
     >
@@ -54,7 +54,9 @@
               |  paginate: { id: 'foo',itemsPerPage: 25, currentPage: p }"
                 (click)="addSelected(item)"
                 [ngClass]="{'hiddenTree': inSelected(item, selectedItems)}"
-                title="Click to select item">
+                title="Click to select item"
+                class="{{item.hasOwnProperty('programType') ? 'auto-growing' : ''}}"
+            >
               {{ item.name }}
             </li>
             <li *ngIf="(listItems| filterByName:listchanges).length >= 25">
@@ -75,7 +77,7 @@
                 dnd-droppable (onDropSuccess)="transferDataSuccess($event,item)"
                 title="click to unselect item"
             >
-              <div dnd-draggable [dragEnabled]="true" [dragData]="item"> {{ item.name }} </div>
+              <div dnd-draggable [dragEnabled]="true" [dragData]="item" class="{{item.hasOwnProperty('programType') ? 'auto-growing' : ''}}"> {{ item.name }} </div>
             </li>
             <li *ngIf="selectedItems.length > 100">
               <pagination-controls id ='selectedlist' maxSize="0" (pageChange)="k = $event"></pagination-controls>
