@@ -32,6 +32,7 @@ import {
   DATAELEMENT_GROUP_KEY, DATAELEMENT_KEY, DATASET_KEY, INDICATOR_GROUP_KEY, INDICATOR_KEY,
   ORGANISATION_UNIT_KEY, PROGRAM_KEY
 } from "./services/local-storage.service";
+import {DataFilterComponent} from "./components/data-filter/data-filter.component";
 
 @Component({
   selector: 'app-root',
@@ -85,6 +86,9 @@ export class AppComponent implements OnInit{
 
   @ViewChild(PeriodFilterComponent)
   public periodComponent1: PeriodFilterComponent;
+
+  @ViewChild(DataFilterComponent)
+  public datafilter: DataFilterComponent;
   needForUpdate:boolean = false;
   constructor( private store: Store<ApplicationState>,
                private analyticsService: AnalyticscreatorService,
@@ -192,8 +196,8 @@ export class AppComponent implements OnInit{
         this.analyticsService.analytics_lists.push(analytics)
         const tableObject = this.visualization.drawTable(analytics, table_structure);
         this.showTable = true;
-        this.tableObject = this.analyticsService.addParentOu(tableObject);
-
+        this.tableObject = tableObject;
+        // this.tableObject = this.analyticsService.addParentOu(tableObject);
         this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
         this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
         this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
@@ -208,13 +212,27 @@ export class AppComponent implements OnInit{
   updateStore(){
     let num = 0;
     this.updatingStore = true;
-    this.dataService.addDataToLocalDatabase(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
-    this.dataService.addDataToLocalDatabase(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
-    this.dataService.addDataToLocalDatabase(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
-    this.dataService.addDataToLocalDatabase(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
-    this.dataService.addDataToLocalDatabase(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
-    this.dataService.addDataToLocalDatabase(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
-    this.dataService.addDataToLocalDatabase(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){this.updatingStore = false}});
+    this.dataService.addDataToLocalDatabase(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
+    this.dataService.addDataToLocalDatabase(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
+    this.dataService.addDataToLocalDatabase(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
+    this.dataService.addDataToLocalDatabase(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
+    this.dataService.addDataToLocalDatabase(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
+    this.dataService.addDataToLocalDatabase(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
+    this.dataService.addDataToLocalDatabase(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+      this.updatingStore = false; this.datafilter.initiateData();
+    }});
   }
 
   loadAutoGrowing (dimensions) {

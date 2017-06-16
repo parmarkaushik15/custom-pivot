@@ -103,6 +103,11 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     //     "organization"
     //   ]
     // };
+    this.initiateData();
+  }
+
+  initiateData() {
+    console.log("inarum")
     this.dataService.initiateData().subscribe(
       (items ) => {
 

@@ -19,6 +19,7 @@
           <div class="panel panel-default data-component-area">
             <div class="panel-body" style="padding: 3px">
               <app-data-filter
+                #datafilter
                 *ngIf="uiState.dataAreaOpen"
                 (onDataUpdate)="setSelectedData($event)"
                 [selectedItems]="selectedData$ | async"

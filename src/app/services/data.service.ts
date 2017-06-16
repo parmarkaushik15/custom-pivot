@@ -184,7 +184,6 @@ export class DataService {
             dataStream$.subscribe(
               (data) => {
                 data.forEach((val) => {
-                  console.log(val)
                   this.localDbService.add(key, val).subscribe((v) => null);
                 });
                 observer.next( data );
@@ -242,8 +241,7 @@ export class DataService {
             dataStream$.subscribe(
               (data) => {
                 data.forEach((val) => {
-                  console.log(val);
-                  this.localDbService.add(key, val).subscribe((v) => null,error=> console.log("Available"));
+                  this.localDbService.add(key, val).subscribe((v) => null,error=> {});
                 });
                 observer.next( data );
                 observer.complete();
