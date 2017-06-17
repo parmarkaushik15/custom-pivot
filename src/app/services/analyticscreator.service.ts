@@ -18,7 +18,6 @@ export class AnalyticscreatorService {
   ) { }
 
   prepareAnalytics(layout, dimensions:any, repeat:boolean = false ){
-    console.log(layout)
     if( repeat ){
       return Observable.create(observor => {
         observor.next( this.current_normal_analytics );
@@ -53,8 +52,8 @@ export class AnalyticscreatorService {
   }
 
   // merge analytics calls
-  mergeAnalyticsCalls( analytics: any[] ){
-    let combined_analytics = {
+  mergeAnalyticsCalls( analytics: any[],showHirach:boolean ){
+    let combined_analytics:any = {
       headers:[],
       metaData:{
         names:{},
@@ -103,7 +102,51 @@ export class AnalyticscreatorService {
         combined_analytics.rows.push(row);
       })
     });
-    return combined_analytics;
+
+
+    return new Observable((observ)=>{
+      this.sortAnalyticsUsingParent(combined_analytics.metaData.ou).subscribe(
+        (ous) => {
+          if(showHirach){
+            combined_analytics.metaData.ou = ous;
+          }
+          observ.next(combined_analytics);
+        }
+      );
+    });
+
+  }
+
+  sortAnalyticsUsingParent(ou:any[]){
+    return new Observable((observ)=>{
+      let ous = [];
+      ou.forEach((orgUnit)=>{
+        this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,orgUnit).subscribe(orgunit => {
+          let parentId= null;
+          if(orgunit && orgunit.hasOwnProperty('parent')){
+            parentId = orgunit.parent.id;
+          }
+          this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,parentId).subscribe(parent => {
+            ous.push(
+              {id:orgUnit,parent:parent.name}
+            );
+            if(ous.length == ou.length){
+              observ.next(_.map(_.sortBy(ous,'parent'),'id'));
+              observ.complete();
+            }
+          },error=>{
+            ous.push(
+              {id:orgUnit,parent:""}
+            );
+            if(ous.length == ou.length){
+              observ.next(_.map(_.sortBy(ous,'parent'),'id'));
+              observ.complete();
+            }
+          });
+        });
+      })
+    })
+
   }
 
   duplicateAnalytics(analytics,data,oldDataId){
@@ -133,7 +176,6 @@ export class AnalyticscreatorService {
       }
     });
     url += '&displayProperty=NAME&hierarchyMeta=true&'+showData;
-    console.log("url:",url);
     return url;
   }
 
@@ -176,14 +218,17 @@ export class AnalyticscreatorService {
         let limit = (span_distance - current_distance)+1;
         let check_counter = 1;
         header.items.forEach( (item,index) => {
-          if((check_counter % limit) == 0){
-            some_items.push(item);
-            some_items.push({name:'total',span:1})
-          }else{
-            some_items.push(item);
+          if(item.name == "total"){
+            some_items.push(item)
+          }else {
+            if ((check_counter % limit) == 0) {
+              some_items.push(item);
+              some_items.push({name: 'total', span: 1})
+            } else {
+              some_items.push(item);
+            }
+            check_counter++;
           }
-          check_counter++;
-
         });
         some_header.push({items:some_items,style: ""});
       //
@@ -391,41 +436,110 @@ export class AnalyticscreatorService {
     let counter = 1;
     let sum_rows = [];
     let row_items = [];
-    if(data.columns[0] == "ou"){
       data.hasParentOu = true;
+      let parentsOrgunits = [];
+
+    if(data.columns[0] == "ou"){
       data.rows.forEach( (row) => {
-        if(row.items[0]['type'] == "ou"){
-          this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,row.items[0].name).subscribe(orgunit => {
-            if(orgunit && orgunit.hasOwnProperty('parent')){
-              this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,orgunit.parent.id).subscribe(parent => {
+          if(row.items[0]['type'] == "ou"){
+            this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,row.items[0].name).subscribe(orgunit => {
+              if(orgunit && orgunit.hasOwnProperty('parent')){
+                this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,orgunit.parent.id).subscribe(parent => {
+                  if(parentsOrgunits.indexOf(parent.id) == -1){
+                    row.items.unshift({
+                      "type": "",
+                      "name": "drHchnPFUa9",
+                      "val": parent.name,
+                      "row_span": row.items[0].row_span,
+                      "header": true
+                    })
+                  }else{
+                    row.items.unshift({
+                      "type": "",
+                      "name": "drHchnPFUa9",
+                      "val": "",
+                      "row_span": row.items[0].row_span,
+                      "header": true
+                    })
+                  }
+
+                  parentsOrgunits.push(parent.id);
+                });
+              }else{
                 row.items.unshift({
                   "type": "",
                   "name": "drHchnPFUa9",
-                  "val": parent.name,
+                  "val": "",
                   "row_span": row.items[0].row_span,
                   "header": true
                 })
-              });
-            }else{
-              row.items.unshift({
-                "type": "",
-                "name": "drHchnPFUa9",
-                "val": "",
-                "row_span": row.items[0].row_span,
-                "header": true
-              })
-            }
+                parentsOrgunits.push("");
+              }
 
-          });
+            });
 
-        }
-        some_rows.push(row);
-      });
-    }else{
-      data.rows.forEach( (row) => {
+          }
+
         some_rows.push(row);
       });
     }
+    else{
+      data.rows.forEach( (row) => {
+
+        row.items.forEach((item,index) => {
+          if(item.type == "ou"){
+            this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,item.name).subscribe(orgunit => {
+              if(orgunit && orgunit.hasOwnProperty('parent')){
+                this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,orgunit.parent.id).subscribe(parent => {
+                  // row.items[index].val = parent.name+" > "+row.items[index].val;
+                  if(row.items[0].type != "ou"){
+                    parentsOrgunits = [];
+                  }
+                  if(parentsOrgunits.indexOf(parent.id) == -1){
+                    row.items.splice(index,0,{
+                      "type": "",
+                      "name": "drHchnPFUa9",
+                      "val": parent.name,
+                      "row_span": item.row_span,
+                      "header": true
+                    })
+                  }else{
+                    row.items.splice(index,0,{
+                      "type": "",
+                      "name": "drHchnPFUa9",
+                      "val": "",
+                      "row_span": item.row_span,
+                      "header": true
+                    })
+                  }
+
+                  parentsOrgunits.push(parent.id);
+                });
+              }
+            });
+          }
+        });
+        some_rows.push(row);
+      });
+      some_rows = data.rows;
+    }
+    if(data.columns.indexOf("ou") == -1){
+      data.hasParentOu = false;
+    }
+      data.headers.forEach((header) => {
+        header.items.forEach((item) => {
+          if(item.type == "ou"){
+            this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,item.id).subscribe(orgunit => {
+              if(orgunit && orgunit.hasOwnProperty('parent')){
+                this.localStorageService.getByKey(ORGANISATION_UNIT_KEY,orgunit.parent.id).subscribe(parent => {
+                  item.name = parent.name+" > "+item.name;
+                });
+              }
+            });
+
+          }
+        })
+      })
 
     return {
       headers : data.headers,
@@ -436,6 +550,7 @@ export class AnalyticscreatorService {
       titlesAvailable:data.itlesAvailable,
       hasParentOu:data.hasParentOu
     };
+
 
   }
 }

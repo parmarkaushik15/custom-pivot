@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <div class="right-block col-xs-8" [ngClass]="{'col-xs-12': !uiState.dataAreaOpen}">
+    <div class="right-block " [ngClass]="{'col-xs-12': !uiState.dataAreaOpen,'col-xs-8': uiState.dataAreaOpen}" >
       <nav class="navbar navbar-default top-bar">
         <div class="container-fluid" style="padding-top: 4px;padding-left: 3px;padding-right: 3px">
           <div class="navbar-header">
@@ -92,6 +92,13 @@
             <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
             <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
             <app-options (onOptionUpdate)="updateOptions($event)"></app-options>
+            <!--favorites-->
+            <app-favorite
+              [dataDimensions]="dataDimensions$ | async"
+              [layout]="layout" [options]="options"
+              [allDimensionAvailable]="allDimensionAvailable"
+              (onFavoriteSelect)="openFavorite($event)"
+            ></app-favorite>
             <!--<button class="btn btn-default btn-sm" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel</button>-->
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">

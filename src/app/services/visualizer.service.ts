@@ -635,7 +635,7 @@ export class VisualizerService {
         let headerItem = [];
         for (let i = 0; i < dimension.duplication; i++) {
           for (let currentItem of currentColumnItems) {
-            headerItem.push({'name': currentItem.name, 'span': dimension.col_span});
+            headerItem.push({'name': currentItem.name, 'span': dimension.col_span,type:currentItem.type,id:currentItem.uid});
           }
         }
         let styles = '';

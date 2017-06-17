@@ -153,26 +153,27 @@ export class AppComponent implements OnInit{
       dimensions.data.need_functions.forEach( (mapping) => {
         this.dataService.getMapping(mapping).subscribe( (value) => {
           // Constructing analytics parameters to pass on the function call
-          console.log("period passed",_.find(dimensions.dimensions, ['name', 'pe'])['value']);
           let parameters = {
             dx: value.id,
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-              console.log("returned analytics",results)
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
                 if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
-                const tableObject = this.visualization.drawTable(this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists), table_structure);
-                this.showTable = true;
-                this.tableObject = tableObject;
-                this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
-                this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
-                this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
-                this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
-                this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+                this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
+                  const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
+                  this.showTable = true;
+                  this.tableObject = tableObject;
+                  this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
+                  this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
+                  this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
+                  this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
+                  this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
+                  this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+                });
               }
               // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
             },
@@ -183,7 +184,6 @@ export class AppComponent implements OnInit{
               console.log('progress');
             }
           };
-          console.log(value)
             // If there is a function for a data find the function and run it.
             let use_function = _.find(this.functions, ['id', value.function]);
             let execute = Function('parameters', use_function['function']);
@@ -194,17 +194,19 @@ export class AppComponent implements OnInit{
 
     }else{
       if(analytics){
-        console.log("naanza kufanya kazi")
-        this.analyticsService.analytics_lists.push(analytics)
-        const tableObject = this.visualization.drawTable(analytics, table_structure);
-        this.showTable = true;
-        this.tableObject = tableObject;
-        // this.tableObject = this.analyticsService.addParentOu(tableObject);
-        this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
-        this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
-        this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
-        this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
-        this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+        this.analyticsService.analytics_lists.push(analytics);
+        this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
+          const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
+          this.showTable = true;
+          this.tableObject = tableObject;
+          this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
+          this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+        })
+
       }
     }
   }
@@ -361,59 +363,21 @@ export class AppComponent implements OnInit{
 
   }
 
-  downloadExcel(){
-    let headers = [];
-    let newRows = _.cloneDeep(this.tableObject);
-    this.tableObject.headers.forEach((header) => {
-      let someItems = [];
-      header.items.forEach((item) => {
-        for( let i=0;i<item.span; i++){
-          someItems.push(item.name)
-        }
-      });
-      headers.push(someItems)
-    });
+  openFavorite(favorite){
 
-    let length = newRows.rows[0].items.length;
-    newRows.rows.forEach((row) => {
-      for(let k=0; k < length-row.items.length; k++){
-          row.items.unshift({name:"",value:""})
-      }
-    });
-    let csvHeaders = [];
-    headers.forEach((header) => {
-      header.forEach((singleHeader, index) => {
-        if(csvHeaders[index]){
-          csvHeaders[index] += " "+singleHeader;
-        }else{
-          csvHeaders[index] = singleHeader;
-        }
-      });
-    });
-    csvHeaders = newRows.titles.rows.concat(csvHeaders);
-    let dataValues = [];
-    newRows.rows.forEach((row) => {
-      let dataObject = {};
-      csvHeaders.forEach((header,index) => {
-        dataObject[header] = (row.items[index].val)?row.items[index].val:"";
-      });
-      dataValues.push(dataObject);
-    });
-    let options = {
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalseparator: '.',
-      showLabels: true,
-      showTitle: false
-    };
-    new Angular2Csv(dataValues, 'My Report',options);
-    return {
-      headers: csvHeaders,
-      data: dataValues
-    }
-  }
-
-  addParentToAnalytics(analytics){
-
+    //set orgunits
+    this.setSelectedOrgunit(favorite.dataDimensions.ou);
+    //set periods
+    this.setSelectedData(favorite.dataDimensions.data);
+    //set data
+    this.setSelectedPeriod(favorite.dataDimensions.period);
+    //set layout
+    this.store.dispatch( new SetLayoutAction( favorite.layout ) );
+    //set options
+    this.store.dispatch( new UpdateOptionsAction( favorite.options ) );
+    //update table
+    setTimeout(()=>{
+      this.updateTable();
+    })
   }
 }

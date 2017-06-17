@@ -43,6 +43,7 @@ import {PeriodService} from "./services/period.service";
 import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
 import {SpecificPeriodService} from "./components/period-filter/period.service";
 import {OrderPipe} from "./pipes/order-by.pipe";
+import { FavoriteComponent } from './components/favorite/favorite.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import {OrderPipe} from "./pipes/order-by.pipe";
     RemoveNaNPipe,
     OptionsComponent,
     OrderPipe,
-    FilterLevelPipe
+    FilterLevelPipe,
+    FavoriteComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,61 @@
+<span appClickOutside (clickOutside)="showLayout = false">
+<a class="btn btn-default btn-sm" tooltip="Change layouts" (click)="showLayout = !showLayout">
+  Favorites
+</a>
+<div style="position: absolute">
+  <div *ngIf="showLayout" class="layout-block" [ng2-draggable]="true" [ng2DraggableHandle]="elementreference">
+    <div #elementreference style="padding:6px;margin-bottom: 6px;border-bottom: 1px solid rgba(0,0,0,0.1); cursor: move">
+      <label>Favorites</label>
+      <button *ngIf="!newFavoriteArea && allDimensionAvailable"  class="pull-right btn-xs btn btn-default" (click)="enableAddFavorite();$event.stopPropagation()"><span class="glyphicon glyphicon-plus"></span> New</button>
+
+    </div>
+
+    <div >
+      <div class="col-sm-12" style="padding-left: 5px;padding-right: 5px">
+        <span *ngIf="savingSuccess" class="text-success">Favorite saved successful...</span>
+        <span *ngIf="savingFalure" class="text-danger">A problem occurs when saving  favorite, try again...</span>
+        <div class="col-sm-12" *ngIf="newFavoriteArea" style="padding:0px">
+          <textarea placeholder="Favorite name" class="form-control" [(ngModel)]="newFavName"></textarea>
+          <button style="margin-top: 4px;margin-bottom: 5px" class="btn btn-info btn-xs pull-right" (click)="addFavorite();$event.stopPropagation()" *ngIf="!saving" [disabled]="newFavName==''">Save</button>
+            <span *ngIf="saving">Saving The favorite...</span>
+        </div>
+        <!--favorites lists-->
+        <ul class="list-unstyled">
+          <li *ngIf="loadingFavorite">Loading</li>
+          <li *ngIf="!loadingFavorite && favorites.length == 0">There are no saved favorite</li>
+          <li class="fav-list" *ngFor="let favorite of favorites" style="padding: 7px;border-bottom: solid 1px rgba(0,0,0,0.1);">
+            <span *ngIf="!showEdit[favorite.id]" class="fav-name" (click)="openFavorite(favorite);$event.stopPropagation()"> {{ favorite.name }}</span>
+            <!--textbox for editing in case editing is on-->
+            <span *ngIf="showEdit[favorite.id]">
+              <textarea [(ngModel)]="editText" class="form-control"></textarea>
+            </span>
+            <span *ngIf="!showDelete[favorite.id] && !showEdit[favorite.id]" (click)="enableEdit(favorite);$event.stopPropagation()" class="glyphicon glyphicon-pencil pull-right text-primary butn" style="cursor: pointer" title="Update favorite"></span>
+            <span *ngIf="!showDelete[favorite.id] && !showEdit[favorite.id]" (click)="enableDelete(favorite);$event.stopPropagation()" class="glyphicon glyphicon-trash pull-right text-danger butn" style="cursor: pointer;padding-left: 5px;padding-right: 5px" title="Delete favorite"></span>
+            <!--deleteng favorite-->
+            <div class="pull-right" *ngIf="showDelete[favorite.id]">
+              <span class="text-success" *ngIf="deleteSuccess[favorite.id]">Favorite Deleted successful</span>
+              <span class="text-danger" *ngIf="deleteFalure[favorite.id]">Something went wrong when trying to delete favorite, try again</span>
+              <span *ngIf="deleting[favorite.id]">Deleting favorite...</span>
+              <span class="glyphicon glyphicon-check text-success butn" style="cursor: pointer" title="Delete" (click)="deleteFavorite(favorite);$event.stopPropagation()"><span></span>Delete</span>
+              <span class="glyphicon glyphicon-remove text-danger butn" style="cursor: pointer" title="Cancel" (click)="showDelete[favorite.id]=false;$event.stopPropagation()"><span></span>Cancel</span>
+            </div>
+            <!--Editing favorite-->
+            <div class="pull-right" *ngIf="showEdit[favorite.id]">
+              <span class="text-success" *ngIf="editSuccess[favorite.id]">Favorite Updated successful</span>
+              <span class="text-danger" *ngIf="editFalure[favorite.id]">Something went wrong when trying to update favorite, try again</span>
+              <span *ngIf="editing[favorite.id]">Updating favorite...</span>
+              <span class="glyphicon glyphicon-check text-success butn" style="cursor: pointer" title="Delete" (click)="editFavorite(favorite);$event.stopPropagation()"><span></span>Update</span>
+              <span class="glyphicon glyphicon-remove text-danger butn" style="cursor: pointer" title="Cancel" (click)="showEdit[favorite.id]=false;$event.stopPropagation()"><span></span>Cancel</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="pull-right">
+        <button class="btn btn-default btn-sm" (click)="showLayout= false"><i class="fa fa-times"></i>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</span>
