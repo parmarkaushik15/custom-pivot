@@ -81,7 +81,7 @@ export class AnalyticscreatorService {
         }
       });
       analytic.metaData.ou.forEach((val) => {
-        if(!_.includes(combined_analytics.metaData.pe, val)){
+        if(!_.includes(combined_analytics.metaData.ou, val)){
           combined_analytics.metaData.ou.push( val );
         }
       });

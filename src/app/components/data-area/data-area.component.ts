@@ -144,7 +144,8 @@ export class DataAreaComponent implements OnInit {
   downloadExcel(){
     this.excelDownloadService.download("My Report",this.autogrowingTable.nativeElement);
   }
-downloadExcel1(){
+
+  downloadExcel1(){
     let headers = [];
     let newRows = _.cloneDeep(this.tableObject);
     this.tableObject.headers.forEach((header) => {

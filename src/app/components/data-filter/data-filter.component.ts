@@ -233,6 +233,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     let dataElements = [];
     let categoryCombo = this.getCategoryCombo( dataElement.categoryCombo.id);
     dataElements.push({
+      dataElementId:dataElement.id,
       id:dataElement.id,
       name:dataElement.name + "",
       dataSetElements:dataElement.dataSetElements
@@ -240,6 +241,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     categoryCombo.categoryOptionCombos.forEach((option) => {
       if(option.name != 'default'){
         dataElements.push({
+          dataElementId:dataElement.id,
           id:dataElement.id+"."+option.id,
           name:dataElement.name + " "+option.name,
           dataSetElements:dataElement.dataSetElements
@@ -284,7 +286,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }else{
         if( group.hasOwnProperty('dataElements')){
           let newArray = _.filter(data.dx, (dataElement) => {
-            return _.includes(_.map(group.dataElements,'id'), dataElement['id']);
+            return _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId);
           });
           currentList.push(...newArray)
         }

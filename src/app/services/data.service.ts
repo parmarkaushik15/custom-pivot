@@ -37,7 +37,7 @@ export class DataService {
   }
 
   getDataElements(): Observable<DataElement[]>{
-    return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo,dataSetElements[dataSet[periodType]&paging=false")
+    return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo,dataSetElements[dataSet[periodType]&paging=false&filter=domainType:eq:AGGREGATE")
     // return this.http.get("../../../api/dataElements.json?fields=id,name,categoryCombo,dataSetElements[dataSet[periodType]&pageSize=400")
       .map(res => res.json().dataElements || [])
   }

@@ -164,14 +164,15 @@ export class AppComponent implements OnInit{
               if(counter == dimensions.data.need_functions.length ){
                 if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
                 this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
+                  console.log(JSON.stringify(combined_analytics))
                   const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
                   this.showTable = true;
                   this.tableObject = tableObject;
-                  this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
                   this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
                   this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
                   this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
                   this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
+                  this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
                   this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
                 });
               }
@@ -199,11 +200,11 @@ export class AppComponent implements OnInit{
           const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
           this.showTable = true;
           this.tableObject = tableObject;
-          this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
           this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
         })
 
