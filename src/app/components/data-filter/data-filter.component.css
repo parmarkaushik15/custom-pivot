@@ -5,7 +5,8 @@
   background-color: #A9A9A9 !important;
 }
 .auto-growing{
-  color: #851C00;
+  /*color: #851C00;*/
+  color: #0869A2;
 }
 .direction-arrows:hover{
   background-color: rgba(0,0,0,0.2);
