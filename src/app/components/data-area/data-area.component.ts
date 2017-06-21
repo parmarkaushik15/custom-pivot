@@ -160,7 +160,6 @@ export class DataAreaComponent implements OnInit {
 
     let length = newRows.rows[0].items.length;
     newRows.rows.forEach((row) => {
-      console.log(length-row.items.length);
       for(let k=0; k < length-row.items.length; k++){
         row.items.unshift({name:"",value:""})
       }

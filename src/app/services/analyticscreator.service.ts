@@ -218,7 +218,7 @@ export class AnalyticscreatorService {
         let limit = (span_distance - current_distance)+1;
         let check_counter = 1;
         header.items.forEach( (item,index) => {
-          if(item.name == "total"){
+          if(item.name == "total" || item.name == "avg"){
             some_items.push(item)
           }else {
             if ((check_counter % limit) == 0) {
@@ -303,6 +303,55 @@ export class AnalyticscreatorService {
         }
       });
       some_row_item.push({name:'total', val: +sum.toFixed(2), row_span:1,column_total:true,sub_total:true});
+      some_rows.push({items:some_row_item,headers:row.headers});
+    });
+
+    return {
+      headers : some_header,
+      rows : some_rows,
+      columns : data.columns,
+      titles : data.titles,
+      title : data.title
+    };
+
+  }
+
+  addColumnAverage( tableObject ){
+    let data = _.cloneDeep(tableObject);
+    let some_header = [];
+    let some_rows = [];
+    // Adding title to the rows
+    data.headers.forEach( (header) => {
+      let some_items = [];
+      header.items.forEach( ( item ) => {
+          some_items.push( item );
+      });
+      some_items.push( {name:'avg',span:1} );
+      some_header.push( {items:some_items,style: ""} );
+
+    });
+
+    // Processing row
+    let sum_counter = 0;
+    data.rows.forEach( (row) => {
+      let some_row_item = [];
+      let sum = 0;
+      sum_counter = 0;
+      row.items.forEach( (item) => {
+        if(item.hasOwnProperty("header")){
+          some_row_item.push(item)
+        }else{
+          let item_value = parseFloat(item.val);
+          if(item.hasOwnProperty('subtotal_column')){ }
+          else{
+            sum_counter++;
+            sum += (item_value)?item.val : 0;
+            some_row_item.push(item);
+          }
+        }
+      });
+      let avg = sum / sum_counter;
+      some_row_item.push({name:'avg', val: +avg.toFixed(2), row_span:1,column_total:true,sub_total:true});
       some_rows.push({items:some_row_item,headers:row.headers});
     });
 
@@ -416,6 +465,59 @@ export class AnalyticscreatorService {
         row_items.push({name:"",val:'',row_span:1,header:true})
       }else{
         row_items.push({name:"",val:+sum_rows[total_counter].toFixed(2),row_span:1,row_total:true,sub_total:true});
+        total_counter++;
+      }
+    });
+    some_rows.push({items:row_items,headers:data.rows[0].headers,sub_total:true});
+    return {
+      headers : data.headers,
+      rows : some_rows,
+      columns : data.columns,
+      titles : data.titles,
+      title : data.title
+    };
+
+  }
+
+  addRowAverage( tableObject ){
+    let data = _.cloneDeep(tableObject);
+    let row_distance:any = data.rows[0].items[0].row_span;
+    let some_rows = [];
+    let counter = 1;
+    let sum_rows = [];
+    let row_items = [];
+    let avg_counter = 0;
+    data.rows.forEach( (row) => {
+        some_rows.push(row);
+        // adding totals to the sum array to be used in the created row
+        let sum_counter = 0;
+        row.items.forEach( (item) => {
+          if(item.hasOwnProperty('header')){}
+          else{
+            if(sum_rows[sum_counter]){
+              sum_rows[sum_counter] += (parseFloat(item.val))?parseFloat(item.val):0;
+            }else{
+              sum_rows[sum_counter] = (parseFloat(item.val))?parseFloat(item.val):0;
+            }
+            sum_counter++;
+          }
+        });
+      counter++;
+    });
+    // creating a subtotal column
+    let total_counter = 0;
+    data.rows.forEach( (item) => {
+      if(item.hasOwnProperty('header')){
+      }else{
+        avg_counter++
+      }
+    });
+    data.rows[0].items.forEach( (item) => {
+      if(item.hasOwnProperty('header')){
+        row_items.push({name:"",val:'',row_span:1,header:true})
+      }else{
+        let avg = sum_rows[total_counter] / avg_counter;
+        row_items.push({name:"",val:+avg.toFixed(2),row_span:1,row_total:true,sub_total:true});
         total_counter++;
       }
     });

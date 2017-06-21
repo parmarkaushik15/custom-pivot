@@ -158,13 +158,14 @@ export class AppComponent implements OnInit{
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
+              console.log(JSON.stringify(results));
               // This will run on successfull function return, which will save the result to the data store for analytics
               counter++;
               this.analyticsService.analytics_lists.push(results);
               if(counter == dimensions.data.need_functions.length ){
                 if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
                 this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
-                  console.log(JSON.stringify(combined_analytics))
+
                   const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
                   this.showTable = true;
                   this.tableObject = tableObject;
@@ -201,6 +202,8 @@ export class AppComponent implements OnInit{
           this.showTable = true;
           this.tableObject = tableObject;
           this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showRowAverage)?this.analyticsService.addRowAverage(this.tableObject):this.tableObject;
+          this.tableObject = (table_structure.showColumnAverage)?this.analyticsService.addColumnAverage(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
           this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
@@ -337,8 +340,10 @@ export class AppComponent implements OnInit{
       this.analyticsService.current_normal_analytics = analytics;
       let table_structure = {
         showColumnTotal: this.options.column_totals,
+        showColumnAverage: this.options.column_avg,
         showColumnSubTotal: this.options.column_sub_total,
         showRowTotal: this.options.row_totals,
+        showRowAverage: this.options.row_avg,
         showRowSubtotal: this.options.row_sub_total,
         showDimensionLabels: this.options.dimension_labels,
         hide_zeros: this.options.hide_empty_row,

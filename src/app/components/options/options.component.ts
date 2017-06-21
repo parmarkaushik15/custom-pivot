@@ -13,6 +13,8 @@ export class OptionsComponent implements OnInit {
     row_totals: false,
     column_sub_total: false,
     row_sub_total: false,
+    row_avg: false,
+    column_avg: false,
     dimension_labels: false,
     hide_empty_row: false,
     show_hierarchy: false,

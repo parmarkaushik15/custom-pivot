@@ -24,8 +24,14 @@
 
 <div *ngIf="tableObject" style="padding: 3px" [ngClass]="{'update-needed': needForUpdate}">
   <h4 *ngIf="tableObject.rows.length != 0" class="text-center" style="margin-bottom: 0px">{{tableObject?.title}}
-    <button class="btn btn-default btn-sm pull-right" style="margin-bottom: 10px" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel </button>
-    <button class="btn btn-default btn-sm pull-right" style="margin-bottom: 10px" (click)="downloadExcel1()"><i class="fa fa-file-excel-o"></i> Excel(no Merging) </button>
+    <div class="dropdown pull-right">
+      <button class="btn btn-default btn-sm" style="margin-bottom: 10px" type="button" data-toggle="dropdown"><i class="fa fa-file-excel-o"></i> Excel
+        <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a (click)="downloadExcel()">Merged Data</a></li>
+        <li><a (click)="downloadExcel1()">Raw Data</a></li>
+      </ul>
+    </div>
   </h4>
   <table #autogrowingTable class="table table-bordered table-responsive table-condensed custom-table"
          *ngIf="tableObject.rows.length != 0">
