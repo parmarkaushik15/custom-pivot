@@ -15,7 +15,7 @@ export const PROGRAM_KEY =    'programs';
 export class LocalStorageService {
   db;
   constructor() {
-    this.db = new AngularIndexedDB('org.hisptz.ards.metadata', 1);
+    this.db = new AngularIndexedDB('org.hisptz.ardspivot.metadata', 1);
   }
 
   /**

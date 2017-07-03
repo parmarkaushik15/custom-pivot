@@ -107,7 +107,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   }
 
   initiateData() {
-    console.log("inarum")
     this.dataService.initiateData().subscribe(
       (items ) => {
 
@@ -149,8 +148,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     } else {
       this.dataOptions.forEach((value) => {
         if( value['prefix'] == optionPrefix ){
-
-          console.log(someItems)
           if(someItems.many && someItems.available){
             value['selected'] = true;
           }else{
@@ -170,7 +167,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   }
 
   manyItemsSelected(optios:any, optionPrefix:string){
-    console.log(optios)
     let selected = {
       many: false,
       items: [],
@@ -191,12 +187,13 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     return selected;
   }
 
-  setSelectedGroup(group) {
+  setSelectedGroup(group,listArea) {
     this.listchanges = '';
     this.selectedGroup = group;
     this.listItems = this.dataItemList();
     this.showGroups = false;
     this.p = 1;
+    listArea.scrollTop = 0;
   }
 
   getSelectedOption(): any[] {
@@ -284,8 +281,14 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       if( group.id == 'ALL' ){
         currentList.push(...data.dx)
       }else{
+        console.log(JSON.stringify(data.dx))
         if( group.hasOwnProperty('dataElements')){
           let newArray = _.filter(data.dx, (dataElement) => {
+            if( _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId)){
+
+              console.log(dataElement.dataElementId);
+              console.log(_.map(group.dataElements,'id'));
+            }
             return _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId);
           });
           currentList.push(...newArray)

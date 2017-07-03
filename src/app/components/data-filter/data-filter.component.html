@@ -20,7 +20,7 @@
   <div class="panel-body" style="padding: 5px;">
     <input type="search" class="form-control input-sm" placeholder="Search" style="margin-bottom: 5px;" [(ngModel)]="querystring">
     <ul class="list-unstyled metadata-list  tree-area1">
-      <li *ngFor="let item of dataGroups | fuseSearch:searchOptions:querystring | orderBy: 'name':false" (click)="setSelectedGroup(item)">{{ item.name }}</li>
+      <li *ngFor="let item of dataGroups | fuseSearch:searchOptions:querystring | orderBy: 'name':false" (click)="setSelectedGroup(item,scrollse)">{{ item.name }}</li>
     </ul>
   </div>
 </div>
@@ -46,7 +46,7 @@
       <tr>
         <td style="height: 120px;width: 50%;">
 
-          <ul class="list-unstyled metadata-list scrollable">
+          <ul class="list-unstyled metadata-list scrollable" #scrollse>
             <li *ngIf="loading">Loading...</li>
             <li *ngIf="!loading && (listItems| filterByName:listchanges).length == 0">No items</li>
             <li *ngFor="let item of listItems
