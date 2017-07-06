@@ -34,7 +34,7 @@ export class ExcelDownloadService {
 
     setTimeout(()=>{
       var link = document.createElement('a');
-      link.download = name +".xlsx";
+      link.download = name +".xls";
       link.href = uri + base64(format(str, ctx));
       link.click();},100);
   }
