@@ -147,7 +147,7 @@ export const INITIAL_STORE_DATA: StoreData = {
     rows: ['pe'],
     columns: ['dx'],
     filters: ['ou'],
-    excluded:['co']
+    excluded:[]
   },
   orgunit_model: {
     selection_mode: "Usr_orgUnit",

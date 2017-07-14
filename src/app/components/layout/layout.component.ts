@@ -35,14 +35,12 @@ export class LayoutComponent implements OnInit {
   names = {
     dx: 'Data',
     ou: 'Organisation Unit',
-    pe: 'Period',
-    co: 'Category Option'
+    pe: 'Period'
   };
   icons = {
     dx:"glyphicon glyphicon-oil",
     ou:"glyphicon glyphicon-home",
-    pe:"glyphicon glyphicon-calendar",
-    co:"glyphicon glyphicon-align-justify",
+    pe:"glyphicon glyphicon-calendar"
   };
 
   dimensions = {

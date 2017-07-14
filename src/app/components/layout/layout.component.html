@@ -10,12 +10,12 @@
       <div class="col-sm-12" style="padding-left: 5px;padding-right: 5px">
         <table class="table table-bordered" style="height: 250px">
           <tr >
-            <td rowspan="2" dnd-droppable (onDropSuccess)="onDrop($event,'excluded')">
-              <div>
-                <label>Excluded dimension</label>
-              </div>
-              <div class="draggable" dnd-draggable [dragEnabled]="true" *ngFor="let dimension of layout.excluded" [dragData]="{data: dimension, dimension: 'excluded'}"><span [ngClass]="icons[dimension]"></span> {{names[dimension]}}</div>
-            </td>
+            <!--<td rowspan="2" dnd-droppable (onDropSuccess)="onDrop($event,'excluded')">-->
+              <!--<div>-->
+                <!--<label>Excluded dimension</label>-->
+              <!--</div>-->
+              <!--<div class="draggable" dnd-draggable [dragEnabled]="true" *ngFor="let dimension of layout.excluded" [dragData]="{data: dimension, dimension: 'excluded'}"><span [ngClass]="icons[dimension]"></span> {{names[dimension]}}</div>-->
+            <!--</td>-->
             <td dnd-droppable (onDropSuccess)="onDrop($event,'filters')" class="dimension-drops">
               <div>
                 <label>Filters</label>
