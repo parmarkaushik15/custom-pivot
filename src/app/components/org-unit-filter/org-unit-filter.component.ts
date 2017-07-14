@@ -272,8 +272,7 @@ export class OrgUnitFilterComponent implements OnInit {
       }
     });
 
-    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
-    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+    this.emit();
 
     // $event.node.isFocused = false;
   };
@@ -290,10 +289,25 @@ export class OrgUnitFilterComponent implements OnInit {
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
-    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
-    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+    this.emit();
   };
 
+  emit(){
+    console.log("This Model:",this.orgunit_model.selected_orgunits);
+    var mapper = {};
+    this.orgunit_model.selected_orgunits.forEach(function(orgUnit){
+      if(!mapper[orgUnit.level]){
+        mapper[orgUnit.level] = [];
+      }
+      mapper[orgUnit.level].push(orgUnit);
+    })
+    var arrayed_org_units = [];
+    Object.keys(mapper).forEach(function(orgUnits){
+      arrayed_org_units.push(mapper[orgUnits])
+    })
+    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),arrayed_org_units:arrayed_org_units,items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
+    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+  }
   // set selected groups
   setSelectedGroups( selected_groups ){
     this.orgunit_model.selected_groups = selected_groups;
@@ -303,15 +317,13 @@ export class OrgUnitFilterComponent implements OnInit {
   // set selected groups
   setSelectedUserOrg( selected_user_orgunit ){
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
-    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
-    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+    this.emit();
   }
 
   // set selected groups
   setSelectedLevels( selected_levels ){
     this.orgunit_model.selected_levels = selected_levels;
-    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
-    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+    this.emit();
   }
 
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
@@ -354,8 +366,7 @@ export class OrgUnitFilterComponent implements OnInit {
 
   updateOrgUnitModel() {
     this.displayOrgTree();
-    this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(),items: this.orgunit_model.selected_orgunits, name:'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model,false)});
-    this.onOrgUnitModelUpdate.emit(this.orgunit_model);
+    this.emit();
   }
 
   // prepare a proper name for updating the organisation unit display area.

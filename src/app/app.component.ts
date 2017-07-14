@@ -254,9 +254,20 @@ export class AppComponent implements OnInit{
 
       }
       dimensions.data.auto_growing.forEach( (value) =>{
-        let parameters = {
+        console.log("Dimensions:",dimensions);
+        _.find(dimensions.dimensions, ['name', 'ou'])['arrayed_org_units'].forEach((orgUnits)=>{
+          console.log(orgUnits);
+          var orgUnitIds = "";
+          orgUnits.forEach((ou,index)=>{
+            if(index > 0){
+              orgUnitIds += ";";
+            }
+            orgUnitIds += ou.id;
+          })
+          console.log("Yef:",orgUnitIds);
+          let parameters = {
             dx: value.id,
-            ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
+            ou: orgUnitIds,
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
@@ -278,6 +289,7 @@ export class AppComponent implements OnInit{
           let use_function = _.find(this.functions, ['id', 'DDtZTbdxMsQ']);
           let execute = Function('parameters', use_function['function']);
           execute(parameters);
+        })
       });
   }
 
