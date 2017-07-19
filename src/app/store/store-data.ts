@@ -114,16 +114,16 @@ export const INITIAL_STORE_DATA: StoreData = {
     {
       name: 'All Data',
       prefix: 'ALL',
-      selected: false},
+      selected: true},
     {
       name: 'Data Elements',
       prefix: 'de',
-      selected: true
+      selected: false
     },
     {
       name: 'Computed',
       prefix: 'in',
-      selected: true
+      selected: false
     },
     {
       name: 'Submissions',

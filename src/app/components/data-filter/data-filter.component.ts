@@ -20,16 +20,16 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     {
       name: 'All Data',
       prefix: 'ALL',
-      selected: false},
+      selected: true},
     {
       name: 'Data Elements',
       prefix: 'de',
-      selected: true
+      selected: false
     },
     {
       name: 'Computed',
       prefix: 'in',
-      selected: true
+      selected: false
     },
     {
       name: 'Submissions',
