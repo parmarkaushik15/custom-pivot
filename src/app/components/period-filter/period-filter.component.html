@@ -12,8 +12,8 @@
             <option  [value]="'Quarterly'" [hidden]="hideQuarter">Quarterly</option>
             <!--<option  [value]="'Yearly'" >Yearly</option>-->
             <option  [value]="'FinancialJuly'" >Financial-July</option>
-            <option  [value]="'RelativeMonth'" >Relative Month</option>
-            <option  [value]="'RelativeQuarter'" >Relative Quarter</option>
+            <option  [value]="'RelativeMonth'" [hidden]="hideMonth">Relative Month</option>
+            <option  [value]="'RelativeQuarter'" [hidden]="hideQuarter">Relative Quarter</option>
             <!--<option  [value]="'RelativeQuarterYear'" >RelativeYearve Year</option>-->
             <option  [value]="'RelativeFinancialYear'" >Relative Financial Year</option>
           </select>
