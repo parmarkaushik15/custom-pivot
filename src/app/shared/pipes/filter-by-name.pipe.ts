@@ -5,12 +5,19 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FilterByNamePipe implements PipeTransform {
 
-  transform(value: any[], name: any): any {
+  transform(value:any[], name:any):any {
     if (name !== undefined) {
       // filter users, users which match and return true will be kept, false will be filtered out
-      if(value.length !== 0 && name !== null){
+      if (value.length !== 0 && name !== null) {
+        let splitData = name.split(" ");
         return value.filter((item) => {
-          return (item.name.toLowerCase().indexOf(name.toLowerCase()) !== -1);
+          var found = true;
+          splitData.forEach((str)=> {
+            if (item.name.toLowerCase().indexOf(str.toLowerCase()) == -1) {
+              found = false;
+            }
+          })
+          return found;
         });
       }
 
