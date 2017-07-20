@@ -281,13 +281,9 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       if( group.id == 'ALL' ){
         currentList.push(...data.dx)
       }else{
-        console.log(JSON.stringify(data.dx))
         if( group.hasOwnProperty('dataElements')){
           let newArray = _.filter(data.dx, (dataElement) => {
             if( _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId)){
-
-              console.log(dataElement.dataElementId);
-              console.log(_.map(group.dataElements,'id'));
             }
             return _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId);
           });
