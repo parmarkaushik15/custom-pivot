@@ -151,10 +151,9 @@ export class AppComponent implements OnInit{
     if( dimensions.data.need_functions.length > 0 ) {
       let counter = 0;
       dimensions.data.need_functions.forEach( (mapping) => {
-        this.dataService.getMapping(mapping).subscribe( (value) => {
           // Constructing analytics parameters to pass on the function call
           let parameters = {
-            dx: value.id,
+            dx: mapping.id,
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
@@ -165,16 +164,7 @@ export class AppComponent implements OnInit{
               if(counter == dimensions.data.need_functions.length ){
                 if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
                 this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
-
-                  const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
-                  this.showTable = true;
-                  this.tableObject = tableObject;
-                  this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
-                  this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
-                  this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
-                  this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
-                  this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
-                  this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+                  this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
                 });
               }
               // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
@@ -186,11 +176,10 @@ export class AppComponent implements OnInit{
               console.log('progress');
             }
           };
-            // If there is a function for a data find the function and run it.
-            let use_function = _.find(this.functions, ['id', value.function]);
-            let execute = Function('parameters', use_function['function']);
-            execute(parameters);
-        })
+          // If there is a function for a data find the function and run it.
+          let use_function = _.find(this.functions, ['id', mapping.func]);
+          let execute = Function('parameters', use_function['function']);
+          execute(parameters);
 
       });
 
@@ -198,21 +187,25 @@ export class AppComponent implements OnInit{
       if(analytics){
         this.analyticsService.analytics_lists.push(analytics);
         this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
-          const tableObject = this.visualization.drawTable(combined_analytics, table_structure);
-          this.showTable = true;
-          this.tableObject = tableObject;
-          this.tableObject = (table_structure.showRowTotal)?this.analyticsService.addRowTotal(this.tableObject):this.tableObject;
-          this.tableObject = (table_structure.showRowAverage)?this.analyticsService.addRowAverage(this.tableObject):this.tableObject;
-          this.tableObject = (table_structure.showColumnAverage)?this.analyticsService.addColumnAverage(this.tableObject):this.tableObject;
-          this.tableObject = (table_structure.showColumnTotal)?this.analyticsService.addColumnTotal(this.tableObject):this.tableObject;
-          this.tableObject = (table_structure.showRowSubtotal)?this.analyticsService.addRowSubtotal(this.tableObject):this.tableObject;
-          this.tableObject = (table_structure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(this.tableObject):this.tableObject;
-          this.tableObject = (table_structure.showHierarchy)?this.analyticsService.addParentOu(this.tableObject):this.tableObject;
-          this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+          this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
         })
 
       }
     }
+  }
+
+  prepareTableObject(analyticsObject, tableStructure){
+    let tableObject:any = this.visualization.drawTable(analyticsObject, tableStructure);
+    this.showTable = true;
+    tableObject = (tableStructure.showRowTotal)?this.analyticsService.addRowTotal(tableObject):tableObject;
+    tableObject = (tableStructure.showRowAverage)?this.analyticsService.addRowAverage(tableObject):tableObject;
+    tableObject = (tableStructure.showColumnAverage)?this.analyticsService.addColumnAverage(tableObject):tableObject;
+    tableObject = (tableStructure.showColumnTotal)?this.analyticsService.addColumnTotal(tableObject):tableObject;
+    tableObject = (tableStructure.showRowSubtotal)?this.analyticsService.addRowSubtotal(tableObject):tableObject;
+    tableObject = (tableStructure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(tableObject):tableObject;
+    tableObject = (tableStructure.showHierarchy)?this.analyticsService.addParentOu(tableObject):tableObject;
+    this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+    return tableObject
   }
 
   updatingStore:boolean = false;
@@ -316,6 +309,7 @@ export class AppComponent implements OnInit{
   }
 
   setSelectedData( value ){
+    console.log(value);
     this.store.dispatch( new SelectDataAction( value ) );
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     this.hideMonth = value.hideMonth;

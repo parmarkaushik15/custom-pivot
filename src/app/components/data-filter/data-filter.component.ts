@@ -376,10 +376,13 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   getFunctions(selections){
     let mappings = [];
     selections.forEach((value) => {
-
-      if(_.includes(this.functionMappings,value.id.replace(".","_") )){
-        mappings.push(value.id.replace(".","_"))
-      }
+      let dataElementId = value.id.split(".");
+      this.functionMappings.forEach(mappedItem => {
+        let mappedId = mappedItem.split("_");
+        if(dataElementId[0] == mappedId[0]){
+          mappings.push({id:value.id, func:mappedId[1]})
+        }
+      });
     });
     return mappings;
   }
@@ -518,6 +521,16 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
           }
         }
 
+      }if(data_item.hasOwnProperty("programType")){
+
+        if(data_item.name.indexOf("DF02") !== -1 || data_item.name.indexOf("WF02") !== -1 ){
+          periods.push("Quarterly");
+        }if(data_item.name.indexOf("DF03") !== -1 || data_item.name.indexOf("WF03") !== -1 ){
+          periods.push("FinancialJuly");
+        }
+        if(data_item.name.indexOf("WF01") !== -1 ){
+          periods.push("Monthly");
+        }
       }
     }
     if(this.selectedItems.length > 0){
@@ -543,9 +556,16 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     let dataForAnalytics = "";
     let counter = 0;
     selectedData.forEach((dataValue) => {
+      let dataElementId = dataValue.id.split(".");
       if(dataValue.hasOwnProperty('programType')){
       }else{
-        let mapped = _.includes(this.functionMappings,dataValue.id.replace(".","_") );
+        let mapped = false;
+        this.functionMappings.forEach(mappedItem => {
+          let mappedId = mappedItem.split("_");
+          if(dataElementId[0] == mappedId[0]){
+            mapped = true;
+          }
+        });
         if(mapped){}else{
           dataForAnalytics += counter == 0 ? dataValue.id : ';' + dataValue.id;
           counter++;

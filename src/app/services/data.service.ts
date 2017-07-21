@@ -116,7 +116,7 @@ export class DataService {
 
   getAllMappings(){
     return new Observable((observ)=>{
-      this.http.get("../../../api/dataStore/functionMapper").map(res=>res.json()).subscribe((results)=>{
+      this.http.get("../../../api/dataStore/functionMapper1").map(res=>res.json()).subscribe((results)=>{
         observ.next(results);
         observ.complete();
       },(error)=>{
@@ -128,7 +128,7 @@ export class DataService {
 
   getMapping(id): any{
     return new Observable((observ)=>{
-      this.http.get("../../../api/dataStore/functionMapper/" + id).map(res=>res.json()).subscribe((results)=>{
+      this.http.get("../../../api/dataStore/functionMapper1/" + id).map(res=>res.json()).subscribe((results)=>{
         observ.next(results);
         observ.complete();
       },(error)=>{
