@@ -283,16 +283,15 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }else{
         if( group.hasOwnProperty('dataElements')){
           let newArray = _.filter(data.dx, (dataElement) => {
-            if( _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId)){
-            }
             return _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId);
           });
-          currentList.push(...newArray)
+          currentList.push(...group.dataElements)
         }
 
       }
-      // check if data indicators are in a selected group
+
     }
+    // check if data indicators are in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'in')){
       if( group.id == 'ALL' ){
         currentList.push(...data.ind)
@@ -304,23 +303,30 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
           currentList.push(...newArray)
         }
       }
-      // check if data data sets are in a selected group
+
     }
+
+    // check if data data sets are in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'cv')){
+      console.log(data.dt)
       if( group.id == 'ALL' ){
         this.metaData.dataSetGroups.forEach((group) => {
-          currentList.push(...data.dt.map(data => {
-            return {id:data.id + group.id, name:group.name+' '+data.name}
+          currentList.push(...data.dt.map(datacv => {
+            return {id:datacv.id + group.id, name:group.name+' '+datacv.name}
           }))
         });
-      }else{
-        currentList.push(...data.dt.map(data => {
-          return {id:data.id + group.id, name:group.name+' '+data.name}
+      }else if( !group.hasOwnProperty('indicators') && !group.hasOwnProperty('dataElements') ){
+        currentList.push(...data.dt.map(datacv => {
+          console.log({id:datacv.id + group.id, name:group.name+' '+datacv.name})
+          return {id:datacv.id + group.id, name:group.name+' '+datacv.name}
         }));
       }
     }
+    // check if auto-growing
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'at')){
-      currentList.push(...data.at);
+      if( group.id == 'ALL' ) {
+        currentList.push(...data.at);
+      }
     }
     // return this.orderPipe.transform(currentList,'name',false);
     return currentList;

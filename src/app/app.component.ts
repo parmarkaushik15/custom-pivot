@@ -194,6 +194,7 @@ export class AppComponent implements OnInit{
     }
   }
 
+  // this method will help to solve the issue of reuse of table object creation
   prepareTableObject(analyticsObject, tableStructure){
     let tableObject:any = this.visualization.drawTable(analyticsObject, tableStructure);
     this.showTable = true;
