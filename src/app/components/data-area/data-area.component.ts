@@ -148,8 +148,19 @@ export class DataAreaComponent implements OnInit {
   downloadExcel1(){
     let headers = [];
     let newRows = _.cloneDeep(this.tableObject);
+    console.log(JSON.stringify(newRows));
     this.tableObject.headers.forEach((header) => {
       let someItems = [];
+      this.tableObject.columns.forEach((col) => {
+        if(col == "ou"){
+          someItems.push("Admin Unit")
+        }if(col == "dx"){
+          someItems.push("Data")
+        }if(col == "pe"){
+          someItems.push("Period")
+        }
+
+      });
       header.items.forEach((item) => {
         for( let i=0;i<item.span; i++){
           someItems.push(item.name)
@@ -190,6 +201,7 @@ export class DataAreaComponent implements OnInit {
       showLabels: true,
       showTitle: false
     };
+    console.log(dataValues)
     new Angular2Csv(dataValues, 'My Report',options);
     return {
       headers: csvHeaders,

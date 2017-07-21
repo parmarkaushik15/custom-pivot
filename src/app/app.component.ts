@@ -26,7 +26,6 @@ import {
 import {AnalyticscreatorService} from "./services/analyticscreator.service";
 import {DataService} from "./services/data.service";
 import {VisualizerService} from "./services/visualizer.service";
-import {Angular2Csv} from "angular2-csv";
 import {
   CATEGORY_COMBOS_KEY,
   DATAELEMENT_GROUP_KEY, DATAELEMENT_KEY, DATASET_KEY, INDICATOR_GROUP_KEY, INDICATOR_KEY,
