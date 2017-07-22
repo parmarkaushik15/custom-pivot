@@ -367,14 +367,8 @@ export class AppComponent implements OnInit{
     this.tableObject = null;
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
     if(this.allDimensionAvailable){
-      this.dimensions.data.itemList.forEach((itemToUpdate)=>{
-        // TODO: Remove this when going production
-        // this.updateAccessLogs(itemToUpdate)
-      });
       this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
-      // this.showTable = false;
       this.showAutoGrowingTable = false;
-      // let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
       this.needForUpdate = false;
       this.analyticsService.prepareAnalytics(this.layout,this.dimensions.dimensions, false).subscribe(analytics => {
         // check first if there is normal data selected
@@ -404,6 +398,19 @@ export class AppComponent implements OnInit{
 
       });
 
+      //update the system for data usage
+      let json = 'http://ipv4.myexternalip.com/json';
+      let dhis2Evnts = {events:[]}
+      this.http.get(json).map(res=>res.json()).subscribe((result) => {
+        this.dimensions.data.itemList.forEach((itemToUpdate)=>{
+          dhis2Evnts.events.push( this.updateAccessLogs(itemToUpdate,result.ip) )
+        });
+        console.log("Events",dhis2Evnts)
+        this.http.post("../../../api/events",dhis2Evnts).map(res=>res.json()).subscribe((result1) => {
+          console.log(result1)
+        });
+        //
+      });
     }else{
       this.showTable = true
     }
@@ -431,7 +438,7 @@ export class AppComponent implements OnInit{
   }
 
   // update access log for every indicator accessed
-  updateAccessLogs(data){
+  updateAccessLogs(data,ipAddress){
     let d = new Date();
     let curr_date:any	= d.getDate();
     let curr_month:any	= d.getMonth()+1;
@@ -443,54 +450,46 @@ export class AppComponent implements OnInit{
       curr_date="0"+curr_date;
     }
     let RequestDateTime = curr_year+"-"+curr_month+"-"+curr_date;
-    let json = 'http://ipv4.myexternalip.com/json';
-    this.http.get(json).map(res=>res.json()).subscribe((result) => {
-      let dhis2Event = {
-        program: 'UOwc7u7EOX4',
-        programStage: 'wenwxWjxmJT',
-        status: "ACTIVE",
-        orgUnit: 'zs9X8YYBOnK',
-        eventDate: RequestDateTime,
-        dataValues: [
-          {
-            dataElement: 'tgyz9410LhM',
-            value: ''
-          },{
-            dataElement: 'Fsn1VHHLO99',
-            value: data.name
-          },{
-            dataElement: 'QUeMonQ9w7q',
-            value: data.type
-          },{
-            dataElement: 'atwoYgdxvgg',
-            value: navigator.platform
-          },{
-            dataElement: 'mgtwnvohcow',//dutty post
-            value: ""
-          },{
-            dataElement: 'N6x8L5LAp6o',//ip Address
-            value: result.ip
-          },{
-            dataElement: 'UvEng3cCnhS',
-            value: RequestDateTime
-          },{
-            dataElement: 'IcsZOKnNtBX',
-            value: this.getBrowserName(navigator)
-          },{
-            dataElement: 'ulKVzFSbkry',
-            value: ""
-          },{
-            dataElement: 'hjCMP7fuJSD',
-            value: ""
-          }
-        ]
-      };
-      this.http.post("../../../api/events",dhis2Event).map(res=>res.json()).subscribe((result1) => {
-
-      });
-    },  function(e) {
-      alert("error");
-    });
+    return {
+      program: 'UOwc7u7EOX4',
+      programStage: 'wenwxWjxmJT',
+      status: "ACTIVE",
+      orgUnit: 'zs9X8YYBOnK',
+      eventDate: RequestDateTime,
+      dataValues: [
+        {
+          dataElement: 'tgyz9410LhM',
+          value: ''
+        },{
+          dataElement: 'Fsn1VHHLO99',
+          value: data.name
+        },{
+          dataElement: 'QUeMonQ9w7q',
+          value: data.type
+        },{
+          dataElement: 'atwoYgdxvgg',
+          value: navigator.platform
+        },{
+          dataElement: 'mgtwnvohcow',//dutty post
+          value: ""
+        },{
+          dataElement: 'N6x8L5LAp6o',//ip Address
+          value: ipAddress
+        },{
+          dataElement: 'UvEng3cCnhS',
+          value: RequestDateTime
+        },{
+          dataElement: 'IcsZOKnNtBX',
+          value: this.getBrowserName(navigator)
+        },{
+          dataElement: 'ulKVzFSbkry',
+          value: ""
+        },{
+          dataElement: 'hjCMP7fuJSD',
+          value: ""
+        }
+      ]
+    };
 
   }
 

@@ -331,10 +331,40 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         currentList.push(...data.at);
       }
     }
+    let SortOrder=["WF00","WF01","WF02","WF03","DF02","DF03"];
     // return this.orderPipe.transform(currentList,'name',false);
-    return _.filter(currentList,(item=>{
+    let newcurrentList = [];
+    currentList.forEach((listItem) => {
+      if(listItem.name.indexOf("WF00") !== -1){
+        listItem.sorOrder = "A";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF00") !== -1){
+        listItem.sorOrder = "B";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF01") !== -1){
+        listItem.sorOrder = "C";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF02") !== -1){
+        listItem.sorOrder = "D";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF03") !== -1){
+        listItem.sorOrder = "E";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("DF02") !== -1){
+        listItem.sorOrder = "F";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("DF03") !== -1){
+        listItem.sorOrder = "G";
+        // newcurrentList.push(listItem)
+      }else{
+        listItem.sorOrder = "H";
+        // newcurrentList.push(listItem)
+      }
+    });
+    newcurrentList = _.filter(currentList,(item=>{
       return !_.includes(this.hiddenDataElements,item['id']);
     }));
+    return this.orderPipe.transform(newcurrentList,'sorOrder',false);
 
   }
 
@@ -356,7 +386,34 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }if(_.includes(options,'at')){
       this.need_groups = false;
     }
-    return this.orderPipe.transform(currentGroupList,'name',false);
+    currentGroupList.forEach((listItem) => {
+      if(listItem.name.indexOf("WF00") !== -1){
+        listItem.sorOrder = "A";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF00") !== -1){
+        listItem.sorOrder = "B";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF01") !== -1){
+        listItem.sorOrder = "C";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF02") !== -1){
+        listItem.sorOrder = "D";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("WF03") !== -1){
+        listItem.sorOrder = "E";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("DF02") !== -1){
+        listItem.sorOrder = "F";
+        // newcurrentList.push(listItem)
+      }else if(listItem.name.indexOf("DF03") !== -1){
+        listItem.sorOrder = "G";
+        // newcurrentList.push(listItem)
+      }else{
+        listItem.sorOrder = "H";
+        // newcurrentList.push(listItem)
+      }
+    });
+    return this.orderPipe.transform(currentGroupList,'sorOrder',false);
     // return currentGroupList;
   }
 
