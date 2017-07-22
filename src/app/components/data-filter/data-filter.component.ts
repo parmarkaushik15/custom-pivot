@@ -335,26 +335,27 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     // return this.orderPipe.transform(currentList,'name',false);
     let newcurrentList = [];
     currentList.forEach((listItem) => {
-      if(listItem.name.indexOf("WF00") !== -1){
-        listItem.sorOrder = "A";
+      let nameArr = listItem.name.split(" ");
+      if(listItem.name.indexOf("WF00") !== -1 && nameArr[0] == "WF00"){
+        listItem.sorOrder = "A"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF00") !== -1){
-        listItem.sorOrder = "B";
+        listItem.sorOrder = "B"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF01") !== -1){
-        listItem.sorOrder = "C";
+        listItem.sorOrder = "C"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF02") !== -1){
-        listItem.sorOrder = "D";
+        listItem.sorOrder = "D"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF03") !== -1){
-        listItem.sorOrder = "E";
+        listItem.sorOrder = "E"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("DF02") !== -1){
-        listItem.sorOrder = "F";
+        listItem.sorOrder = "F"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("DF03") !== -1){
-        listItem.sorOrder = "G";
+        listItem.sorOrder = "G"+listItem.name;
         // newcurrentList.push(listItem)
       }else{
         listItem.sorOrder = "H";
@@ -388,25 +389,25 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
     currentGroupList.forEach((listItem) => {
       if(listItem.name.indexOf("WF00") !== -1){
-        listItem.sorOrder = "A";
+        listItem.sorOrder = "A"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF00") !== -1){
-        listItem.sorOrder = "B";
+        listItem.sorOrder = "B"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF01") !== -1){
-        listItem.sorOrder = "C";
+        listItem.sorOrder = "C"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF02") !== -1){
-        listItem.sorOrder = "D";
+        listItem.sorOrder = "D"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF03") !== -1){
-        listItem.sorOrder = "E";
+        listItem.sorOrder = "E"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("DF02") !== -1){
-        listItem.sorOrder = "F";
+        listItem.sorOrder = "F"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("DF03") !== -1){
-        listItem.sorOrder = "G";
+        listItem.sorOrder = "G"+listItem.name;
         // newcurrentList.push(listItem)
       }else{
         listItem.sorOrder = "H";
