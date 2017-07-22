@@ -175,13 +175,12 @@ export class AppComponent implements OnInit{
         // Constructing analytics parameters to pass on the function call
         periodArray.forEach((singlePeriod) => {
           orgUnitArray.forEach((singleOu) => {
-            console.log(singleOu+"++"+singlePeriod)
             let parameters = {
               dx: mapping.id,
               ou: singleOu,
               pe: singlePeriod,
               success: (results) => {
-                console.log(JSON.stringify(results));
+                // console.log(JSON.stringify(results));
                 // This will run on successfull function return, which will save the result to the data store for analytics
                 counter++;
                 this.analyticsService.analytics_lists.push(results);
