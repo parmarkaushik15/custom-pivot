@@ -313,7 +313,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
 
     // check if data data sets are in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'cv')){
-      console.log(data.dt)
       if( group.id == 'ALL' ){
         this.metaData.dataSetGroups.forEach((group) => {
           currentList.push(...data.dt.map(datacv => {
@@ -322,7 +321,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         });
       }else if( !group.hasOwnProperty('indicators') && !group.hasOwnProperty('dataElements') ){
         currentList.push(...data.dt.map(datacv => {
-          console.log({id:datacv.id + group.id, name:group.name+' '+datacv.name})
           return {id:datacv.id + group.id, name:group.name+' '+datacv.name}
         }));
       }
@@ -599,5 +597,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       return result * sortOrder;
     }
   }
+
 
 }

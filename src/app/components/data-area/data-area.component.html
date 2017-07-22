@@ -16,7 +16,7 @@
     <li><small>- Click Download to save table data to your computer</small></li>
   </ul>
 </div>
-<small *ngIf="needForUpdate && showTable">There are a changes in selections hit update to see the latest changes.
+<small *ngIf="needForUpdate && showTable && allDimensionAvailable">There are a changes in selections hit update to see the latest changes.
   <button class="btn btn-default btn-xs" (click)="needForUpdate = false">Hide</button>
   <button class="btn btn-default btn-xs" (click)="updateTable()">Update</button>
   <!--<button class="btn btn-default btn-xs" (click)="update()">Update</button>-->

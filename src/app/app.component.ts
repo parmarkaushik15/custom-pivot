@@ -32,6 +32,7 @@ import {
   ORGANISATION_UNIT_KEY, PROGRAM_KEY
 } from "./services/local-storage.service";
 import {DataFilterComponent} from "./components/data-filter/data-filter.component";
+import {Http} from "@angular/http";
 
 @Component({
   selector: 'app-root',
@@ -93,7 +94,8 @@ export class AppComponent implements OnInit{
   constructor( private store: Store<ApplicationState>,
                private analyticsService: AnalyticscreatorService,
                private dataService: DataService,
-               private visualization: VisualizerService
+               private visualization: VisualizerService,
+               private http:Http
   ){
 
     this.visualizationObject$ = store.select(visualizationObjectSelector);
@@ -134,8 +136,9 @@ export class AppComponent implements OnInit{
       val.forEach((hiddenDx) => {
         this.hiddenDataElements.push(hiddenDx.replace("_","."))
       });
-      console.log(this.hiddenDataElements)
     });
+
+
   }
 
   selected_orgunits: any;
@@ -165,7 +168,7 @@ export class AppComponent implements OnInit{
             ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
-              console.log(JSON.stringify(results));
+              console.log(JSON.stringify("From Autogrowing",results));
               // This will run on successfull function return, which will save the result to the data store for analytics
               counter++;
               this.analyticsService.analytics_lists.push(results);
@@ -256,9 +259,7 @@ export class AppComponent implements OnInit{
 
       }
       dimensions.data.auto_growing.forEach( (value) =>{
-        console.log("Dimensions:",dimensions);
         _.find(dimensions.dimensions, ['name', 'ou'])['arrayed_org_units'].forEach((orgUnits)=>{
-          console.log(orgUnits);
           var orgUnitIds = "";
           orgUnits.forEach((ou,index)=>{
             if(index > 0){
@@ -266,14 +267,12 @@ export class AppComponent implements OnInit{
             }
             orgUnitIds += ou.id;
           })
-          console.log("Yef:",orgUnitIds);
           let parameters = {
             dx: value.id,
             ou: orgUnitIds,
             pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
-              // console.log(results)
               this.showTable = true;
               // this.store.dispatch( new UpdateTableAction(tableObject));
               this.autoGrowingData.push( {analytics: results, dataId: value.id} );
@@ -318,7 +317,6 @@ export class AppComponent implements OnInit{
   }
 
   setSelectedData( value ){
-    console.log(value);
     this.store.dispatch( new SelectDataAction( value ) );
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     this.hideMonth = value.hideMonth;
@@ -342,45 +340,50 @@ export class AppComponent implements OnInit{
 
   allDimensionAvailable = false;
   updateTable() {
+
     this.tableObject = null;
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
-    this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
-    // this.showTable = false;
-    this.showAutoGrowingTable = false;
-    // let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
-    this.needForUpdate = false;
-    this.analyticsService.prepareAnalytics(this.layout,this.dimensions.dimensions, false).subscribe(analytics => {
-      // check first if there is normal data selected
-      this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
-      this.analyticsService.current_normal_analytics = analytics;
-      let table_structure = {
-        showColumnTotal: this.options.column_totals,
-        showColumnAverage: this.options.column_avg,
-        showColumnSubTotal: this.options.column_sub_total,
-        showRowTotal: this.options.row_totals,
-        showRowAverage: this.options.row_avg,
-        showRowSubtotal: this.options.row_sub_total,
-        showDimensionLabels: this.options.dimension_labels,
-        hide_zeros: this.options.hide_empty_row,
-        showHierarchy: this.options.show_hierarchy,
-        title: this.options.table_title,
-        rows: this.layout.rows,
-        columns: this.layout.columns,
-        displayList: false,
-      };
-      //loading additional functions
-      this.performFunctionCalculations(this.dimensions,analytics,table_structure);
+    if(this.allDimensionAvailable){
+      this.dimensions.data.itemList.forEach((itemToUpdate)=>{
+        this.updateAccessLogs(itemToUpdate)
+      });
+      this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
+      // this.showTable = false;
+      this.showAutoGrowingTable = false;
+      // let new_update_available = this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions);
+      this.needForUpdate = false;
+      this.analyticsService.prepareAnalytics(this.layout,this.dimensions.dimensions, false).subscribe(analytics => {
+        // check first if there is normal data selected
+        this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
+        this.analyticsService.current_normal_analytics = analytics;
+        let table_structure = {
+          showColumnTotal: this.options.column_totals,
+          showColumnAverage: this.options.column_avg,
+          showColumnSubTotal: this.options.column_sub_total,
+          showRowTotal: this.options.row_totals,
+          showRowAverage: this.options.row_avg,
+          showRowSubtotal: this.options.row_sub_total,
+          showDimensionLabels: this.options.dimension_labels,
+          hide_zeros: this.options.hide_empty_row,
+          showHierarchy: this.options.show_hierarchy,
+          title: this.options.table_title,
+          rows: this.layout.rows,
+          columns: this.layout.columns,
+          displayList: false,
+        };
+        //loading additional functions
+        this.performFunctionCalculations(this.dimensions,analytics,table_structure);
 
 
-      //loading autogrowing tables
-      this.loadAutoGrowing(this.dimensions);
+        //loading autogrowing tables
+        this.loadAutoGrowing(this.dimensions);
 
-    });
-    //this.store.dispatch( new AddDataAnalyticsAction())
-    /**
-     * Get current dimensions .i.e data (dx), period (pe), orgunit(ou) and catCombo (co) if any
-     * @type {Array}
-     */
+      });
+
+    }else{
+      this.showTable = true
+    }
+
 
   }
 
@@ -401,4 +404,125 @@ export class AppComponent implements OnInit{
       this.updateTable();
     })
   }
+
+  // update access log
+  updateAccessLogs(data){
+    let d = new Date();
+    let curr_date:any	= d.getDate();
+    let curr_month:any	= d.getMonth()+1;
+    let curr_year 	= d.getFullYear();
+    if(curr_month<10){
+      curr_month="0"+curr_month;
+    }
+    if(curr_date<10){
+      curr_date="0"+curr_date;
+    }
+    let RequestDateTime = curr_year+"-"+curr_month+"-"+curr_date;
+    let json = 'http://ipv4.myexternalip.com/json';
+    this.http.get(json).map(res=>res.json()).subscribe((result) => {
+      let dhis2Event = {
+        program: 'UOwc7u7EOX4',
+        programStage: 'wenwxWjxmJT',
+        status: "ACTIVE",
+        orgUnit: 'zs9X8YYBOnK',
+        eventDate: RequestDateTime,
+        dataValues: [
+          {
+            dataElement: 'tgyz9410LhM',
+            value: ''
+          },{
+            dataElement: 'Fsn1VHHLO99',
+            value: data.name
+          },{
+            dataElement: 'QUeMonQ9w7q',
+            value: data.type
+          },{
+            dataElement: 'atwoYgdxvgg',
+            value: navigator.platform
+          },{
+            dataElement: 'mgtwnvohcow',//dutty post
+            value: ""
+          },{
+            dataElement: 'N6x8L5LAp6o',//ip Address
+            value: result.ip
+          },{
+            dataElement: 'UvEng3cCnhS',
+            value: RequestDateTime
+          },{
+            dataElement: 'IcsZOKnNtBX',
+            value: this.getBrowserName(navigator)
+          },{
+            dataElement: 'ulKVzFSbkry',
+            value: ""
+          },{
+            dataElement: 'hjCMP7fuJSD',
+            value: ""
+          }
+        ]
+      };
+      this.http.post("../../../api/events",dhis2Event).map(res=>res.json()).subscribe((result1) => {
+
+      });
+    },  function(e) {
+      alert("error");
+    });
+
+  }
+
+  getBrowserName(navig){
+    let nVer = navig.appVersion;
+    let nAgt = navig.userAgent;
+    let browserName  = navig.appName;
+    let fullVersion  = ''+parseFloat(navig.appVersion);
+    let majorVersion = parseInt(navig.appVersion,10);
+    let nameOffset,verOffset,ix;
+
+    // In Opera 15+, the true version is after "OPR/"
+    if ((verOffset=nAgt.indexOf("OPR/"))!=-1) {
+      browserName = "Opera";
+      fullVersion = nAgt.substring(verOffset+4);
+    }
+    // In older Opera, the true version is after "Opera" or after "Version"
+    else if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+      browserName = "Opera";
+      fullVersion = nAgt.substring(verOffset+6);
+      if ((verOffset=nAgt.indexOf("Version"))!=-1)
+        fullVersion = nAgt.substring(verOffset+8);
+    }
+    // In MSIE, the true version is after "MSIE" in userAgent
+    else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+      browserName = "Microsoft Internet Explorer";
+      fullVersion = nAgt.substring(verOffset+5);
+    }
+    // In Chrome, the true version is after "Chrome"
+    else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+      browserName = "Chrome";
+      fullVersion = nAgt.substring(verOffset+7);
+    }
+    // In Safari, the true version is after "Safari" or after "Version"
+    else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+      browserName = "Safari";
+      fullVersion = nAgt.substring(verOffset+7);
+      if ((verOffset=nAgt.indexOf("Version"))!=-1)
+        fullVersion = nAgt.substring(verOffset+8);
+    }
+    // In Firefox, the true version is after "Firefox"
+    else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+      browserName = "Firefox";
+      fullVersion = nAgt.substring(verOffset+8);
+    }
+    // In most other browsers, "name/version" is at the end of userAgent
+    else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) <
+      (verOffset=nAgt.lastIndexOf('/')) )
+    {
+      browserName = nAgt.substring(nameOffset,verOffset);
+      fullVersion = nAgt.substring(verOffset+1);
+      if (browserName.toLowerCase()==browserName.toUpperCase()) {
+        browserName = navig.appName;
+      }
+    }
+
+    return browserName+" ( "+fullVersion+" )";
+  }
+
 }
