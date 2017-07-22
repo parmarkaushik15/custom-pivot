@@ -53,9 +53,10 @@
               | filterByName:listchanges
               |  paginate: { id: 'foo',itemsPerPage: 25, currentPage: p }"
                 (click)="addSelected(item)"
-                [ngClass]="{'hiddenTree': inSelected(item, selectedItems)}"
+                [ngClass]="{'hiddenTree': inSelected(item, selectedItems) || inHidden(item.id)}"
                 title="Click to select item"
                 class="{{item.hasOwnProperty('programType') ? 'auto-growing' : ''}}"
+                id="{{item.id | addUnderscore}}"
             >
               {{ item.name }}
             </li>

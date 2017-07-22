@@ -71,6 +71,7 @@ export class AppComponent implements OnInit{
   lastAnalyticsParams: any;
   orgunitModel$: Observable<any>;
   functions: any;
+  hiddenDataElements: any = [];
   mappings: any;
   showTable: boolean = false;
   showAutoGrowingTable: boolean = false;
@@ -118,15 +119,23 @@ export class AppComponent implements OnInit{
     //set initial layout
     this.dataService.getDataFromLocalDatabase(ORGANISATION_UNIT_KEY).subscribe();
     this.currentLayout = this.layout;
+    // get a list of mappings
     this.dataService.getAllMappings().subscribe((val) => {
       this.store.dispatch( new AddFunctionMappingAction(val) );
     });
 
+    // get a list of all available functions
     this.dataService.getFunctions().subscribe((val) => {
       this.store.dispatch( new AddFunctionsAction(val) );
-
     });
-    // this.analyticsService.addParentOu("");
+
+    // get a list of data-elements to be hidden
+    this.dataService.getHiddenDataElements().subscribe((val) => {
+      val.forEach((hiddenDx) => {
+        this.hiddenDataElements.push(hiddenDx.replace("_","."))
+      });
+      console.log(this.hiddenDataElements)
+    });
   }
 
   selected_orgunits: any;

@@ -44,6 +44,7 @@ import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
 import {SpecificPeriodService} from "./components/period-filter/period.service";
 import {OrderPipe} from "./pipes/order-by.pipe";
 import { FavoriteComponent } from './components/favorite/favorite.component';
+import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { FavoriteComponent } from './components/favorite/favorite.component';
     OptionsComponent,
     OrderPipe,
     FilterLevelPipe,
-    FavoriteComponent
+    FavoriteComponent,
+    AddUnderscorePipe,
   ],
   imports: [
     BrowserModule,

@@ -112,11 +112,23 @@ export class DataService {
 
   }
 
-
-
+  // Get the data-elements mappings to match with functions
   getAllMappings(){
     return new Observable((observ)=>{
       this.http.get("../../../api/dataStore/functionMapper1").map(res=>res.json()).subscribe((results)=>{
+        observ.next(results);
+        observ.complete();
+      },(error)=>{
+        observ.error();
+      })
+    })
+
+  }
+
+  // get a list of data-elements to hide because of grey fields in data-elements/otherwise
+  getHiddenDataElements() :any{
+    return new Observable((observ)=>{
+      this.http.get("../../../api/dataStore/dataElementsHiddenInPivot").map(res=>res.json()).subscribe((results)=>{
         observ.next(results);
         observ.complete();
       },(error)=>{
