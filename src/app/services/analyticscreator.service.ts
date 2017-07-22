@@ -52,7 +52,7 @@ export class AnalyticscreatorService {
   }
 
   // merge analytics calls
-  mergeAnalyticsCalls( analytics: any[],showHirach:boolean ){
+  mergeAnalyticsCalls( analytics: any[],showHirach:boolean, dimensions:any ){
     let combined_analytics:any = {
       headers:[],
       metaData:{
@@ -98,6 +98,18 @@ export class AnalyticscreatorService {
           }
         })
       }
+      let newDxOrder = [];
+      dimensions.data.itemList.forEach((listItem) => {
+        if(!listItem.hasOwnProperty("programType")){
+          newDxOrder.push(listItem.id)
+        }
+      });
+      combined_analytics.metaData.dx = newDxOrder;
+      dimensions.dimensions.forEach((dimesion)=>{
+        if(dimesion.name == "pe"){
+          combined_analytics.metaData.pe = dimesion.value.split(";")
+        }
+      });
       analytic.rows.forEach( (row) => {
         combined_analytics.rows.push(row);
       })

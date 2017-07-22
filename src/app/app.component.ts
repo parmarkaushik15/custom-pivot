@@ -157,6 +157,7 @@ export class AppComponent implements OnInit{
 
   // This function holds the logic for combining the logic for dataelements that are using functions and those not using functions and return one analytics
   performFunctionCalculations(dimensions,analytics,table_structure){
+    console.log(dimensions);
     this.analyticsService.analytics_lists = [];
     if(!analytics && dimensions.data.need_functions.length == 0){
       this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
@@ -186,7 +187,7 @@ export class AppComponent implements OnInit{
                 this.analyticsService.analytics_lists.push(results);
                 if(counter == dimensions.data.need_functions.length*times ){
                   if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
-                  this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
+                  this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
                     this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
                   });
                 }
@@ -212,7 +213,7 @@ export class AppComponent implements OnInit{
     }else{
       if(analytics){
         this.analyticsService.analytics_lists.push(analytics);
-        this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
+        this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
           this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
         })
 
