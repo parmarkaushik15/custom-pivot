@@ -28,7 +28,7 @@ import {DataService} from "./services/data.service";
 import {VisualizerService} from "./services/visualizer.service";
 import {
   CATEGORY_COMBOS_KEY,
-  DATAELEMENT_GROUP_KEY, DATAELEMENT_KEY, DATASET_KEY, INDICATOR_GROUP_KEY, INDICATOR_KEY,
+  DATAELEMENT_GROUP_KEY, DATAELEMENT_KEY, DATASET_KEY, INDICATOR_GROUP_KEY, INDICATOR_KEY, LocalStorageService,
   ORGANISATION_UNIT_KEY, PROGRAM_KEY
 } from "./services/local-storage.service";
 import {DataFilterComponent} from "./components/data-filter/data-filter.component";
@@ -94,6 +94,7 @@ export class AppComponent implements OnInit{
   constructor( private store: Store<ApplicationState>,
                private analyticsService: AnalyticscreatorService,
                private dataService: DataService,
+               private localDbService: LocalStorageService,
                private visualization: VisualizerService,
                private http:Http
   ){
@@ -154,6 +155,7 @@ export class AppComponent implements OnInit{
     this.store.dispatch( new SetOrgunitModelAction( value ) );
   }
 
+  // This function holds the logic for combining the logic for dataelements that are using functions and those not using functions and return one analytics
   performFunctionCalculations(dimensions,analytics,table_structure){
     this.analyticsService.analytics_lists = [];
     if(!analytics && dimensions.data.need_functions.length == 0){
@@ -225,29 +227,31 @@ export class AppComponent implements OnInit{
   updateStore(){
     let num = 0;
     this.updatingStore = true;
-    this.dataService.addDataToLocalDatabase(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(DATASET_KEY)
+    this.localDbService.clearAll(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
-    this.dataService.addDataToLocalDatabase(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
-    this.dataService.addDataToLocalDatabase(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
-    this.dataService.addDataToLocalDatabase(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
-    this.dataService.addDataToLocalDatabase(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
-    this.dataService.addDataToLocalDatabase(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
-    this.dataService.addDataToLocalDatabase(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
+    this.localDbService.clearAll(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
       this.updatingStore = false; this.datafilter.initiateData();
     }});
   }
 
+  // This function is used to hold all logic necessary for loading auto-growing tables
   loadAutoGrowing (dimensions) {
     this.autoGrowingData = [];
     this.loadingAutogrowing = true;
@@ -294,6 +298,7 @@ export class AppComponent implements OnInit{
       });
   }
 
+  // This will be called every time period is changed
   selected_periods:any;
   setSelectedPeriod( value ){
     this.selected_periods = value.items;
@@ -302,11 +307,13 @@ export class AppComponent implements OnInit{
     // this.addAnalytics(this.dimensions)
   }
 
+  // This function is used to update the table layout
   setLayout( value ){
     this.store.dispatch( new SetLayoutAction( value ) );
     this.updateTable();
   }
 
+  // this will be called every time options are updated
   updateOptions( value ){
     this.store.dispatch( new UpdateOptionsAction( value ) );
     this.updateTable();
@@ -316,6 +323,7 @@ export class AppComponent implements OnInit{
     this.store.dispatch( new ToggleDataAreaAction() );
   }
 
+  // This will be called every time data selection changes
   setSelectedData( value ){
     this.store.dispatch( new SelectDataAction( value ) );
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
@@ -330,6 +338,7 @@ export class AppComponent implements OnInit{
     }
   }
 
+  // This function will use selected dimension and check if user has selected both data, period and administration units.
   allAvailable( dimensions ):boolean{
     let checker = true;
     if(dimensions.data.itemList.length == 0 || this.selected_orgunits.length == 0 || this.selected_periods.length == 0){
@@ -338,6 +347,7 @@ export class AppComponent implements OnInit{
     return checker;
   }
 
+  // The function that will handle the data updating
   allDimensionAvailable = false;
   updateTable() {
 
@@ -387,6 +397,7 @@ export class AppComponent implements OnInit{
 
   }
 
+  // this will be called when oppening pivot table
   openFavorite(favorite){
 
     //set orgunits
@@ -405,7 +416,7 @@ export class AppComponent implements OnInit{
     })
   }
 
-  // update access log
+  // update access log for every indicator accessed
   updateAccessLogs(data){
     let d = new Date();
     let curr_date:any	= d.getDate();
@@ -469,6 +480,7 @@ export class AppComponent implements OnInit{
 
   }
 
+  // Determine browser name
   getBrowserName(navig){
     let nVer = navig.appVersion;
     let nAgt = navig.userAgent;
