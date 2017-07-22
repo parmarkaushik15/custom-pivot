@@ -163,36 +163,50 @@ export class AppComponent implements OnInit{
     }
     if( dimensions.data.need_functions.length > 0 ) {
       let counter = 0;
+      let periodArray = _.find(dimensions.dimensions, ['name', 'pe'])['value'].split(";");
+      let orgUnitArray = _.find(dimensions.dimensions, ['name', 'ou'])['value'].split(";");
+      let times = 0;
+      periodArray.forEach((singlePeriod) => {
+        orgUnitArray.forEach((singleOu) => {
+          times++;
+        })
+      })
       dimensions.data.need_functions.forEach( (mapping) => {
-          // Constructing analytics parameters to pass on the function call
-          let parameters = {
-            dx: mapping.id,
-            ou: _.find(dimensions.dimensions, ['name', 'ou'])['value'],
-            pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
-            success: (results) => {
-              console.log(JSON.stringify("From Autogrowing",results));
-              // This will run on successfull function return, which will save the result to the data store for analytics
-              counter++;
-              this.analyticsService.analytics_lists.push(results);
-              if(counter == dimensions.data.need_functions.length ){
-                if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
-                this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
-                  this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
-                });
+        // Constructing analytics parameters to pass on the function call
+        periodArray.forEach((singlePeriod) => {
+          orgUnitArray.forEach((singleOu) => {
+            console.log(singleOu+"++"+singlePeriod)
+            let parameters = {
+              dx: mapping.id,
+              ou: singleOu,
+              pe: singlePeriod,
+              success: (results) => {
+                console.log(JSON.stringify(results));
+                // This will run on successfull function return, which will save the result to the data store for analytics
+                counter++;
+                this.analyticsService.analytics_lists.push(results);
+                if(counter == dimensions.data.need_functions.length*times ){
+                  if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
+                  this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy).subscribe((combined_analytics) => {
+                    this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
+                  });
+                }
+                // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
+              },
+              error: (error) => {
+                console.log('error');
+              },
+              progress: (progress) => {
+                console.log('progress');
               }
-              // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
-            },
-            error: (error) => {
-              console.log('error');
-            },
-            progress: (progress) => {
-              console.log('progress');
-            }
-          };
-          // If there is a function for a data find the function and run it.
-          let use_function = _.find(this.functions, ['id', mapping.func]);
-          let execute = Function('parameters', use_function['function']);
-          execute(parameters);
+            };
+            // If there is a function for a data find the function and run it.
+            let use_function = _.find(this.functions, ['id', mapping.func]);
+            let execute = Function('parameters', use_function['function']);
+            execute(parameters);
+          })
+        })
+
 
       });
 
@@ -355,7 +369,8 @@ export class AppComponent implements OnInit{
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
     if(this.allDimensionAvailable){
       this.dimensions.data.itemList.forEach((itemToUpdate)=>{
-        this.updateAccessLogs(itemToUpdate)
+        // TODO: Remove this when going production
+        // this.updateAccessLogs(itemToUpdate)
       });
       this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
       // this.showTable = false;

@@ -338,10 +338,6 @@ export class SpecificPeriodService {
   }
 
   getPeriodName(id:string){
-    console.log("------")
-    console.log(id)
-    console.log(this.deducePeriodType(id))
-    console.log(this.getPeriodArray(this.deducePeriodType(id), id.substr(0,4)))
     for ( let period of this.getPeriodArray(this.deducePeriodType(id).type, id.substr(0,4))){
       if( id == period.id){
         return period.name;

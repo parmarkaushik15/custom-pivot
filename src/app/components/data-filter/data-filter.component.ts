@@ -420,6 +420,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         this.selectedItems.push(item);
       }
     });
+    this.getSelectedPeriods();
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
       need_functions: this.getFunctions(this.selectedItems),
@@ -433,6 +434,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   //selecting all items
   deselectAllItems(){
     this.selectedItems = [];
+    this.getSelectedPeriods();
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
       need_functions: this.getFunctions(this.selectedItems),
