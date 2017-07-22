@@ -221,9 +221,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
   }
 
-  inHidden(itemId){
-    return _.includes(this.hiddenDataElements,itemId);
-  }
 
   // track by function to improve the list selection performance
   trackByFn(index, item) {
@@ -234,32 +231,25 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   getDetailedDataElements(dataElement ){
     let dataElements = [];
     let categoryCombo = this.getCategoryCombo( dataElement.categoryCombo.id);
-    // check first if dataelement is not supposed to be hidden
-    if(_.includes(this.hiddenDataElements,dataElement.id)){
 
-    }else{
-      dataElements.push({
-        dataElementId:dataElement.id,
-        id:dataElement.id,
-        name:dataElement.name + "",
-        dataSetElements:dataElement.dataSetElements
-      });
-    }
-    // check first if data-element category is not supposed to be hidden
+    dataElements.push({
+      dataElementId:dataElement.id,
+      id:dataElement.id,
+      name:dataElement.name + "",
+      dataSetElements:dataElement.dataSetElements
+    });
 
-      categoryCombo.categoryOptionCombos.forEach((option) => {
-        if(_.includes(this.hiddenDataElements,dataElement.id+"."+option.id)){ }else {
-          if (option.name != 'default') {
-            dataElements.push({
-              dataElementId: dataElement.id,
-              id: dataElement.id + "." + option.id,
-              name: dataElement.name + " " + option.name,
-              dataSetElements: dataElement.dataSetElements
-            })
-          }
-        }
+    categoryCombo.categoryOptionCombos.forEach((option) => {
+      if (option.name != 'default') {
+        dataElements.push({
+          dataElementId: dataElement.id,
+          id: dataElement.id + "." + option.id,
+          name: dataElement.name + " " + option.name,
+          dataSetElements: dataElement.dataSetElements
+        })
+      }
 
-      });
+    });
 
     return dataElements;
   }
@@ -309,9 +299,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     // check if data indicators are in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'in')){
       if( group.id == 'ALL' ){
-        currentList.push(..._.filter(data.ind, (indicator) => {
-          return !_.includes(this.hiddenDataElements,indicator['id']);
-        }))
+        currentList.push(...data.ind)
       }else{
         if( group.hasOwnProperty('indicators')){
           let newArray = _.filter(data.ind, (indicator) => {
@@ -346,7 +334,9 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }
     }
     // return this.orderPipe.transform(currentList,'name',false);
-    return currentList;
+    return _.filter(currentList,(item=>{
+      return !_.includes(this.hiddenDataElements,item['id']);
+    }));
 
   }
 
