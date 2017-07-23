@@ -42,7 +42,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       selected: false
     }
   ];
-  selectedGroup:any = {id:'ALL',name:'All Data'};
+  selectedGroup:any = {id:'ALL',name:'All Tables [Select Table]'};
 
   @Output() selected_data_option: EventEmitter<any> = new EventEmitter<any>();
   @Output() selected_group: EventEmitter<any> = new EventEmitter<any>();
@@ -160,7 +160,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         }
       });
     }
-    this.selectedGroup = {id:'ALL', name:'All Data'};
+    this.selectedGroup = {id:'ALL', name:'All Data [Select Table]'};
     this.dataGroups = this.groupList();
     this.listItems = this.dataItemList();
     this.p =1;

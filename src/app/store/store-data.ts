@@ -99,7 +99,7 @@ export const INITIAL_STORE_DATA: StoreData = {
     hideMonth:false
   },
   selectedDataItems: [],
-  selectedGroup: {id:'ALL',name:'All Data'},
+  selectedGroup: {id:'ALL',name:'All Data [Select Table]'},
   tableObject:[],
   dataAnalytics:[],
   autoGrowingAnalytics:[],

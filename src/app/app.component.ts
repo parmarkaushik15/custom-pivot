@@ -168,68 +168,78 @@ export class AppComponent implements OnInit{
 
   // This function holds the logic for combining the logic for dataelements that are using functions and those not using functions and return one analytics
   performFunctionCalculations(dimensions,analytics,table_structure){
-    console.log(dimensions);
-    this.analyticsService.analytics_lists = [];
-    if(!analytics && dimensions.data.need_functions.length == 0){
-      this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
-    }
-    if( dimensions.data.need_functions.length > 0 ) {
-      let counter = 0;
-      let periodArray = _.find(dimensions.dimensions, ['name', 'pe'])['value'].split(";");
-      let orgUnitArray = _.find(dimensions.dimensions, ['name', 'ou'])['value'].split(";");
-      let times = 0;
-      periodArray.forEach((singlePeriod) => {
-        orgUnitArray.forEach((singleOu) => {
-          times++;
-        })
-      })
-      dimensions.data.need_functions.forEach( (mapping) => {
-        // Constructing analytics parameters to pass on the function call
-        periodArray.forEach((singlePeriod) => {
-          orgUnitArray.forEach((singleOu) => {
-            let parameters = {
-              dx: mapping.id,
-              ou: singleOu,
-              pe: singlePeriod,
-              success: (results) => {
-                // console.log(JSON.stringify(results));
-                // This will run on successfull function return, which will save the result to the data store for analytics
-                counter++;
-                this.analyticsService.analytics_lists.push(results);
-                if(counter == dimensions.data.need_functions.length*times ){
-                  if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
-                  this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
-                    this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
-                  });
-                }
-                // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
-              },
-              error: (error) => {
-                console.log('error');
-              },
-              progress: (progress) => {
-                console.log('progress');
-              }
-            };
-            // If there is a function for a data find the function and run it.
-            let use_function = _.find(this.functions, ['id', mapping.func]);
-            let execute = Function('parameters', use_function['function']);
-            execute(parameters);
-          })
-        })
+    this.http.get("../../../api/25/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:"+_.find(dimensions.dimensions, ['name', 'pe'])['value']+"&dimension=ou:"+_.find(dimensions.dimensions, ['name', 'ou'])['value']+"&displayProperty=NAME").map(res => res.json()).subscribe(
+      (dummyResult) => {
+        let periodArray = dummyResult.metaData.pe;
+        let orgUnitArray = dummyResult.metaData.ou;
+        dimensions.dimensions.forEach((dimesion)=>{
+          if(dimesion.name == "pe"){
+            dimesion.value = periodArray.join(";");
+          }
+        });
+        this.analyticsService.analytics_lists = [];
+        if(!analytics && dimensions.data.need_functions.length == 0){
+          this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
+        }
+        if( dimensions.data.need_functions.length > 0 ) {
+          //call a dummy analytics to prepare periods and orgunit when coming from relative period and grouped organisation units.
 
 
-      });
+          let counter = 0;
+          let times = 0;
+          periodArray.forEach((singlePeriod) => {
+            orgUnitArray.forEach((singleOu) => {
+              times++;
+            })
+          });
+          dimensions.data.need_functions.forEach( (mapping) => {
+            // Constructing analytics parameters to pass on the function call
+            periodArray.forEach((singlePeriod) => {
+              orgUnitArray.forEach((singleOu) => {
+                let parameters = {
+                  dx: mapping.id,
+                  ou: singleOu,
+                  pe: singlePeriod,
+                  success: (results) => {
+                    // console.log(JSON.stringify(results));
+                    // This will run on successfull function return, which will save the result to the data store for analytics
+                    counter++;
+                    this.analyticsService.analytics_lists.push(results);
+                    if(counter == dimensions.data.need_functions.length*times ){
+                      if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
+                      this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
+                        this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
+                      });
+                    }
+                    // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
+                  },
+                  error: (error) => {
+                    console.log('error');
+                  },
+                  progress: (progress) => {
+                    console.log('progress');
+                  }
+                };
+                // If there is a function for a data find the function and run it.
+                let use_function = _.find(this.functions, ['id', mapping.func]);
+                let execute = Function('parameters', use_function['function']);
+                execute(parameters);
+              })
+            })
 
-    }else{
-      if(analytics){
-        this.analyticsService.analytics_lists.push(analytics);
-        this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
-          this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
-        })
 
+          });
+        }else{
+          if(analytics){
+            this.analyticsService.analytics_lists.push(analytics);
+            this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
+              this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
+            })
+
+          }
+        }
       }
-    }
+    );
   }
 
   // this method will help to solve the issue of reuse of table object creation
