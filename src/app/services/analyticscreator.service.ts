@@ -115,7 +115,6 @@ export class AnalyticscreatorService {
       })
     });
 
-
     return new Observable((observ)=>{
       this.sortAnalyticsUsingParent(combined_analytics.metaData.ou).subscribe(
         (ous) => {
@@ -129,6 +128,7 @@ export class AnalyticscreatorService {
 
   }
 
+  // this function will help to format the analytics returned to incorporate the parent organisation units
   sortAnalyticsUsingParent(ou:any[]){
     return new Observable((observ)=>{
       let ous = [];
@@ -282,7 +282,7 @@ export class AnalyticscreatorService {
     }
   }
 
-  // This function will add a ti
+  // This function will add a totals for all columns
   addColumnTotal( tableObject ){
     let data = _.cloneDeep(tableObject);
     let some_header = [];
@@ -328,6 +328,7 @@ export class AnalyticscreatorService {
 
   }
 
+  // This will add an average for all columns
   addColumnAverage( tableObject ){
     let data = _.cloneDeep(tableObject);
     let some_header = [];
@@ -377,6 +378,7 @@ export class AnalyticscreatorService {
 
   }
 
+  //this will add a subtotal for rows for each groups
   addRowSubtotal( tableObject ){
     let data = _.cloneDeep(tableObject);
     if(data.columns.length > 1){
@@ -446,6 +448,7 @@ export class AnalyticscreatorService {
 
   }
 
+  // This will add a total for each row
   addRowTotal( tableObject ){
     let data = _.cloneDeep(tableObject);
     let row_distance:any = data.rows[0].items[0].row_span;
@@ -491,6 +494,7 @@ export class AnalyticscreatorService {
 
   }
 
+  // this will add average in rows
   addRowAverage( tableObject ){
     let data = _.cloneDeep(tableObject);
     let row_distance:any = data.rows[0].items[0].row_span;
@@ -544,6 +548,7 @@ export class AnalyticscreatorService {
 
   }
 
+  //this will add a parent organisation unit for each organisation unit
   addParentOu( tableObject ){
     let data = _.cloneDeep(tableObject);
     let some_rows = [];
