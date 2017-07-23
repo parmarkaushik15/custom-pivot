@@ -45,6 +45,7 @@ import {SpecificPeriodService} from "./components/period-filter/period.service";
 import {OrderPipe} from "./pipes/order-by.pipe";
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
+import {LoginRedirectService} from "./services/login-redirect.service";
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
     AnalyticscreatorService,
     HttpClientService,
     PeriodService,
-    SpecificPeriodService
+    SpecificPeriodService,
+    LoginRedirectService
   ],
   bootstrap: [
     AppComponent,

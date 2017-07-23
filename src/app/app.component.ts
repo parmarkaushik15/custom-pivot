@@ -33,6 +33,7 @@ import {
 } from "./services/local-storage.service";
 import {DataFilterComponent} from "./components/data-filter/data-filter.component";
 import {Http} from "@angular/http";
+import {LoginRedirectService} from "./services/login-redirect.service";
 
 @Component({
   selector: 'app-root',
@@ -99,7 +100,8 @@ export class AppComponent implements OnInit{
                private dataService: DataService,
                private localDbService: LocalStorageService,
                private visualization: VisualizerService,
-               private http:Http
+               private http:Http,
+               private loginRedirectService: LoginRedirectService
   ){
 
     this.visualizationObject$ = store.select(visualizationObjectSelector);
@@ -147,6 +149,7 @@ export class AppComponent implements OnInit{
       this.systemInfo = val;
     });
 
+    this.loginRedirectService.checkIfLogin('../../../')
 
   }
 
