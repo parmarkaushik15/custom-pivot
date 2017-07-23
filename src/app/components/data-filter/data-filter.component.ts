@@ -308,7 +308,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
           currentList.push(...newArray)
         }
       }
-
     }
 
     // check if data data sets are in a selected group
@@ -381,13 +380,20 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
 
       currentGroupList.push(...data.dx)
     }if(_.includes(options, 'ALL') || _.includes(options,'in')){
-      currentGroupList.push(...data.ind)
+      if(options.length == 1 && _.includes(options,'in')){
+        currentGroupList.push(...data.ind)
+      }else{
+        currentGroupList.push(...data.ind.map(indicatorGroup => {
+          return {id:indicatorGroup.id, name:indicatorGroup.name+' -Computed',indicators:indicatorGroup.indicators,}
+        }));
+      }
     }if(_.includes(options, 'ALL') || _.includes(options,'cv')){
       currentGroupList.push(...data.dt)
     }if(_.includes(options,'at')){
       this.need_groups = false;
     }
     currentGroupList.forEach((listItem) => {
+
       if(listItem.name.indexOf("WF00") !== -1){
         listItem.sorOrder = "A"+listItem.name;
         // newcurrentList.push(listItem)
