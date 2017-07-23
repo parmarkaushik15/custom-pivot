@@ -75,6 +75,7 @@ export class AppComponent implements OnInit{
   hiddenDataElements: any = [];
   mappings: any;
   showTable: boolean = false;
+  systemInfo: any = {};
   showAutoGrowingTable: boolean = false;
   loadingAutogrowing: boolean = false;
   selected_orgunit_model:any;
@@ -82,6 +83,8 @@ export class AppComponent implements OnInit{
   showDx:boolean = false;
   showPe:boolean = false;
   showOu:boolean = false;
+
+  showInfo:boolean = false;
   @ViewChild(PeriodFilterComponent)
   public periodComponent: PeriodFilterComponent;
 
@@ -137,6 +140,11 @@ export class AppComponent implements OnInit{
       val.forEach((hiddenDx) => {
         this.hiddenDataElements.push(hiddenDx.replace("_","."))
       });
+    });
+
+    // get a system Information
+    this.dataService.getASytemInfo().subscribe((val) => {
+      this.systemInfo = val;
     });
 
 
