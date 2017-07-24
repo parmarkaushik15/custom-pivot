@@ -107,6 +107,12 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     this.initiateData();
   }
 
+  // trigger this to reset pagination pointer when search change
+  searchChanged(){
+    console.log("changed")
+    this.p =1;
+  }
+
   initiateData() {
     this.dataService.initiateData().subscribe(
       (items ) => {
