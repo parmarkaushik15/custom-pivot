@@ -254,17 +254,17 @@ export class AutoGrowingComponent implements OnInit {
                   }
                   try {
                     if (this.$scope.config.valueTypes) {
-                      if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'int') {
+                      if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'int') {
                         cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
-                      } else if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'min' ||
-                        this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'max') {
+                      } else if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' ||
+                        this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') {
 
                       } else {
                         cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
                       }
                     } else {
                       if (this.$scope.config.list) {
-                        if (this.$scope.config.list == this.$scope.config.dataElements[i - 1]) {
+                        if (this.$scope.config.list == this.$scope.config.dataElements[i]) {
                           if (firstValue.indexOf(secondValue) == -1) {
                             cellToExtend.html(firstValue + "<br /> " + secondValue);
                           }
@@ -272,7 +272,7 @@ export class AutoGrowingComponent implements OnInit {
                           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
                         }
                       } else {
-                        if (this.$scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE") {
+                        if (this.$scope.config.dataElementsDetails[i].aggregationType == "AVERAGE") {
                           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
                         } else {
                           cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
