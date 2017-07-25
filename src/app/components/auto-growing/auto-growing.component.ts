@@ -296,6 +296,19 @@ export class AutoGrowingComponent implements OnInit {
         }
 
       }
+      this.$scope.config.dataElements.forEach((dataElementId,deIndex)=>{
+        this.$scope.config.dataElementsDetails.forEach((dataElement, index)=> {
+          if (dataElement.id == dataElementId) {
+            if (dataElement.aggregationType == "AVERAGE") {
+              elem.children.forEach((trElement,trIndex)=> {
+                if(trElement.children[deIndex]){
+                  trElement.children[deIndex].innerText = (parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1);
+                }
+              })
+            }
+          }
+        });
+      })
       if (this.$scope.config.valueTypes) {
         for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
           this.elementFind(elem,i,(index, el)=> {
@@ -459,7 +472,7 @@ export class AutoGrowingComponent implements OnInit {
                 }
               });
               this.$scope.config.data.forEach((eventData)=>{
-                eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[this.$scope.config.dataElementsDetails[0].name]] + ")");
+                //eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[this.$scope.config.dataElementsDetails[0].name]] + ")");
               })
             }
           }
