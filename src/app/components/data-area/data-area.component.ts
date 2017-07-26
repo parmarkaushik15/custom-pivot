@@ -18,7 +18,7 @@ export class DataAreaComponent implements OnInit {
   @Input() dataItems:any = null;
   @Input() autoGrowingData:any = null;
   @Input() uiState:any = null;
-  @Input() loadingParcent:number = 0;
+  @Input() loadingParcent:any = null;
   @Input() allDimensionAvailable:boolean = false;
   @Output() onTableUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Input() layoutItems:any = {

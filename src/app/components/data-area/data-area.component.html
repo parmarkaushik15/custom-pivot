@@ -1,5 +1,6 @@
 <div class="loadingMessage" *ngIf="uiState.loadingData" >
-  <img src="assets/img/balls-5.svg" style="height: 40px; width: 40px">{{ uiState.loadingDataMessage }} {{loadingParcent }}
+  <img src="assets/img/balls-5.svg" style="height: 40px; width: 40px">
+  {{ uiState.loadingDataMessage }} - {{ loadingParcent.loadedData }}/{{ loadingParcent.totalDataRequired }}({{loadingParcent.loadedData/loadingParcent.totalDataRequired | percent }})
 </div>
 <p *ngIf="!allDimensionAvailable && showTable"> Please make sure you have selected at least data, period, and Admin Unit</p>
 <div class="col-md-12" style="padding-left: 10px;" *ngIf="!showTable">
