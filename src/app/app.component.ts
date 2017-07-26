@@ -85,6 +85,11 @@ export class AppComponent implements OnInit{
   showPe:boolean = false;
   showOu:boolean = false;
 
+  //Percent completeness of loading data
+  dataLoadingPercent:number = 0;
+  totalDataRequired:number = 0;
+  loadedData:number = 0;
+
   showInfo:boolean = false;
   @ViewChild(PeriodFilterComponent)
   public periodComponent: PeriodFilterComponent;
@@ -172,6 +177,16 @@ export class AppComponent implements OnInit{
       (dummyResult) => {
         let periodArray = dummyResult.metaData.pe;
         let orgUnitArray = dummyResult.metaData.ou;
+        //calculate how many times the calls to functions are going to be made
+        let times = 0;
+        periodArray.forEach((s) => {
+          orgUnitArray.forEach((u) => {
+            times++;
+          })
+        });
+        if(analytics)this.loadedData++;
+
+        this.totalDataRequired += dimensions.data.need_functions.length*times;
         dimensions.dimensions.forEach((dimesion)=>{
           if(dimesion.name == "pe"){
             dimesion.value = periodArray.join(";");
@@ -181,17 +196,10 @@ export class AppComponent implements OnInit{
         if(!analytics && dimensions.data.need_functions.length == 0){
           this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
         }
+        //check first if there is data that needs functions
         if( dimensions.data.need_functions.length > 0 ) {
           //call a dummy analytics to prepare periods and orgunit when coming from relative period and grouped organisation units.
-
-
           let counter = 0;
-          let times = 0;
-          periodArray.forEach((singlePeriod) => {
-            orgUnitArray.forEach((singleOu) => {
-              times++;
-            })
-          });
           dimensions.data.need_functions.forEach( (mapping) => {
             // Constructing analytics parameters to pass on the function call
             periodArray.forEach((singlePeriod) => {
@@ -204,6 +212,7 @@ export class AppComponent implements OnInit{
                     // console.log(JSON.stringify(results));
                     // This will run on successfull function return, which will save the result to the data store for analytics
                     counter++;
+                    this.loadedData++;
                     this.analyticsService.analytics_lists.push(results);
                     if(counter == dimensions.data.need_functions.length*times ){
                       if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
@@ -255,35 +264,6 @@ export class AppComponent implements OnInit{
     tableObject = (tableStructure.showHierarchy)?this.analyticsService.addParentOu(tableObject):tableObject;
     this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
     return tableObject
-  }
-
-  updatingStore:boolean = false;
-  updatingParcentage = 0;
-  updateStore(){
-    let num = 0;
-    this.updatingStore = true;
-    this.localDbService.clearAll(DATASET_KEY)
-    this.localDbService.clearAll(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
   }
 
   // This function is used to hold all logic necessary for loading auto-growing tables
@@ -385,10 +365,14 @@ export class AppComponent implements OnInit{
   // The function that will handle the data updating
   allDimensionAvailable = false;
   updateTable() {
-
+    this.loadedData = 0;
+    this.totalDataRequired = 0;
     this.tableObject = null;
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
     if(this.allDimensionAvailable){
+      if(this.dimensions.data.selectedData.value !== ""){
+        this.totalDataRequired++;
+      }
       this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
       this.showAutoGrowingTable = false;
       this.needForUpdate = false;
@@ -572,4 +556,33 @@ export class AppComponent implements OnInit{
     return browserName+" ( "+fullVersion+" )";
   }
 
+  //updating metadata with new version available from server
+  updatingStore:boolean = false;
+  updatingParcentage:number = 0;
+  updatedStores:number = 0;
+  updateStore(){
+    this.updatedStores = 0;
+    this.updatingStore = true;
+    this.updateStoreData(DATASET_KEY);
+    this.updateStoreData(DATAELEMENT_KEY);
+    this.updateStoreData(DATAELEMENT_GROUP_KEY);
+    this.updateStoreData(INDICATOR_GROUP_KEY);
+    this.updateStoreData(INDICATOR_KEY);
+    this.updateStoreData(PROGRAM_KEY);
+    this.updateStoreData(CATEGORY_COMBOS_KEY);
+  }
+
+  //this will help to apply the calls
+  updateStoreData(store_key:string){
+    this.localDbService.clearAll(DATAELEMENT_KEY).subscribe(()=>{
+      this.dataService.getDataFromLocalDatabase(store_key).subscribe((data) => {
+        this.updatedStores++; this.updatingParcentage= Math.floor((this.updatedStores/7)*100);
+        if(this.updatedStores == 7){
+          this.updatingStore = false;
+          this.datafilter.initiateData();
+        }
+      },
+        error => console.log("Errors"));
+    });
+  }
 }

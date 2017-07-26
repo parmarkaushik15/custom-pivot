@@ -2,7 +2,8 @@
   cursor: pointer;
 }
 .btn-info{
-  background-color: #C9C2C2 !important;
+  background-color: rgba(201, 194, 194, 0.53) !important;
+  color: #000;
 }
 .auto-growing{
   /*color: #851C00;*/
