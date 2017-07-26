@@ -90,11 +90,11 @@ export class AutoGrowingComponent implements OnInit {
     if (this.autogrowing) {
       this.autogrowing.analytics.merge.config.dataElements.unshift("eventdate");
       this.autogrowing.analytics.merge.config.groupBy.unshift("eventdate");
-      this.autogrowing.analytics.merge.config.dataElementsDetails.unshift({id:"eventdate",name:"Period",valueType:"TEXT",aggregationType: "NONE"});
+      this.autogrowing.analytics.merge.config.dataElementsDetails.unshift({id:"eventdate",name:"Period",formName:"Period",valueType:"TEXT",aggregationType: "NONE"});
 
       this.autogrowing.analytics.merge.config.dataElements.unshift("ouname");
       this.autogrowing.analytics.merge.config.groupBy.unshift("ouname");
-      this.autogrowing.analytics.merge.config.dataElementsDetails.unshift({id:"ouname",name:"Organisation unit name",valueType:"TEXT",aggregationType: "NONE"});
+      this.autogrowing.analytics.merge.config.dataElementsDetails.unshift({id:"ouname",name:"Organisation unit name",formName:"Organisation unit name",valueType:"TEXT",aggregationType: "NONE"});
       this.autogrowing.analytics.merge.config.dataElementsDetails.forEach(function(dataElementDetails:any,index){
         dataElementDetails.sortOrder = index;
       })
