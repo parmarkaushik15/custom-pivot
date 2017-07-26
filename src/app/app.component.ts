@@ -257,35 +257,6 @@ export class AppComponent implements OnInit{
     return tableObject
   }
 
-  updatingStore:boolean = false;
-  updatingParcentage = 0;
-  updateStore(){
-    let num = 0;
-    this.updatingStore = true;
-    this.localDbService.clearAll(DATASET_KEY)
-    this.localDbService.clearAll(DATASET_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(DATAELEMENT_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(DATAELEMENT_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(INDICATOR_GROUP_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(INDICATOR_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(PROGRAM_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-    this.localDbService.clearAll(CATEGORY_COMBOS_KEY).subscribe(()=>{ num++; this.updatingParcentage= Math.floor((num/7)*100); if(num == 7){
-      this.updatingStore = false; this.datafilter.initiateData();
-    }});
-  }
-
   // This function is used to hold all logic necessary for loading auto-growing tables
   loadAutoGrowing (dimensions) {
     this.autoGrowingData = [];
@@ -572,4 +543,33 @@ export class AppComponent implements OnInit{
     return browserName+" ( "+fullVersion+" )";
   }
 
+  //updating metadata with new version available from server
+  updatingStore:boolean = false;
+  updatingParcentage:number = 0;
+  updatedStores:number = 0;
+  updateStore(){
+    this.updatedStores = 0;
+    this.updatingStore = true;
+    this.updateStoreData(DATASET_KEY);
+    this.updateStoreData(DATAELEMENT_KEY);
+    this.updateStoreData(DATAELEMENT_GROUP_KEY);
+    this.updateStoreData(INDICATOR_GROUP_KEY);
+    this.updateStoreData(INDICATOR_KEY);
+    this.updateStoreData(PROGRAM_KEY);
+    this.updateStoreData(CATEGORY_COMBOS_KEY);
+  }
+
+  //this will help to apply the calls
+  updateStoreData(store_key:string){
+    this.localDbService.clearAll(DATAELEMENT_KEY).subscribe(()=>{
+      this.dataService.getDataFromLocalDatabase(store_key).subscribe((data) => {
+        this.updatedStores++; this.updatingParcentage= Math.floor((this.updatedStores/7)*100);
+        if(this.updatedStores == 7){
+          this.updatingStore = false;
+          this.datafilter.initiateData();
+        }
+      },
+        error => console.log("Errors"));
+    });
+  }
 }
