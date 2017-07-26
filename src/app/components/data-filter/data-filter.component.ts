@@ -381,7 +381,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     const options = this.getSelectedOption();
     const data = this.getData();
 
-    currentGroupList.push(...[{id:'ALL',name:'All Data'}]);
+    currentGroupList.push(...[{id:'ALL',name:'All Tables'}]);
     if(_.includes(options, 'ALL') || _.includes(options,'de')){
 
       currentGroupList.push(...data.dx)
@@ -399,8 +399,10 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       this.need_groups = false;
     }
     currentGroupList.forEach((listItem) => {
-
-      if(listItem.name.indexOf("WF00") !== -1){
+      if(listItem.name.indexOf("All Tables") !== -1){
+        listItem.sorOrder = "0AA"+listItem.name;
+      }
+      else if(listItem.name.indexOf("WF00") !== -1){
         listItem.sorOrder = "A"+listItem.name;
         // newcurrentList.push(listItem)
       }else if(listItem.name.indexOf("WF00") !== -1){
