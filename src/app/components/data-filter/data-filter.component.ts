@@ -378,7 +378,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         currentGroupList.push(...data.ind)
       }else{
         currentGroupList.push(...data.ind.map(indicatorGroup => {
-          return {id:indicatorGroup.id, name:indicatorGroup.name+' -Computed',indicators:indicatorGroup.indicators,}
+          return {id:indicatorGroup.id, name:indicatorGroup.name+' - Computed',indicators:indicatorGroup.indicators,}
         }));
       }
     }if(_.includes(options, 'ALL') || _.includes(options,'cv')){
