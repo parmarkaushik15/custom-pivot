@@ -390,7 +390,6 @@ export class AutoGrowingComponent implements OnInit {
                 }
               });
               var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
-              console.log("eventIndicator:",valueCalculated);
               if (isNaN(valueCalculated)) {
                 valueCalculated = "";
               }
@@ -588,7 +587,6 @@ export class AutoGrowingComponent implements OnInit {
   }
 
   downloadExcel(table){
-    console.log(table);
     var date = new Date();
     var dateStr:any = date.getDate();
     if(dateStr < 10){
