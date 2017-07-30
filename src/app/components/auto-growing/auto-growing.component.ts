@@ -75,6 +75,7 @@ export class AutoGrowingComponent implements OnInit {
   @ViewChild('autogrowingTable') private autogrowingTable:ElementRef;
   @ViewChild('autogrowingRawTable') private autogrowingRawTable:ElementRef;
 
+  loadingPercent = 0;
   ngOnInit() {
     let table_structure = {
       showColumnTotal: false,
@@ -101,6 +102,7 @@ export class AutoGrowingComponent implements OnInit {
 
       this.$scope = this.autogrowing.analytics.merge;
       this.controller();
+      this.loadingPercent = 20;
       var orgUnitIds:Array<any> = [];
       this.autogrowing.analytics.merge.config.data.forEach((event)=>{
         if(orgUnitIds.indexOf(event["Organisation unit"]) == -1){
@@ -129,6 +131,7 @@ export class AutoGrowingComponent implements OnInit {
           })
         })
         this.autogrowing.analytics.merge.config.data = newData;
+        this.loadingPercent = 40;
         setTimeout(this.mergingCallBack())
 
       })
@@ -164,239 +167,246 @@ export class AutoGrowingComponent implements OnInit {
   }
 
   show = false;
-
+  error = false;
   $scope:any;
   mergingCallBack() {
 
     return ()=> {
-      let elem = this.tbody.nativeElement;
-      let dataElementIndexes = [];
-      this.$scope.config.groupBy.forEach((group, index)=> {
-        this.$scope.data.dataElements.forEach((dataElement, cindex) =>{
-          if (this.$scope.config.groupBy[index] == dataElement.id) {
-            dataElementIndexes.push(cindex);
-          }
+      try{
+        let elem = this.tbody.nativeElement;
+        let dataElementIndexes = [];
+        this.$scope.config.groupBy.forEach((group, index)=> {
+          this.$scope.data.dataElements.forEach((dataElement, cindex) =>{
+            if (this.$scope.config.groupBy[index] == dataElement.id) {
+              dataElementIndexes.push(cindex);
+            }
+          });
         });
-      });
 
-      elem.children.sort(this.dynamicSortMultiple(dataElementIndexes));
+        elem.children.sort(this.dynamicSortMultiple(dataElementIndexes));
 
-      var firstColumnBrakes = [];
-      var toFixed = [];
+        var firstColumnBrakes = [];
+        var toFixed = [];
 
-      function adjacentToGroup(row, column) {
-        var adjacentString = "";
-        dataElementIndexes.forEach(function (dataElementIndex) {
-          //if (column > (dataElementIndex + 1))
+        let adjacentToGroup = (row, column) =>{
+          var adjacentString = "";
+          dataElementIndexes.forEach(function (dataElementIndex) {
+            //if (column > (dataElementIndex + 1))
+            {
+              elem.children.forEach((trElement, index)=> {
+                if (trElement.children[dataElementIndex]) {
+                  let el = trElement.children[dataElementIndex];
+                  {
+                    if (row == index) {
+                      adjacentString += $(el).html().trim().toLowerCase();
+                    }
+                  }
+                }
+              })
+            }
+          });
+          return adjacentString;
+        }
+
+        let range = 50 / this.$scope.data.dataElements.length
+        for (var i = 0; i < this.$scope.data.dataElements.length; i++) {
+          /*var dataIndex = i;
+           if(dataIndex > 0){
+           dataIndex = i - 1;
+           }*/
+          var dataIndex = i;
+          var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
+          if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
+
+            this.elementFind(elem,i,(index, el)=> {
+              if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
+                $(el).addClass('hidden');
+                cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+              } else {
+                if ($.inArray(index, firstColumnBrakes) === -1) {
+                  firstColumnBrakes.push(index);
+                }
+                rowspan = 1;
+                previous = $(el).text().trim().toLowerCase();
+                cellToExtend = $(el);
+              }
+            })
+          } else //if(scope.config.continuous)
           {
             elem.children.forEach((trElement, index)=> {
-              if (trElement.children[dataElementIndex]) {
-                let el = trElement.children[dataElementIndex];
+              if (trElement.children[i]) {
+                let el = trElement.children[i];
                 {
-                  if (row == index) {
-                    adjacentString += $(el).html().trim().toLowerCase();
+                  if (previous == adjacentToGroup(index, i)) {
+                    $(el).addClass('hidden');
+                    if (this.$scope.config.valueTypes) {
+                      if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'min' ||
+                        this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'max') {
+                        cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                        return;
+                      }
+                    }
+                    var firstValue = cellToExtend.html(), secondValue = $(el).html();
+                    var firstValueSet = false, secondValueSet = false;
+                    if (firstValue == "") {
+                      firstValue = 0.0;
+                      firstValueSet = true;
+                    }
+                    if (secondValue == "") {
+                      secondValue = 0.0;
+                      secondValueSet = true;
+                    }
+                    try {
+                      if (this.$scope.config.valueTypes) {
+                        if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'int') {
+                          cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
+                        } else if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' ||
+                          this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') {
+
+                        } else {
+                          cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
+                        }
+                      } else {
+                        if (this.$scope.config.list) {
+                          if (this.$scope.config.list == this.$scope.config.dataElements[i]) {
+                            if (firstValue.indexOf(secondValue) == -1) {
+                              cellToExtend.html(firstValue + "<br /> " + secondValue);
+                            }
+                          } else {
+                            cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
+                          }
+                        } else {
+                          if (this.$scope.config.dataElementsDetails[i].aggregationType == "AVERAGE") {
+                            cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
+                          } else {
+                            cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
+                          }
+                        }
+                      }
+                    } catch (e) {
+                      //alert("Catch:" + scope.config.dataElements[i]);
+                    }
+
+                    cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                  } else {
+                    rowspan = 1;
+                    //previous = $(el).text();
+                    previous = adjacentToGroup(index, i).trim().toLowerCase();
+                    cellToExtend = $(el);
                   }
                 }
               }
             })
           }
-        });
-        return adjacentString;
-      }
-
-
-      for (var i = 0; i < this.$scope.data.dataElements.length; i++) {
-        /*var dataIndex = i;
-        if(dataIndex > 0){
-          dataIndex = i - 1;
-        }*/
-        var dataIndex = i;
-        var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
-        if (this.$scope.config.groupBy.indexOf(this.$scope.data.dataElements[dataIndex].id) > -1) {
-
-          this.elementFind(elem,i,(index, el)=> {
-            if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
-              $(el).addClass('hidden');
-              cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-            } else {
-              if ($.inArray(index, firstColumnBrakes) === -1) {
-                firstColumnBrakes.push(index);
-              }
-              rowspan = 1;
-              previous = $(el).text().trim().toLowerCase();
-              cellToExtend = $(el);
-            }
-          })
-        } else //if(scope.config.continuous)
-        {
-          elem.children.forEach((trElement, index)=> {
-            if (trElement.children[i]) {
-              let el = trElement.children[i];
-              {
-                if (previous == adjacentToGroup(index, i)) {
-                  $(el).addClass('hidden');
-                  if (this.$scope.config.valueTypes) {
-                    if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'min' ||
-                      this.$scope.config.valueTypes[this.$scope.config.dataElements[i - 1]] == 'max') {
-                      cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-                      return;
-                    }
-                  }
-                  var firstValue = cellToExtend.html(), secondValue = $(el).html();
-                  var firstValueSet = false, secondValueSet = false;
-                  if (firstValue == "") {
-                    firstValue = 0.0;
-                    firstValueSet = true;
-                  }
-                  if (secondValue == "") {
-                    secondValue = 0.0;
-                    secondValueSet = true;
-                  }
-                  try {
-                    if (this.$scope.config.valueTypes) {
-                      if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'int') {
-                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
-                      } else if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' ||
-                        this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') {
-
-                      } else {
-                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
-                      }
-                    } else {
-                      if (this.$scope.config.list) {
-                        if (this.$scope.config.list == this.$scope.config.dataElements[i]) {
-                          if (firstValue.indexOf(secondValue) == -1) {
-                            cellToExtend.html(firstValue + "<br /> " + secondValue);
-                          }
-                        } else {
-                          cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
-                        }
-                      } else {
-                        if (this.$scope.config.dataElementsDetails[i].aggregationType == "AVERAGE") {
-                          cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
-                        } else {
-                          cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
-                        }
-                      }
-                    }
-                  } catch (e) {
-                    //alert("Catch:" + scope.config.dataElements[i]);
-                  }
-
-                  cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-                } else {
-                  rowspan = 1;
-                  //previous = $(el).text();
-                  previous = adjacentToGroup(index, i).trim().toLowerCase();
-                  cellToExtend = $(el);
-                }
-              }
-            }
+          setTimeout(()=>{
+            this.loadingPercent += range;
           })
         }
-
-      }
-      this.$scope.config.dataElements.forEach((dataElementId,deIndex)=>{
-        this.$scope.config.dataElementsDetails.forEach((dataElement, index)=> {
-          if (dataElement.id == dataElementId) {
-            if (dataElement.aggregationType == "AVERAGE") {
-              elem.children.forEach((trElement,trIndex)=> {
-                if(trElement.children[deIndex]){
-                  trElement.children[deIndex].innerText = (parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1);
-                }
-              })
-            }
-          }
-        });
-      })
-      if (this.$scope.config.valueTypes) {
-        for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
-          this.elementFind(elem,i,(index, el)=> {
-
-            if ((this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' || this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
-              for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
-                var topHtml = parseFloat($(elem.children[index].children[i]).html());
-                var current = parseFloat($(elem.children[counter].children[i]).html());
-
-                if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min') {
-                  if (topHtml > current) {
-                    $(elem.children[index].children[i]).html(current.toFixed(1));
+        this.$scope.config.dataElements.forEach((dataElementId,deIndex)=>{
+          this.$scope.config.dataElementsDetails.forEach((dataElement, index)=> {
+            if (dataElement.id == dataElementId) {
+              if (dataElement.aggregationType == "AVERAGE") {
+                elem.children.forEach((trElement,trIndex)=> {
+                  if(trElement.children[deIndex]){
+                    trElement.children[deIndex].innerText = (parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1);
                   }
-                }
-                if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') {
-                  if (topHtml < current) {
-                    $(elem.children[index].children[i]).html(current.toFixed(1));
-                  }
-                }
+                })
               }
             }
-          })
-        }
-      }
-      if (this.$scope.config.dec) {
-        for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
-          this.elementFind(elem,i, (index, el)=> {
-            if (this.$scope.config.dec == this.$scope.config.dataElements[i]) {
-              $(elem.children[index].children[i]).html(parseFloat($(elem.children[index].children[i]).html()).toFixed(1));
-            }
-          })
-        }
-      }
-
-      if (this.$scope.config.groupAdd) {
-        firstColumnBrakes = [];
-        this.$scope.config.groupAdd.forEach((dataElementId)=> {
-          this.$scope.data.dataElements.forEach((dataElement, i) =>{
-            if (dataElementId == dataElement.id) {
-              this.elementFind(elem,i, (index, el)=> {
-                if (elem.children[index].children[i - 1].getAttribute('rowspan') != null) {
-                  var span = parseInt(elem.children[index].children[i - 1].getAttribute('rowspan'));
-                  elem.children[index].children[i].setAttribute('rowspan', span);
-                  var previousVal = "";
-                  for (var counter = 1; counter < span; counter++) {
-                    if (elem.children[index + counter].children[i + 1].innerHTML != previousVal && !$(elem.children[index + counter].children[i]).hasClass('hidden'))
-                    {
-                      elem.children[index].children[i].innerHTML = (parseFloat(elem.children[index].children[i].innerHTML) + parseFloat(elem.children[index + counter].children[i].innerHTML)).toFixed(1);
-                    }
-                    $(elem.children[index + counter].children[i]).addClass('hidden');
-                    previousVal = elem.children[index + counter].children[i + 1].innerHTML;
-                  }
-                }
-              })
-            }
-          })
-        })
-      }
-      //re-calculate indicator values after merging rows
-      if (this.$scope.config.indicators) {
-        this.$scope.config.indicators.forEach((indicator)=>{
-          if (indicator.position) {
-            this.$scope.config.dataElements.splice(indicator.position + 2, 0, indicator.position + 2);
-          }
-        });
-        elem.children.forEach((trElement,trIndex) =>{
-          this.$scope.config.indicators.forEach((indicator)=>{
-            var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
-            this.$scope.data.dataElements.forEach((dataElement)=>{
-              if (eventIndicator.indexOf(dataElement.id) > -1) {
-                var dataElementIndex = this.$scope.config.dataElements.indexOf(dataElement.id);
-                var value = trElement.children[dataElementIndex].innerText;
-                eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
-              }
-            });
-            var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
-            console.log("eventIndicator:",valueCalculated);
-            if (isNaN(valueCalculated)) {
-              valueCalculated = "";
-            }
-            trElement.children[indicator.position + 2].innerText = valueCalculated;
           });
-        });
+        })
+        if (this.$scope.config.valueTypes) {
+          for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
+            this.elementFind(elem,i,(index, el)=> {
+
+              if ((this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min' || this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
+                for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
+                  var topHtml = parseFloat($(elem.children[index].children[i]).html());
+                  var current = parseFloat($(elem.children[counter].children[i]).html());
+
+                  if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'min') {
+                    if (topHtml > current) {
+                      $(elem.children[index].children[i]).html(current.toFixed(1));
+                    }
+                  }
+                  if (this.$scope.config.valueTypes[this.$scope.config.dataElements[i]] == 'max') {
+                    if (topHtml < current) {
+                      $(elem.children[index].children[i]).html(current.toFixed(1));
+                    }
+                  }
+                }
+              }
+            })
+          }
+        }
+        if (this.$scope.config.dec) {
+          for (var i = 1; i <= this.$scope.data.dataElements.length; i++) {
+            this.elementFind(elem,i, (index, el)=> {
+              if (this.$scope.config.dec == this.$scope.config.dataElements[i]) {
+                $(elem.children[index].children[i]).html(parseFloat($(elem.children[index].children[i]).html()).toFixed(1));
+              }
+            })
+          }
+        }
+        if (this.$scope.config.groupAdd) {
+          firstColumnBrakes = [];
+          this.$scope.config.groupAdd.forEach((dataElementId)=> {
+            this.$scope.data.dataElements.forEach((dataElement, i) =>{
+              if (dataElementId == dataElement.id) {
+                this.elementFind(elem,i, (index, el)=> {
+                  if (elem.children[index].children[i - 1].getAttribute('rowspan') != null) {
+                    var span = parseInt(elem.children[index].children[i - 1].getAttribute('rowspan'));
+                    elem.children[index].children[i].setAttribute('rowspan', span);
+                    var previousVal = "";
+                    for (var counter = 1; counter < span; counter++) {
+                      if (elem.children[index + counter].children[i + 1].innerHTML != previousVal && !$(elem.children[index + counter].children[i]).hasClass('hidden'))
+                      {
+                        elem.children[index].children[i].innerHTML = (parseFloat(elem.children[index].children[i].innerHTML) + parseFloat(elem.children[index + counter].children[i].innerHTML)).toFixed(1);
+                      }
+                      $(elem.children[index + counter].children[i]).addClass('hidden');
+                      previousVal = elem.children[index + counter].children[i + 1].innerHTML;
+                    }
+                  }
+                })
+              }
+            })
+          })
+        }
+        //re-calculate indicator values after merging rows
+        if (this.$scope.config.indicators) {
+          this.$scope.config.indicators.forEach((indicator)=>{
+            if (indicator.position) {
+              this.$scope.config.dataElements.splice(indicator.position + 2, 0, indicator.position + 2);
+            }
+          });
+          elem.children.forEach((trElement,trIndex) =>{
+            this.$scope.config.indicators.forEach((indicator)=>{
+              var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
+              this.$scope.data.dataElements.forEach((dataElement)=>{
+                if (eventIndicator.indexOf(dataElement.id) > -1) {
+                  var dataElementIndex = this.$scope.config.dataElements.indexOf(dataElement.id);
+                  var value = trElement.children[dataElementIndex].innerText;
+                  eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
+                }
+              });
+              var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
+              console.log("eventIndicator:",valueCalculated);
+              if (isNaN(valueCalculated)) {
+                valueCalculated = "";
+              }
+              trElement.children[indicator.position + 2].innerText = valueCalculated;
+            });
+          });
+        }
+        toFixed.forEach((child)=> {
+          child.html(parseFloat(child.html()).toFixed(1));
+        })
+        this.loadingPercent = 100;
+        this.show = true;
+      }catch(e){
+        this.error = true;
+        this.show = true;
       }
-      toFixed.forEach((child)=> {
-        child.html(parseFloat(child.html()).toFixed(1));
-      })
-      this.show = true;
     }
   }
 
