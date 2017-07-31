@@ -140,3 +140,9 @@
   z-index: 100;
   background-color: whitesmoke
 }
+
+@media print {
+   .right-block{
+     width: 100%;
+   }
+}

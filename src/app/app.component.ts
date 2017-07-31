@@ -577,6 +577,7 @@ export class AppComponent implements OnInit{
   updatingStore:boolean = false;
   updatingParcentage:number = 0;
   updatedStores:number = 0;
+  updatingMetadataMessage: string = "Updating Metadata";
   updateStore(){
     this.updatedStores = 0;
     this.updatingStore = true;
@@ -591,9 +592,10 @@ export class AppComponent implements OnInit{
 
   //this will help to apply the calls
   updateStoreData(store_key:string){
-    this.localDbService.clearAll(DATAELEMENT_KEY).subscribe(()=>{
+    this.localDbService.clearAll(store_key).subscribe(()=>{
       this.dataService.getDataFromLocalDatabase(store_key).subscribe((data) => {
         this.updatedStores++; this.updatingParcentage= Math.floor((this.updatedStores/7)*100);
+        this.updatingMetadataMessage = `Done Updating ${store_key}`;
         if(this.updatedStores == 7){
           this.updatingStore = false;
           this.datafilter.initiateData();

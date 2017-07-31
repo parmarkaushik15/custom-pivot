@@ -75,7 +75,10 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   k:number = 1;
   need_groups:boolean =true;
   searchOptions:any;
-  constructor( private dataService: DataService, private filterByName:FilterByNamePipe, private fusePipe:FuseSearchPipe, private orderPipe:OrderPipe) { }
+  constructor( private dataService: DataService,
+               private filterByName:FilterByNamePipe,
+               private fusePipe:FuseSearchPipe,
+               private orderPipe:OrderPipe) { }
 
   ngOnInit() {
     this.searchOptions={
@@ -214,7 +217,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       at: this.metaData.programs
     }
   }
-
 
   // track by function to improve the list selection performance
   trackByFn(index, item) {
@@ -660,5 +662,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getSelectedItemsToRemove(){
+    return this.filterByName.transform(this.selectedItems ,this.listchanges).length;
 
+  }
 }

@@ -88,8 +88,8 @@ export class PeriodFilterComponent implements OnInit {
     if(this.period_type != '') {
       this.changePeriodType();
     }
+    // this.getRelativePeriodText("LAST_5_YEARS");
   }
-
 
   transferDataSuccess(data,current){
     if(data.dragData.id == current.id){
@@ -238,8 +238,6 @@ export class PeriodFilterComponent implements OnInit {
 
     this.periods = this.getFinencialPeriodArray(this.period_type,this.year);
   }
-
-
 
   getPeriodArray(type,year){
     let periods = [];
@@ -573,5 +571,44 @@ export class PeriodFilterComponent implements OnInit {
       return last_year+"April"
     }
   }
+
+  // getRelativePeriodText(period_key: string) {
+  //   let date = new Date();
+  //   let year = date.getFullYear();
+  //   let datestring =("0"+(date.getMonth()+1)).slice(-2);
+  //   switch (datestring){
+  //     case "01":
+  //       return{
+  //         months:"",
+  //         quarters:"",
+  //         years:""
+  //       }
+  //       break;
+  //     case "02":
+  //       break;
+  //     case "03":
+  //       break;
+  //     case "04":
+  //       break;
+  //     case "05":
+  //       break;
+  //     case "06":
+  //       break;
+  //     case "07":
+  //       break;
+  //     case "08":
+  //       break;
+  //     case "09":
+  //       break;
+  //     case "10":
+  //       break;
+  //     case "11":
+  //       break;
+  //     case "12":
+  //       break;
+  //
+  //   }
+  //
+  // }
 
 }
