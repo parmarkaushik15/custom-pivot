@@ -75,7 +75,10 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   k:number = 1;
   need_groups:boolean =true;
   searchOptions:any;
-  constructor( private dataService: DataService, private filterByName:FilterByNamePipe, private fusePipe:FuseSearchPipe, private orderPipe:OrderPipe) { }
+  constructor( private dataService: DataService,
+               private filterByName:FilterByNamePipe,
+               private fusePipe:FuseSearchPipe,
+               private orderPipe:OrderPipe) { }
 
   ngOnInit() {
     this.searchOptions={
@@ -214,7 +217,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       at: this.metaData.programs
     }
   }
-
 
   // track by function to improve the list selection performance
   trackByFn(index, item) {
@@ -378,7 +380,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
         currentGroupList.push(...data.ind)
       }else{
         currentGroupList.push(...data.ind.map(indicatorGroup => {
-          return {id:indicatorGroup.id, name:indicatorGroup.name+' -Computed',indicators:indicatorGroup.indicators,}
+          return {id:indicatorGroup.id, name:indicatorGroup.name+' - Computed',indicators:indicatorGroup.indicators,}
         }));
       }
     }if(_.includes(options, 'ALL') || _.includes(options,'cv')){
@@ -660,5 +662,8 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getSelectedItemsToRemove(){
+    return this.filterByName.transform(this.selectedItems ,this.listchanges).length;
 
+  }
 }

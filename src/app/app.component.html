@@ -1,12 +1,12 @@
 <div class="container-fluid" style="border: 1px solid rgba(0,0,0,0.2); padding-left: 3px;padding-right: 3px">
-    <div class="left-block col-xs-4" [@heroState]="uiState.dataAreaOpenState" >
+    <div class="left-block col-xs-4 hide-on-print" [@heroState]="uiState.dataAreaOpenState" >
       <nav class="navbar navbar-default top-bar" style="margin-bottom: 5px">
         <div class="container-fluid" style="padding-left: 3px;padding-right: 3px">
           <div class="col-sm-10" style="padding: 0px">
               <h4>Pivot tables</h4>
           </div>
           <div class="col-sm-2" style="padding: 0px">
-            <a (click)="toogleDataArea()" class="pull-right close-right-area" title="close data selection area" style="cursor: pointer;font-weight: bold">
+            <a (click)="toogleDataArea()" class="pull-right close-right-area" title="Close data selection area" style="cursor: pointer;font-weight: bold">
               <i class="fa fa-angle-double-left" style="margin-top: 5px;font-size: 23px;color: rgba(0,0,0,0.5);"></i>
             </a>
           </div>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="right-block " [ngClass]="{'col-xs-12': !uiState.dataAreaOpen,'col-xs-8': uiState.dataAreaOpen}" >
-      <nav class="navbar navbar-default top-bar">
+      <nav class="navbar navbar-default top-bar hide-on-print">
         <div class="container-fluid" style="padding-top: 4px;padding-left: 3px;padding-right: 3px">
           <div class="navbar-header">
             <a (click)="toogleDataArea()" *ngIf="!uiState.dataAreaOpen" class="pull-left close-right-area" title="open data selection area" style="margin-right:8px;cursor: pointer;font-weight: bold">
@@ -105,7 +105,7 @@
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">
             <li>
-              <span title="Updating store..." *ngIf="updatingStore"><img src="assets/img/balls-5.svg" style="height: 40px">Updating Metadata({{ updatingParcentage}}%) </span>
+              <span title="Updating store..." *ngIf="updatingStore"><img src="assets/img/balls-5.svg" style="height: 40px">{{ updatingMetadataMessage }}({{ updatingParcentage}}%) </span>
               <a *ngIf="!updatingStore" (click)="updateStore()" style="cursor: pointer" title="Update metadata"><span class="glyphicon glyphicon-refresh"></span></a>
             </li>
             <li appClickOutside (clickOutside)="showInfo = false"> <a (click)="showInfo = !showInfo"  title="More info about pivot"><span class="glyphicon glyphicon-info-sign"></span> </a>
@@ -147,7 +147,7 @@
             [loadingAutogrowing]="loadingAutogrowing"
             [needForUpdate]="needForUpdate"
             [allDimensionAvailable]="allDimensionAvailable"
-            [loadingParcent] = "{loadedData:loadedData,totalDataRequired:totalDataRequired}"
+            [loadingParcent] = "{loadedData:loadedData,totalDataRequired:totalDataRequired,errorInNormalDataOccur:errorInNormalDataOccur,errorInNormalData:errorInNormalData}"
             (onTableUpdate)="updateTable()"
           ></data-area>
         </div>

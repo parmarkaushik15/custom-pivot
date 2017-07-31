@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+@media print {
+  .hide-on-print {
+    display: none;
+  }.hide-on-print *{
+     display: none;
+   }
+  .right-block{
+    width: 100%;
+  }
+}

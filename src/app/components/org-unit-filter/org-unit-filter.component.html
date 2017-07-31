@@ -35,7 +35,7 @@
   <div class="" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
     <div class="col-sm-3" style="padding-left: 0px; margin-bottom: 5px">
       <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Switch selection between: by Level, Group or Current selected">
           <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
@@ -53,7 +53,7 @@
     </div>
     <!--org_unit_groups-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
-      <app-multiselect [placeholder]="'Select Administrative units group'" [selected_items]="orgunit_model.selected_groups" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
+      <app-multiselect [placeholder]="'Select Admin.units group'" [selected_items]="orgunit_model.selected_groups" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
 
     </div>
     <!--user_org_unit-->
@@ -63,7 +63,7 @@
     </div>
     <!--org_unit_levels-->
     <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
-      <app-multiselect [prefix]="'Level: '" [prefix_multiple]="'Levels: '" [placeholder]="'Select Administrative units levels'" [selected_items]="orgunit_model.selected_levels" [items]="orgunit_model.orgunit_levels | filterLevel:organisationunits[0]:orgunit_model.selected_orgunits" (onSelected)="setSelectedLevels($event)"></app-multiselect>
+      <app-multiselect [prefix]="'Level: '" [prefix_multiple]="'Levels: '" [placeholder]="'Select Admin.units levels'" [selected_items]="orgunit_model.selected_levels" [items]="orgunit_model.orgunit_levels | filterLevel:organisationunits[0]:orgunit_model.selected_orgunits" (onSelected)="setSelectedLevels($event)"></app-multiselect>
 
     </div>
     <!--<div class="search-area">-->
