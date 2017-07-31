@@ -171,10 +171,10 @@ export class AppComponent implements OnInit{
     this.store.dispatch( new SetOrgunitModelAction( value ) );
   }
 
+  errorInNormalDataOccur:boolean = false;
+  errorInNormalData:string = "";
   // This function holds the logic for combining the logic for dataelements that are using functions and those not using functions and return one analytics
-  performFunctionCalculations(dimensions,analytics,table_structure){
-    this.http.get("../../../api/25/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:"+_.find(dimensions.dimensions, ['name', 'pe'])['value']+"&dimension=ou:"+_.find(dimensions.dimensions, ['name', 'ou'])['value']+"&displayProperty=NAME").map(res => res.json()).subscribe(
-      (dummyResult) => {
+  performFunctionCalculations(dimensions,analytics,table_structure,dummyResult){
         let periodArray = dummyResult.metaData.pe;
         let orgUnitArray = dummyResult.metaData.ou;
         //calculate how many times the calls to functions are going to be made
@@ -223,6 +223,8 @@ export class AppComponent implements OnInit{
                     // this.store.dispatch(new AddSingleEmptyAnalyticsAction({analytics: results, dataId: value.id}));
                   },
                   error: (error) => {
+                    this.errorInNormalData = "Error Occurred in fetching data";
+                    this.errorInNormalDataOccur = true;
                     console.log('error');
                   },
                   progress: (progress) => {
@@ -247,8 +249,6 @@ export class AppComponent implements OnInit{
 
           }
         }
-      }
-    );
   }
 
   // this method will help to solve the issue of reuse of table object creation
@@ -266,8 +266,12 @@ export class AppComponent implements OnInit{
     return tableObject
   }
 
+  autogrowingError:any = {};
   // This function is used to hold all logic necessary for loading auto-growing tables
-  loadAutoGrowing (dimensions) {
+  loadAutoGrowing (dimensions,dummyResult) {
+    this.autogrowingError = {};
+    let periodArray = dummyResult.metaData.pe;
+    let orgUnitArray = dummyResult.metaData.ou;
     this.autoGrowingData = [];
     this.loadingAutogrowing = true;
       //Dealing with auto-growing
@@ -289,7 +293,7 @@ export class AppComponent implements OnInit{
           let parameters = {
             dx: value.id,
             ou: orgUnitIds,
-            pe: _.find(dimensions.dimensions, ['name', 'pe'])['value'],
+            pe: periodArray.join(";"),
             success: (results) => {
               // This will run on successfull function return, which will save the result to the data store for analytics
               this.showTable = true;
@@ -299,6 +303,7 @@ export class AppComponent implements OnInit{
               this.loadingAutogrowing = false;
             },
             error: (error) => {
+              this.autogrowingError[value.id] =true;
               console.log('error');
             },
             progress: (progress) => {
@@ -308,7 +313,12 @@ export class AppComponent implements OnInit{
           // If there is a function for a data find the function and run it.
           let use_function = _.find(this.functions, ['id', 'DDtZTbdxMsQ']);
           let execute = Function('parameters', use_function['function']);
-          execute(parameters);
+          if(execute){
+            execute(parameters);
+          }else{
+            this.autogrowingError[value.id] =true;
+            console.log("some error occured")
+          }
         })
       });
   }
@@ -367,56 +377,63 @@ export class AppComponent implements OnInit{
   updateTable() {
     this.loadedData = 0;
     this.totalDataRequired = 0;
+    this.errorInNormalData = "";
+    this.errorInNormalDataOccur = false;
     this.tableObject = null;
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
     if(this.allDimensionAvailable){
-      if(this.dimensions.data.selectedData.value !== ""){
-        this.totalDataRequired++;
-      }
-      this.store.dispatch( new SendNormalDataLoadingAction({loading:true, message:"Loading data, Please wait"}));
-      this.showAutoGrowingTable = false;
-      this.needForUpdate = false;
-      this.analyticsService.prepareAnalytics(this.layout,this.dimensions.dimensions, false).subscribe(analytics => {
-        // check first if there is normal data selected
-        this.store.dispatch( new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
-        this.analyticsService.current_normal_analytics = analytics;
-        let table_structure = {
-          showColumnTotal: this.options.column_totals,
-          showColumnAverage: this.options.column_avg,
-          showColumnSubTotal: this.options.column_sub_total,
-          showRowTotal: this.options.row_totals,
-          showRowAverage: this.options.row_avg,
-          showRowSubtotal: this.options.row_sub_total,
-          showDimensionLabels: this.options.dimension_labels,
-          hide_zeros: this.options.hide_empty_row,
-          showHierarchy: this.options.show_hierarchy,
-          title: this.options.table_title,
-          rows: this.layout.rows,
-          columns: this.layout.columns,
-          displayList: false,
-        };
-        //loading additional functions
-        this.performFunctionCalculations(this.dimensions,analytics,table_structure);
+      this.http.get("../../../api/25/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:"+_.find(this.dimensions.dimensions, ['name', 'pe'])['value']+"&dimension=ou:"+_.find(this.dimensions.dimensions, ['name', 'ou'])['value']+"&displayProperty=NAME").map(res => res.json()).subscribe(
+        (dummyResult) => {
+          if (this.dimensions.data.selectedData.value !== "") {
+            this.totalDataRequired++;
+          }
+          this.store.dispatch(new SendNormalDataLoadingAction({loading: true, message: "Loading data, Please wait"}));
+          this.showAutoGrowingTable = false;
+          this.needForUpdate = false;
+          this.analyticsService.prepareAnalytics(this.layout, this.dimensions.dimensions, false).subscribe(analytics => {
+            // check first if there is normal data selected
+            this.store.dispatch(new UpdateCurrentAnalyticsOptionsAction(this.analyticsService.getAnalyticsparams(this.dimensions.dimensions)));
+            this.analyticsService.current_normal_analytics = analytics;
+            let table_structure = {
+              showColumnTotal: this.options.column_totals,
+              showColumnAverage: this.options.column_avg,
+              showColumnSubTotal: this.options.column_sub_total,
+              showRowTotal: this.options.row_totals,
+              showRowAverage: this.options.row_avg,
+              showRowSubtotal: this.options.row_sub_total,
+              showDimensionLabels: this.options.dimension_labels,
+              hide_zeros: this.options.hide_empty_row,
+              showHierarchy: this.options.show_hierarchy,
+              title: this.options.table_title,
+              rows: this.layout.rows,
+              columns: this.layout.columns,
+              displayList: false,
+            };
+            //loading additional functions
+            this.performFunctionCalculations(this.dimensions, analytics, table_structure,dummyResult);
 
+            //loading autogrowing tables
+            this.loadAutoGrowing(this.dimensions,dummyResult);
 
-        //loading autogrowing tables
-        this.loadAutoGrowing(this.dimensions);
+          }, error => {
+            this.errorInNormalDataOccur = true;
+            this.errorInNormalData = "Something went wrong while fetching data";
+          });
 
-      });
-
-      //update the system for data usage
-      let json = 'http://ipv4.myexternalip.com/json';
-      let dhis2Evnts = {events:[]}
-      this.http.get(json).map(res=>res.json()).subscribe((result) => {
-        this.dimensions.data.itemList.forEach((itemToUpdate)=>{
-          dhis2Evnts.events.push( this.updateAccessLogs(itemToUpdate,result.ip) )
+          //update the system for data usage
+          let json = 'http://ipv4.myexternalip.com/json';
+          let dhis2Evnts = {events: []};
+          this.http.get(json).map(res => res.json()).subscribe((result) => {
+            this.dimensions.data.itemList.forEach((itemToUpdate) => {
+              dhis2Evnts.events.push(this.updateAccessLogs(itemToUpdate, result.ip))
+            });
+            console.log("Events", dhis2Evnts)
+            this.http.post("../../../api/events", dhis2Evnts).map(res => res.json()).subscribe((result1) => {
+              console.log(result1)
+            });
+            //
+          });
         });
-        console.log("Events",dhis2Evnts)
-        this.http.post("../../../api/events",dhis2Evnts).map(res=>res.json()).subscribe((result1) => {
-          console.log(result1)
-        });
-        //
-      });
     }else{
       this.showTable = true
     }
