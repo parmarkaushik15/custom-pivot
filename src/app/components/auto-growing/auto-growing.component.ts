@@ -548,7 +548,7 @@ export class AutoGrowingComponent implements OnInit {
     if (this.$scope.config.indicators) {
 
       this.$scope.config.indicators.forEach((indicator, index)=>{
-        this.$scope.data.dataElements.splice(indicator.position + 2, 0, {name: indicator.name, valueType: "NUMBER"});
+        this.$scope.data.dataElements.splice(indicator.position + 2, 0, {name: indicator.name,formName: indicator.name, valueType: "NUMBER"});
         this.$scope.data.events.forEach((event)=>{
           var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
           //Get indcator dataelements
