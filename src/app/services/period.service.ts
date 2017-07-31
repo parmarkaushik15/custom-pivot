@@ -63,13 +63,7 @@ export class PeriodService {
   }
   getPeriodName(period){
     var name = "",periodType="",year="";
-    if(period.indexOf("Q") > -1){
-      periodType = "Quarterly";
-      year = period.substr(0,4);
-    }else if(period.indexOf("July") > -1){
-      periodType = "FinancialJuly";
-      year = period.substr(0,4);
-    }else if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH"].indexOf(period) > -1 ){
+    if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH"].indexOf(period) > -1 ){
       periodType = "RelativeMonth";
       year = period;
     }else if(["THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS"].indexOf(period) > -1 ){
@@ -78,7 +72,13 @@ export class PeriodService {
     }else if(["THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(period) > -1 ){
       periodType = "RelativeFinancialYear";
       year = period;
-    }else{
+    }else if(period.indexOf("Q") > -1){
+      periodType = "Quarterly";
+      year = period.substr(0,4);
+    }else if(period.indexOf("July") > -1){
+      periodType = "FinancialJuly";
+      year = period.substr(0,4);
+    }else {
       periodType = "Monthly";
       year = period.substr(0,4);
     }
@@ -91,13 +91,13 @@ export class PeriodService {
     return name;
   }
   getPeriodType(period){
-    if(period.indexOf("Q") > -1){
+    if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH","THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS","THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(period) > -1){
+      return period;
+    }else if(period.indexOf("Q") > -1){
       return "Quarterly";
     }else if(period.indexOf("July") > -1){
       return "FinancialJuly";
-    }else if(["LAST_12_MONTHS","LAST_6_MONTHS","LAST_3_MONTHS","LAST_MONTH","THIS_MONTH","THIS_QUARTER","LAST_QUARTER","LAST_4_QUARTERS","THIS_FINANCIAL_YEAR","LAST_FINANCIAL_YEAR","LAST_5_FINANCIAL_YEARS"].indexOf(period) > -1){
-      return period;
-    }else{
+    }else {
       return "Monthly";
     }
   }
@@ -105,14 +105,7 @@ export class PeriodService {
     var theDate = new Date(date);
     var periodStartDate = new Date();
     var periodEndDate = new Date();
-
-    if(period.indexOf("Q") > -1){
-      periodStartDate = new Date(parseInt(period.substr(0,4)),(parseInt(period.substr(5))-1) * 3);
-      periodEndDate = new Date(parseInt(period.substr(0,4)),((parseInt(period.substr(5))-1) * 3) + 3,0)
-    }else if(period.indexOf("July") > -1){
-      periodStartDate = new Date(parseInt(period.substr(0,4)),6);
-      periodEndDate = new Date(parseInt(period.substr(0,4)) + 1,6,0)
-    }else if(period == "LAST_12_MONTHS"){
+    if(period == "LAST_12_MONTHS"){
       periodStartDate = new Date((new Date()).getFullYear(),(new Date()).getMonth() - 12,1);
       periodEndDate = new Date((new Date()).getFullYear(),(new Date()).getMonth(),0)
     }else if(period == "LAST_6_MONTHS"){
@@ -145,7 +138,13 @@ export class PeriodService {
     }else if(period == "LAST_5_FINANCIAL_YEARS"){
       periodStartDate = new Date((new Date()).getFullYear() - ((new Date()).getMonth() >= 6?0:1) - 5,6,1);
       periodEndDate = new Date((new Date()).getFullYear() + ((new Date()).getMonth() >= 6?1:0) - 5,6,0);
-    }else{
+    }else if(period.indexOf("Q") > -1){
+      periodStartDate = new Date(parseInt(period.substr(0,4)),(parseInt(period.substr(5))-1) * 3);
+      periodEndDate = new Date(parseInt(period.substr(0,4)),((parseInt(period.substr(5))-1) * 3) + 3,0)
+    }else if(period.indexOf("July") > -1){
+      periodStartDate = new Date(parseInt(period.substr(0,4)),6);
+      periodEndDate = new Date(parseInt(period.substr(0,4)) + 1,6,0)
+    }else {
       periodStartDate = new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4))-1);
       periodEndDate = new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4)),0)
     }

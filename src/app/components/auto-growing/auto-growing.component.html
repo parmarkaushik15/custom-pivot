@@ -1,8 +1,8 @@
 <div [ngClass]="{'show':!show,'hide':show}" style="text-align: center;">
   <img src="assets/img/balls-5.svg"/>
-  Merging Autogrowing
+  Merging Autogrowing {{loadingPercent}}%
 </div>
-<div class="col-sm-12 nopadding">
+<div *ngIf="!show || error" class="col-sm-12 nopadding">
   <div class="dropdown pull-right">
     <button class="btn btn-default btn-sm" style="margin-bottom: 10px" type="button" data-toggle="dropdown"><i class="fa fa-file-excel-o"></i> Excel
       <span class="caret"></span></button>
@@ -63,7 +63,7 @@
     </tr>
     </tbody>
   </table>
-  <table #autogrowingTable [ngClass]="{'show':show,'hide':!show}" class="table"
+  <table #autogrowingTable [ngClass]="{'show':show,'hide':!show || error}" class="table"
          *ngIf="$scope.data.dataElements.length != 0">
     <thead>
     <tr class="table-title">
@@ -89,7 +89,7 @@
     <tr class="header-column">
       <th *ngFor="let dataElement of $scope.data.dataElements"
           style="text-align: center">
-        {{ dataElement.name }}
+        {{ dataElement.formName }}
       </th>
     </tr>
     </thead>
@@ -111,4 +111,15 @@
     </tr>
     </tbody>
   </table>
+  <div *ngIf="error" class="alert alert-danger">
+    <strong>Merging Error!</strong> Error merging autogrowing for {{autogrowing.analytics.metaData.names[$scope.config.programId]}}
+    <span *ngFor="let ou of autogrowing.analytics.metaData.ou; let i = index">
+          <span *ngIf="autogrowing.analytics.metaData.names[ou]"><span *ngIf="i > 0">,</span>{{autogrowing.analytics.metaData.names[ou]}}</span>
+        </span>
+       <span *ngIf="autogrowing.analytics.metaData.pe.length > 0">
+         <span *ngFor="let pe of autogrowing.analytics.metaData.pe; let i = index">
+           <span *ngIf="autogrowing.analytics.metaData.names[pe]">,{{autogrowing.analytics.metaData.names[pe]}}</span>
+         </span>
+       </span>
+  </div>
 </div>
