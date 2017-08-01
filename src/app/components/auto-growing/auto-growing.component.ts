@@ -101,7 +101,6 @@ export class AutoGrowingComponent implements OnInit {
       })
 
       this.$scope = this.autogrowing.analytics.merge;
-      this.controller();
       this.loadingPercent = 20;
       var orgUnitIds:Array<any> = [];
       this.autogrowing.analytics.merge.config.data.forEach((event)=>{
@@ -117,6 +116,7 @@ export class AutoGrowingComponent implements OnInit {
             this.autogrowing.analytics.merge.config.data.forEach((event)=>{
               //var event = Object.assign({}, e)
               results.some((eventOU)=>{
+                if(eventOU.name == 'Balili')
                 if(event["Organisation unit"] == eventOU.id && this.periodService.isDateInPeriod(event["Event date"],pe)){
                   if(eventOU.path.indexOf(ou) > -1){
                     event["Period"] = this.periodService.getPeriodName(this.periodService.convertDateToPeriod(event["Event date"],this.periodService.getPeriodType(pe)));
@@ -131,6 +131,7 @@ export class AutoGrowingComponent implements OnInit {
           })
         })
         this.autogrowing.analytics.merge.config.data = newData;
+        this.controller();
         this.loadingPercent = 40;
         setTimeout(this.mergingCallBack())
 
