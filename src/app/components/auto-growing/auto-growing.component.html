@@ -14,7 +14,7 @@
 
 
 </div>
-<div>
+<div *ngIf="$scope.data">
   <table #autogrowingRawTable class="table hide"
          *ngIf="$scope.data.dataElements.length != 0">
     <thead>
