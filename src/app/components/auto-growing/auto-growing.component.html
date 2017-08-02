@@ -14,7 +14,7 @@
 
 
 </div>
-<div>
+<div *ngIf="$scope.data">
   <table #autogrowingRawTable class="table hide"
          *ngIf="$scope.data.dataElements.length != 0">
     <thead>
@@ -89,7 +89,7 @@
     <tr class="header-column">
       <th *ngFor="let dataElement of $scope.data.dataElements"
           style="text-align: center">
-        {{ dataElement.formName }}
+        {{ dataElement.formName || dataElement.shortName }}
       </th>
     </tr>
     </thead>
@@ -98,7 +98,7 @@
       <td *ngFor="let dataElement of $scope.data.dataElements">{{event[dataElement.name]}}</td>
     </tr>
     </tbody>
-    <tbody *ngIf="$scope.config.groupBy" #tbody>
+    <tbody *ngIf="$scope.config.groupBy" #tbody style="background-color: white;">
     <tr *ngFor="let event of $scope.data.events">
       <ng-template ngFor let-dataElement [ngForOf]="$scope.data.dataElements" let-i="index">
         <td [ngClass]="{'hide-text':checkHide(index)}" style="border:1px solid lightgrey"

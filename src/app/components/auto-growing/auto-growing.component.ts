@@ -101,7 +101,6 @@ export class AutoGrowingComponent implements OnInit {
       })
 
       this.$scope = this.autogrowing.analytics.merge;
-      this.controller();
       this.loadingPercent = 20;
       var orgUnitIds:Array<any> = [];
       this.autogrowing.analytics.merge.config.data.forEach((event)=>{
@@ -131,6 +130,7 @@ export class AutoGrowingComponent implements OnInit {
           })
         })
         this.autogrowing.analytics.merge.config.data = newData;
+        this.controller();
         this.loadingPercent = 40;
         setTimeout(this.mergingCallBack())
 
@@ -548,7 +548,7 @@ export class AutoGrowingComponent implements OnInit {
     if (this.$scope.config.indicators) {
 
       this.$scope.config.indicators.forEach((indicator, index)=>{
-        this.$scope.data.dataElements.splice(indicator.position + 2, 0, {name: indicator.name, valueType: "NUMBER"});
+        this.$scope.data.dataElements.splice(indicator.position + 2, 0, {name: indicator.name,formName: indicator.name, valueType: "NUMBER"});
         this.$scope.data.events.forEach((event)=>{
           var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
           //Get indcator dataelements
