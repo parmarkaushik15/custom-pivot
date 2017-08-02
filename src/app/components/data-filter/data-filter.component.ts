@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, Output, EventEmitter, Input} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import {DataService} from "../../services/data.service";
 import * as _ from 'lodash'
 import {FuseSearchPipe} from "../../shared/pipes/fuse-search.pipe";
@@ -11,7 +11,7 @@ import {FilterByNamePipe} from "../../shared/pipes/filter-by-name.pipe";
   styleUrls: ['./data-filter.component.css'],
   providers:[FuseSearchPipe,OrderPipe,FilterByNamePipe]
 })
-export class DataFilterComponent implements OnInit, AfterViewInit {
+export class DataFilterComponent implements OnInit {
 
 
   listItems:any[] = [];
@@ -131,10 +131,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     )
   }
 
-  ngAfterViewInit() {
-     //
-   }
-
   toggleDataOption(optionPrefix,event) {
     let someItems = this.manyItemsSelected(this.dataOptions, optionPrefix);
     if(event.ctrlKey) {
@@ -216,11 +212,6 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       dt: this.metaData.dataSets,
       at: this.metaData.programs
     }
-  }
-
-  // track by function to improve the list selection performance
-  trackByFn(index, item) {
-    return item.id; // or item.id
   }
 
   // this function helps you to get the detailed metadata
@@ -426,14 +417,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   addSelected(item){
     this.selectedItems.push(item);
     this.getSelectedPeriods();
-    this.onDataUpdate.emit({
-      itemList: this.selectedItems,
-      need_functions: this.getFunctions(this.selectedItems),
-      auto_growing: this.getAutogrowingTables(this.selectedItems),
-      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
-      hideQuarter:this.hideQuarter,
-      hideMonth:this.hideMonth
-    });
+    this.emitData();
   }
 
   getAutogrowingTables(selections){
@@ -446,13 +430,29 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     return autogrowings;
   }
 
+  // get all the data that needs functions from a selected list of data
   getFunctions(selections){
     let mappings = [];
     selections.forEach((value) => {
       let dataElementId = value.id.split(".");
       this.functionMappings.forEach(mappedItem => {
         let mappedId = mappedItem.split("_");
-        if(dataElementId[0] == mappedId[0]){
+        if(dataElementId[0] === mappedId[0] && mappedId[1] !== "PrCNxxRERin"){
+          mappings.push({id:value.id, func:mappedId[1]})
+        }
+      });
+    });
+    return mappings;
+  }
+
+  // get all the data that needs the select by ward function from a selected list of data
+  getListByWard(selections){
+    let mappings = [];
+    selections.forEach((value) => {
+      let dataElementId = value.id.split(".");
+      this.functionMappings.forEach(mappedItem => {
+        let mappedId = mappedItem.split("_");
+        if(mappedId[1] === "PrCNxxRERin"){
           mappings.push({id:value.id, func:mappedId[1]})
         }
       });
@@ -464,14 +464,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
   removeSelected(item){
     this.selectedItems.splice(this.selectedItems.indexOf(item),1);
     this.getSelectedPeriods();
-    this.onDataUpdate.emit({
-      itemList: this.selectedItems,
-      need_functions: this.getFunctions(this.selectedItems),
-      auto_growing: this.getAutogrowingTables(this.selectedItems),
-      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
-      hideQuarter:this.hideQuarter,
-      hideMonth:this.hideMonth
-    });
+    this.emitData();
   }
 
   //selecting all items
@@ -483,28 +476,14 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       }
     });
     this.getSelectedPeriods();
-    this.onDataUpdate.emit({
-      itemList: this.selectedItems,
-      need_functions: this.getFunctions(this.selectedItems),
-      auto_growing: this.getAutogrowingTables(this.selectedItems),
-      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
-      hideQuarter:this.hideQuarter,
-      hideMonth:this.hideMonth
-    });
+    this.emitData();
   }
 
   //selecting all items
   deselectAllItems(){
     this.selectedItems = [];
     this.getSelectedPeriods();
-    this.onDataUpdate.emit({
-      itemList: this.selectedItems,
-      need_functions: this.getFunctions(this.selectedItems),
-      auto_growing: this.getAutogrowingTables(this.selectedItems),
-      selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
-      hideQuarter:this.hideQuarter,
-      hideMonth:this.hideMonth
-    });
+    this.emitData();
   }
 
   // Check if item is in selected list
@@ -526,15 +505,20 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
       let number = (this.getDataPosition(data.dragData.id) > this.getDataPosition(current.id))?0:1;
       this.deleteData( data.dragData );
       this.insertData( data.dragData, current, number);
-      this.onDataUpdate.emit({
-        itemList: this.selectedItems,
-        need_functions: this.getFunctions(this.selectedItems),
-        auto_growing: this.getAutogrowingTables(this.selectedItems),
-        selectedData: {name: 'dx', value: this.getDataForAnalytics(this.selectedItems)},
-        hideQuarter:this.hideQuarter,
-        hideMonth:this.hideMonth
-      });
+      this.emitData();
     }
+  }
+
+  emitData(){
+    this.onDataUpdate.emit({
+      itemList: this.selectedItems,
+      need_functions: this.getFunctions( this.selectedItems ),
+      auto_growing: this.getAutogrowingTables( this.selectedItems ),
+      list_by_ward: this.getListByWard( this.selectedItems ),
+      selectedData: {name: 'dx', value: this.getDataForAnalytics( this.selectedItems )},
+      hideQuarter:this.hideQuarter,
+      hideMonth:this.hideMonth
+    });
   }
 
   // helper method to find the index of dragged item
@@ -548,7 +532,7 @@ export class DataFilterComponent implements OnInit, AfterViewInit {
     return Data_index;
   }
 
-  // help method to delete the selected Data in list before inserting it in another position
+  // helper method to delete the selected Data in list before inserting it in another position
   deleteData( Data_to_delete ){
     this.selectedItems.forEach((Data, Data_index) => {
       if( Data_to_delete.id == Data.id){

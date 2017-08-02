@@ -87,6 +87,7 @@ export class AnalyticscreatorService {
       });
       analytic.metaData.pe.forEach((val) => {
         if(!_.includes(combined_analytics.metaData.pe, val)){
+          console.log(val)
           combined_analytics.metaData.pe.push( val );
           combined_analytics.metaData.names[val] = this.periodService.getPeriodName(val);
         }
@@ -107,7 +108,10 @@ export class AnalyticscreatorService {
       combined_analytics.metaData.dx = newDxOrder;
       dimensions.dimensions.forEach((dimesion)=>{
         if(dimesion.name == "pe"){
-          combined_analytics.metaData.pe = dimesion.value.split(";")
+          combined_analytics.metaData.pe = dimesion.value.split(";");
+          combined_analytics.metaData.pe.forEach((val) => {
+            combined_analytics.metaData.names[val] = this.periodService.getPeriodName(val);
+          });
         }
       });
       analytic.rows.forEach( (row) => {
