@@ -76,6 +76,7 @@ export class AutoGrowingComponent implements OnInit {
   @ViewChild('autogrowingRawTable') private autogrowingRawTable:ElementRef;
 
   loadingPercent = 0;
+  dataField = "data";
   ngOnInit() {
     let table_structure = {
       showColumnTotal: false,
@@ -103,7 +104,10 @@ export class AutoGrowingComponent implements OnInit {
       this.$scope = this.autogrowing.analytics.merge;
       this.loadingPercent = 20;
       var orgUnitIds:Array<any> = [];
-      this.autogrowing.analytics.merge.config.data.forEach((event)=>{
+      if(!this.autogrowing.analytics.merge.config.data){
+        this.dataField = "otherData";
+      }
+      this.autogrowing.analytics.merge.config[this.dataField].forEach((event)=>{
         if(orgUnitIds.indexOf(event["Organisation unit"]) == -1){
           orgUnitIds.push(event["Organisation unit"]);
         }
@@ -113,7 +117,7 @@ export class AutoGrowingComponent implements OnInit {
         this.autogrowing.analytics.metaData.pe.forEach((pe)=>{
           this.autogrowing.analytics.metaData.names[pe] = this.periodService.getPeriodName(pe);
           this.autogrowing.analytics.metaData.ou.forEach((ou)=>{
-            this.autogrowing.analytics.merge.config.data.forEach((event)=>{
+            this.autogrowing.analytics.merge.config[this.dataField].forEach((event)=>{
               //var event = Object.assign({}, e)
               results.some((eventOU)=>{
                 if(event["Organisation unit"] == eventOU.id && this.periodService.isDateInPeriod(event["Event date"],pe)){
