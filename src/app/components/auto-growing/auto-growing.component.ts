@@ -509,7 +509,7 @@ export class AutoGrowingComponent implements OnInit {
         }
 
       });
-      if (this.$scope.config.fourthQuarter) {
+      if (this.$scope.config.fourthQuarter && this.$scope.config.otherData) {
         this.$scope.config.groupBy.forEach((group, index)=>{
           if (index == 0) {
             this.$scope.config.otherData.forEach((eventData)=>{
