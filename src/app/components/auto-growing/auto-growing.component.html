@@ -101,7 +101,7 @@
     <tbody *ngIf="$scope.config.groupBy" #tbody style="background-color: white;">
     <tr *ngFor="let event of $scope.data.events">
       <ng-template ngFor let-dataElement [ngForOf]="$scope.data.dataElements" let-i="index">
-        <td [ngClass]="{'hide-text':checkHide(index)}" style="border:1px solid lightgrey"
+        <td [ngClass]="{'hide-text':checkHide(index),'right':['TEXT','DATE'].indexOf(dataElement.valuaType) == -1}" style="border:1px solid lightgrey"
             *ngIf="event[dataElement.name] != undefined && dataElement.valueType != 'NA'">{{event[dataElement.name] |
           removeNaN:dataElement}}
         </td>
