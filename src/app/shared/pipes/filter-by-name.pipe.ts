@@ -10,6 +10,9 @@ export class FilterByNamePipe implements PipeTransform {
       // filter users, users which match and return true will be kept, false will be filtered out
       if (value.length !== 0 && name !== null) {
         let splitData = name.split(" ");
+        [',','[',']','(',')',',','.','-','_'].forEach((char)=>{
+          splitData = splitData.split(char).join("")
+        })
         return value.filter((item) => {
           var found = true;
           splitData.forEach((str)=> {
