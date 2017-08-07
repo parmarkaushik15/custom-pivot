@@ -19,7 +19,7 @@ export class LoginRedirectService {
               window.location.href = rootUrl + 'dhis-web-commons/security/login.action';
             }
           }, () => {
-            window.location.href = rootUrl + 'dhis-web-commons/security/login.action'
+            //window.location.href = rootUrl + 'dhis-web-commons/security/login.action'
             console.warn('You are offline')
           })
       }
