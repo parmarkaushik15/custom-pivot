@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {HttpClientService} from "../../services/http-client.service";
+import * as _ from 'lodash'
 
 @Component({
   selector: 'app-favorite',
@@ -31,6 +32,10 @@ export class FavoriteComponent implements OnInit {
   constructor(private http:HttpClientService) { }
 
   ngOnInit() {
+    this.loadFavorites();
+  }
+
+  loadFavorites(){
     this.getAllFavorite().subscribe((favs) => {
       this.favorites = favs;
       this.loadingFavorite = false;
@@ -99,8 +104,10 @@ export class FavoriteComponent implements OnInit {
   deleteFavorite(favorite){
     this.deleting[favorite.id] = true;
     this.deleteMapping(favorite.id, favorite).subscribe((fav) => {
+      this.loadFavorites();
       this.deleteSuccess[favorite.id] = true;
-      this.favorites.splice(this.favorites.indexOf(favorite),1);
+      // _.remove(this.favorites, {id: favorite.id});
+      // this.favorites.splice(this.favorites.indexOf(favorite),1);
       setTimeout(()=>{
         this.deleteSuccess[favorite.id] = false;
       },2000);
