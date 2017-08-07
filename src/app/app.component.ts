@@ -154,7 +154,7 @@ export class AppComponent implements OnInit{
       this.systemInfo = val;
     });
 
-    this.loginRedirectService.checkIfLogin('../../../')
+    //this.loginRedirectService.checkIfLogin('../../../')
 
   }
 
