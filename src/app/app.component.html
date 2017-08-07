@@ -56,7 +56,7 @@
             </a>
             <!--data-->
             <div *ngIf="!uiState.dataAreaOpen" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showDx = false" >
-              <a class="btn btn-sm btn-default" (click)="showDx = !showDx">Data</a>
+              <a class="btn btn-sm btn-default" (click)="showDx = !showDx" title="Select Data">Data</a>
               <div [ngClass]="{'hideData': !showDx}" class="dropdownField">
                 <app-data-filter
                   (onDataUpdate)="setSelectedData($event)"
@@ -68,7 +68,7 @@
             </div>
             <!--period-->
             <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showPe = false">
-              <a class="btn btn-sm btn-default" (click)="showPe = !showPe">Period</a>
+              <a class="btn btn-sm btn-default" (click)="showPe = !showPe" title="Select Period">Period</a>
               <div *ngIf="showPe" class="dropdownField">
                 <div app-period-filter #periodComponent1
                      [hideMonth]="hideMonth"
@@ -81,7 +81,7 @@
             </div>
             <!--organisation units-->
             <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px;padding-right: 3px" appClickOutside (clickOutside)="showOu = false">
-              <a class="btn btn-sm btn-default" (click)="showOu = !showOu">Orgunit</a>
+              <a class="btn btn-sm btn-default" (click)="showOu = !showOu" title="Select Admin.units">Admin.units</a>
               <div [ngClass]="{'hideData': !showOu}" class="dropdownField">
                 <div app-org-unit-filter *ngIf="!uiState.dataAreaOpen"
                      (onOrgUnitUpdate)="setSelectedOrgunit($event)"

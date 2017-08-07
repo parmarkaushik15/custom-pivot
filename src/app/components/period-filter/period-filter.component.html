@@ -36,7 +36,7 @@
         <div class="container-fluid" style="border-bottom: solid 1px #dddddd; padding: 0px 0px; margin-bottom: 4px">
           <div class="col-sm-6" style="padding-top:8px;padding-left:3px;border-right: 1px solid rgba(0,0,0,0.1); text-align: left;font-size: 11px">
             <ul class="list-inline data-header-list">
-              <li><b>Available <span class="fadeOut">({{periods.length }})</span></b></li>
+              <li><b>Available <span class="fadeOut">({{periods.length - getSelectedItemsToRemove() }})</span></b></li>
               <li class="pull-right pointer direction-arrows"><a (click)="selectAllItems()" title="Select all"><i class="fa fa-angle-double-right"></i></a></li>
             </ul>
           </div>

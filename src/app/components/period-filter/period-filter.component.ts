@@ -1,10 +1,9 @@
 import {
-  Component, OnInit, Output, Input, EventEmitter, ViewChild, AfterViewInit,
-  ChangeDetectionStrategy, OnChanges, SimpleChanges
+  Component, OnInit, Output, Input, EventEmitter
 } from '@angular/core';
 import {Http} from "@angular/http";
-import {_keyValueDiffersFactory} from "@angular/core/src/application_module";
 
+import * as _ from 'lodash'
 
 const PERIOD_TYPE: Array<any> = [
   {value:'Monthly', name: 'Monthly', shown: true},
@@ -54,8 +53,6 @@ export class PeriodFilterComponent implements OnInit {
   period: any = {};
   showPerTree:boolean = false;
   year: number = new Date().getFullYear();
-  default_period: string[] = [];
-  customTemplateStringOrgunitOptions: any;
   period_type_config: Array<any>;
 
   constructor(
@@ -179,6 +176,16 @@ export class PeriodFilterComponent implements OnInit {
     this.onTypeUpdate.emit(this.period_type);
   }
 
+  getSelectedItemsToRemove(){
+    let count = 0;
+    this.selected_periods.forEach(period => {
+      if(_.includes(_.map(this.periods,'id'), period.id)){
+        count++;
+      }
+    })
+    return count;
+
+  }
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
     this.selected_periods.splice(this.selected_periods.indexOf($event),1);

@@ -18,6 +18,7 @@ export class FavoriteComponent implements OnInit {
   @Input() allDimensionAvailable: boolean = false;
   @Output() onFavoriteSelect = new EventEmitter()
   newFavName:string = "";
+  searchKey:string = "";
   showDelete:boolean[] = [];
   deleting:boolean[] = [];
   deleteSuccess:boolean[] = [];
@@ -26,6 +27,7 @@ export class FavoriteComponent implements OnInit {
   editing:boolean[] = [];
   editSuccess:boolean[] = [];
   editFalure:boolean[] = [];
+  k:number = 1;
   constructor(private http:HttpClientService) { }
 
   ngOnInit() {
@@ -42,6 +44,7 @@ export class FavoriteComponent implements OnInit {
   openFavorite(favorite){
     this.onFavoriteSelect.emit(favorite);
     this.showLayout =  false;
+    this.k = 1;
   }
 
   saving:boolean = false;

@@ -387,3 +387,7 @@ table * {
 .node-content-wrapper-focused{
   background-color: white!important;
 }
+
+.group-image{
+  height: 15px;
+}
