@@ -27,7 +27,7 @@ export class ExcelDownloadService {
       // console.log("Remove Index:",index2);
       this.remove();
     }));
-    ctx["table1"] = el.innerHTML;
+    ctx["table1"] = el.innerHTML.split("& ").join("&amp; ");
 
     str += '<table border="1">{table1}</table><br />';
     str += '</body></html>';
