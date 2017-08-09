@@ -56,7 +56,10 @@
             </a>
             <!--data-->
             <div *ngIf="!uiState.dataAreaOpen" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showDx = false" >
-              <a class="btn btn-sm btn-default" (click)="showDx = !showDx">Data</a>
+              <a class="btn btn-sm btn-default" (click)="showDx = !showDx" title="Click Data to select Dataelement, computed value, auto-growing and submissions">
+                <img src="assets/img/data.png" height="15"/>
+                Data
+              </a>
               <div [ngClass]="{'hideData': !showDx}" class="dropdownField">
                 <app-data-filter
                   (onDataUpdate)="setSelectedData($event)"
@@ -68,7 +71,10 @@
             </div>
             <!--period-->
             <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px" appClickOutside (clickOutside)="showPe = false">
-              <a class="btn btn-sm btn-default" (click)="showPe = !showPe">Period</a>
+              <a class="btn btn-sm btn-default" (click)="showPe = !showPe" title="Click Period to select Months,Quarters or Financial years of interest">
+                <img src="assets/img/period.png" height="15"/>
+                Period
+              </a>
               <div *ngIf="showPe" class="dropdownField">
                 <div app-period-filter #periodComponent1
                      [hideMonth]="hideMonth"
@@ -81,7 +87,10 @@
             </div>
             <!--organisation units-->
             <div [ngClass]="{'hideData': uiState.dataAreaOpen}" style="float: left;padding-left: 3px;padding-right: 3px" appClickOutside (clickOutside)="showOu = false">
-              <a class="btn btn-sm btn-default" (click)="showOu = !showOu">Orgunit</a>
+              <a class="btn btn-sm btn-default" (click)="showOu = !showOu" title="Click Admin.units to select one or more administrative units, including by levels and groups">
+                <img src="assets/img/tree.png" height="15"/>
+                Admin.units
+              </a>
               <div [ngClass]="{'hideData': !showOu}" class="dropdownField">
                 <div app-org-unit-filter *ngIf="!uiState.dataAreaOpen"
                      (onOrgUnitUpdate)="setSelectedOrgunit($event)"
@@ -90,10 +99,23 @@
                 ></div>
               </div>
             </div>
+            <!--update button-->
+            <a class="btn btn-sm btn-default" (click)="updateTable()">
+              <img src="assets/img/update.png" height="15"/>
+              Update
+            </a>
+            <!--layout option-->
+            <app-layout
+              [layout]="currentLayout"
+              [visualizationType]="'TABLE'"
+              (onLayoutUpdate)="setLayout($event)"
+            ></app-layout>
 
-            <a class="btn btn-sm btn-default" (click)="updateTable()">Update</a>
-            <app-layout [layout]="currentLayout" [visualizationType]="'TABLE'" (onLayoutUpdate)="setLayout($event)"></app-layout>
-            <app-options (onOptionUpdate)="updateOptions($event)"></app-options>
+            <!--options components-->
+            <app-options
+              (onOptionUpdate)="updateOptions($event)"
+            ></app-options>
+
             <!--favorites-->
             <app-favorite
               [dataDimensions]="dataDimensions$ | async"
@@ -101,7 +123,6 @@
               [allDimensionAvailable]="allDimensionAvailable"
               (onFavoriteSelect)="openFavorite($event)"
             ></app-favorite>
-            <!--<button class="btn btn-default btn-sm" (click)="downloadExcel()"><i class="fa fa-file-excel-o"></i> Excel</button>-->
           </div>
           <ul class="nav navbar-nav navbar-right top-bar-link">
             <li>
@@ -118,7 +139,7 @@
                     </tr>
                     <tr>
                       <td>Last Report Generation Date</td>
-                      <td>{{ systemInfo.lastAnalyticsTableSuccess | date }}</td>
+                      <td>{{ systemInfo.lastAnalyticsTableSuccess | date:'medium' }}</td>
                     </tr>
                   </table>
                 </div>

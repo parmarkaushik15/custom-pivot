@@ -595,7 +595,17 @@ export class AppComponent implements OnInit{
     this.localDbService.clearAll(store_key).subscribe(()=>{
       this.dataService.getDataFromLocalDatabase(store_key).subscribe((data) => {
         this.updatedStores++; this.updatingParcentage= Math.floor((this.updatedStores/7)*100);
-        this.updatingMetadataMessage = `Done Updating ${store_key}`;
+        let storeString = "";
+        if(store_key === "indicators"){
+          storeString = "Computed Values";
+        }else if(store_key === "indicator-groups"){
+          storeString = "Computed Values Groups"
+        }else if(store_key === "programs"){
+          storeString = "Auto Growing"
+        }else{
+          storeString = store_key
+        }
+        this.updatingMetadataMessage = `Done Updating ${storeString}`;
         if(this.updatedStores == 7){
           this.updatingStore = false;
           this.datafilter.initiateData();

@@ -1,7 +1,8 @@
 <span appClickOutside (clickOutside)="showLayout = false">
-<a class="btn btn-default btn-sm" tooltip="Change layouts" (click)="showLayout = !showLayout">
+<a class="btn btn-default btn-sm" title="Favorites" (click)="showLayout = !showLayout;k = 1;">
+  <img src="assets/img/favorite.png" height="15"/>
   Favorites
-</a>
+  </a>
 <div style="position: absolute">
   <div *ngIf="showLayout" class="layout-block" [ng2-draggable]="true" [ng2DraggableHandle]="elementreference">
     <div #elementreference style="padding:6px;margin-bottom: 6px;border-bottom: 1px solid rgba(0,0,0,0.1); cursor: move">
@@ -21,9 +22,14 @@
         </div>
         <!--favorites lists-->
         <ul class="list-unstyled">
-          <li *ngIf="loadingFavorite">Loading</li>
+          <li *ngIf="loadingFavorite">
+            <img src="../../../assets/img/balls-5.svg">Loading favorites
+          </li>
           <li *ngIf="!loadingFavorite && favorites.length == 0">There are no saved favorite</li>
-          <li class="fav-list" *ngFor="let favorite of favorites" style="padding: 7px;border-bottom: solid 1px rgba(0,0,0,0.1);">
+          <li *ngIf="!loadingFavorite">
+            <input type="text" class="form-control input-sm" [(ngModel)]="searchKey" placeholder="Search...">
+          </li>
+          <li class="fav-list" *ngFor="let favorite of favorites | filterByName:searchKey " style="padding: 7px;border-bottom: solid 1px rgba(0,0,0,0.1);">
             <span *ngIf="!showEdit[favorite.id]" class="fav-name" (click)="openFavorite(favorite);$event.stopPropagation()"> {{ favorite.name }}</span>
             <!--textbox for editing in case editing is on-->
             <span *ngIf="showEdit[favorite.id]">
@@ -49,6 +55,7 @@
             </div>
           </li>
         </ul>
+        <!--<pagination-controls id ='selectedlis' maxSize="0" (pageChange)="k = $event;"></pagination-controls>-->
       </div>
     </div>
     <div class="col-sm-12">
