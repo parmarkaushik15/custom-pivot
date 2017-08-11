@@ -149,6 +149,17 @@ export class DataService {
         observ.error();
       })
     })
+  }
+
+  getRenamedDataElements(){
+    return new Observable((observ)=>{
+      this.http.get("../../../api/dataStore/renamedDataElementsInPivot/items").map(res=>res.json()).subscribe((results)=>{
+        observ.next(results);
+        observ.complete();
+      },(error)=>{
+        observ.error();
+      })
+    });
 
   }
 

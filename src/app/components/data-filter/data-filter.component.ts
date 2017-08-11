@@ -50,6 +50,7 @@ export class DataFilterComponent implements OnInit {
   @Input() selectedItems:any[] = [];
   @Input() functionMappings:any[] = [];
   @Input() hiddenDataElements:any[] = [];
+  renamedDataElements:any = {};
   querystring: string = null;
   listchanges: string = null;
   showGroups:boolean = false;
@@ -95,12 +96,21 @@ export class DataFilterComponent implements OnInit {
         "name"
       ]
     };
-    this.initiateData();
+    //find the data_elemets to be renamed
+    this.dataService.getRenamedDataElements().subscribe(
+      (renamed_data) => {
+        console.log(renamed_data);
+        this.renamedDataElements = renamed_data;
+        this.initiateData();
+      }, error => {
+        this.initiateData();
+      }
+    );
+
   }
 
   // trigger this to reset pagination pointer when search change
   searchChanged(){
-    console.log("changed")
     this.p =1;
   }
 
@@ -174,7 +184,7 @@ export class DataFilterComponent implements OnInit {
           selected.available = true;
         }
       }
-    })
+    });
     if (counter > 1 ){
       selected.many = true
     }
@@ -351,8 +361,19 @@ export class DataFilterComponent implements OnInit {
     newcurrentList = _.filter(currentList,(item=>{
       return !_.includes(this.hiddenDataElements,item['id']);
     }));
-    return this.orderPipe.transform(newcurrentList,'sorOrder',false);
+    newcurrentList.forEach((item) => {
+      item.name = this.replaceName(item)
+    });
+    return this.orderPipe.transform(newcurrentList,'sorOrder',false)
 
+  }
+
+  replaceName(item){
+    const keysArray = _.keys(this.renamedDataElements);
+    if(_.includes(keysArray,item.id.replace('.','_'))){
+      item.name = this.renamedDataElements[item.id.replace('.','_')]
+    }
+    return item.name
   }
 
   // Get group list to display
@@ -512,6 +533,7 @@ export class DataFilterComponent implements OnInit {
   emitData(){
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
+      renamedDataElements:this.renamedDataElements,
       need_functions: this.getFunctions( this.selectedItems ),
       auto_growing: this.getAutogrowingTables( this.selectedItems ),
       list_by_ward: this.getListByWard( this.selectedItems ),

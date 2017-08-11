@@ -26,23 +26,23 @@ import { ClickOutsideDirective } from "./components/org-unit-filter/click-outsid
 import { VisualizerService } from "./services/visualizer.service";
 import { LayoutComponent } from "./components/layout/layout.component";
 import { Draggable } from "./shared/draggable-directive.directive";
-import {TableComponent} from "./components/table/table.component";
-import {TableService} from "./services/table.service";
-import {Constants} from "./services/constants";
-import {VisualizationStore} from "./services/visualization-store";
-import {AnalyticsService} from "./services/analytics.service";
-import {NgxPaginationModule} from "ngx-pagination";
-import {AnalyticscreatorService} from "./services/analyticscreator.service";
-import {HttpClientService} from "./services/http-client.service";
-import {FuseSearchPipe} from "./shared/pipes/fuse-search.pipe";
+import { TableComponent } from "./components/table/table.component";
+import { TableService } from "./services/table.service";
+import { Constants } from "./services/constants";
+import { VisualizationStore } from "./services/visualization-store";
+import { AnalyticsService } from "./services/analytics.service";
+import { NgxPaginationModule } from "ngx-pagination";
+import { AnalyticscreatorService } from "./services/analyticscreator.service";
+import { HttpClientService } from "./services/http-client.service";
+import { FuseSearchPipe } from "./shared/pipes/fuse-search.pipe";
 import { AutoGrowingComponent } from './components/auto-growing/auto-growing.component';
 import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
 import { OptionsComponent } from './components/options/options.component';
-import {ExcelDownloadService} from "./services/excel-download.service";
-import {PeriodService} from "./services/period.service";
-import {FilterLevelPipe} from "./shared/pipes/filter-level.pipe";
-import {SpecificPeriodService} from "./components/period-filter/period.service";
-import {OrderPipe} from "./pipes/order-by.pipe";
+import { ExcelDownloadService } from "./services/excel-download.service";
+import { PeriodService } from "./services/period.service";
+import { FilterLevelPipe } from "./shared/pipes/filter-level.pipe";
+import { SpecificPeriodService } from "./components/period-filter/period.service";
+import { OrderPipe } from "./pipes/order-by.pipe";
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
 import {LoginRedirectService} from "./services/login-redirect.service";
@@ -67,7 +67,7 @@ import {LoginRedirectService} from "./services/login-redirect.service";
     OrderPipe,
     FilterLevelPipe,
     FavoriteComponent,
-    AddUnderscorePipe,
+    AddUnderscorePipe
   ],
   imports: [
     BrowserModule,

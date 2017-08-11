@@ -100,6 +100,9 @@ export class AppComponent implements OnInit{
   @ViewChild(DataFilterComponent)
   public datafilter: DataFilterComponent;
   needForUpdate:boolean = false;
+
+  renamedDataElements: any = {};
+  dataReady: boolean = false;
   constructor( private store: Store<ApplicationState>,
                private analyticsService: AnalyticscreatorService,
                private dataService: DataService,
@@ -153,6 +156,7 @@ export class AppComponent implements OnInit{
     this.dataService.getASytemInfo().subscribe((val) => {
       this.systemInfo = val;
     });
+
 
     this.loginRedirectService.checkIfLogin('../../../')
 
@@ -216,7 +220,7 @@ export class AppComponent implements OnInit{
                 this.analyticsService.analytics_lists.push(results);
                 if(counter == dimensions.data.need_functions.length*times ){
                   if(analytics){ this.analyticsService.analytics_lists.push(analytics) }
-                  this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
+                  this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists, table_structure.showHierarchy, dimensions, this.renamedDataElements).subscribe((combined_analytics) => {
                     this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
                   });
                 }
@@ -243,7 +247,7 @@ export class AppComponent implements OnInit{
     }else{
       if(analytics){
         this.analyticsService.analytics_lists.push(analytics);
-        this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists,table_structure.showHierarchy,dimensions).subscribe((combined_analytics) => {
+        this.analyticsService.mergeAnalyticsCalls(this.analyticsService.analytics_lists, table_structure.showHierarchy, dimensions, this.renamedDataElements).subscribe((combined_analytics) => {
           this.tableObject = this.prepareTableObject(combined_analytics, table_structure);
         })
 
@@ -324,7 +328,7 @@ export class AppComponent implements OnInit{
   }
 
   // This will be called every time period is changed
-  selected_periods:any;
+  selected_periods:any = [];
   setSelectedPeriod( value ){
     this.selected_periods = value.items;
     this.store.dispatch( new SelectPeriodAction( value ) );
@@ -350,6 +354,7 @@ export class AppComponent implements OnInit{
 
   // This will be called every time data selection changes
   setSelectedData( value ){
+    this.renamedDataElements = value.renamedDataElements;
     this.store.dispatch( new SelectDataAction( value ) );
     this.needForUpdate = !(this.lastAnalyticsParams == this.analyticsService.getAnalyticsparams(this.dimensions.dimensions));
     this.hideMonth = value.hideMonth;

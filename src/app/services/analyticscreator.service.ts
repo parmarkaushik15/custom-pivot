@@ -52,7 +52,7 @@ export class AnalyticscreatorService {
   }
 
   // merge analytics calls
-  mergeAnalyticsCalls( analytics: any[],showHirach:boolean, dimensions:any ){
+  mergeAnalyticsCalls( analytics: any[],showHirach:boolean, dimensions:any, renamedDataElements:any ){
     let combined_analytics:any = {
       headers:[],
       metaData:{
@@ -72,7 +72,7 @@ export class AnalyticscreatorService {
       let namesArray = this._getArrayFromObject(analytic.metaData.names);
       namesArray.forEach((name) => {
         if(!combined_analytics.metaData.names[name.id]){
-          combined_analytics.metaData.names[name.id] = name.value;
+          combined_analytics.metaData.names[name.id] = this.replaceName({id: name.id, name: name.value}, renamedDataElements);
         }
       });
       analytic.metaData.dx.forEach((val) => {
@@ -130,6 +130,14 @@ export class AnalyticscreatorService {
       );
     });
 
+  }
+
+  replaceName(item, renamedDataElements){
+    const keysArray = _.keys(renamedDataElements);
+    if(_.includes(keysArray,item.id.replace('.','_'))){
+      item.name = renamedDataElements[item.id.replace('.','_')]
+    }
+    return item.name
   }
 
   // this function will help to format the analytics returned to incorporate the parent organisation units
