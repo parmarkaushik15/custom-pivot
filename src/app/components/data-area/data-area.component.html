@@ -61,9 +61,12 @@
     </thead>
     <tbody  id="myPivotTable">
     <tr *ngFor="let row of tableObject.rows" [ngClass]="{'sub-total': row.sub_total}">
-      <td *ngFor="let header_column of row.items;let i = index" [ngClass]="{'header-column': header_column.name != ''}"  style="text-align: center;vertical-align: middle"
+      <td
+        *ngFor="let header_column of row.items;let i = index"
+        [ngClass]="getClasses(header_column)"
+        style="vertical-align: middle"
           [attr.rowspan]="header_column.row_span">
-        {{ header_column.val }}
+        {{ header_column.val | thouthandSepator }}
       </td>
     </tr>
     </tbody>

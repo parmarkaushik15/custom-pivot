@@ -46,6 +46,7 @@ import { OrderPipe } from "./pipes/order-by.pipe";
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
 import {LoginRedirectService} from "./services/login-redirect.service";
+import {ThouthandSeparator} from "./pipes/thouthand-separator-pipe";
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import {LoginRedirectService} from "./services/login-redirect.service";
     OrderPipe,
     FilterLevelPipe,
     FavoriteComponent,
-    AddUnderscorePipe
+    AddUnderscorePipe,
+    ThouthandSeparator
   ],
   imports: [
     BrowserModule,

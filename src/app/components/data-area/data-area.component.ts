@@ -202,12 +202,21 @@ export class DataAreaComponent implements OnInit {
       showLabels: true,
       showTitle: false
     };
-    console.log(dataValues)
     new Angular2Csv(dataValues, 'My Report',options);
     return {
       headers: csvHeaders,
       data: dataValues
     }
+  }
+
+  getClasses(item){
+    const classes = [];
+    if(item.name != ''){
+      classes.push('header-column')
+    }if(!isNaN(item.val)){
+      classes.push('header-item')
+    }
+    return classes;
   }
 
 }
