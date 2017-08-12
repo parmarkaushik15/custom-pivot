@@ -205,19 +205,24 @@ export class AnalyticscreatorService {
 
   getAnalyticsparams( dimensions ){
     let url: string = "";
+    let arr = [];
     dimensions.dimensions.forEach((item, index) => {
       if(item && item.value ){
         url += index > 0 ? '&':'';
         url += 'dimension=' + item.name + ':' + item.value;
+        arr.push(...item.value.split(";"));
       }
     });
     dimensions.data.need_functions.forEach((item) =>  {
       url += item.id;
+      arr.push(item.id);
     });
 
     dimensions.data.auto_growing.forEach((item) =>  {
       url += item.id;
+      arr.push(item.id);
     });
+    // return _.sortBy(arr).join(";");
     return url;
   }
 
