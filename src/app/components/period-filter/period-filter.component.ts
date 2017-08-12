@@ -88,19 +88,10 @@ export class PeriodFilterComponent implements OnInit {
     // this.getRelativePeriodText("LAST_5_YEARS");
   }
 
-  transferDataSuccess(data,current){
-    if(data.dragData.id == current.id){
-    }else{
-      let number = (this.getPeriodPosition(data.dragData.id) > this.getPeriodPosition(current.id))?0:1;
-      this.deletePeriod( data.dragData );
-      this.insertPeriod( data.dragData, current, number);
-      this.onPeriodUpdate.emit({
-        items: this.selected_periods,
-        type: this.period_type,
-        starting_year: this.starting_year,
-        name: 'pe',
-        value: this.getPeriodsForAnalytics(this.selected_periods)});
-    }
+  // action that will fire when the sorting of selected data is done
+  transferDataSuccess(data){
+    console.log("Dragged");
+    this.emitData();
   }
 
   // transfer all period to selected section
@@ -110,17 +101,15 @@ export class PeriodFilterComponent implements OnInit {
         this.selected_periods.push(item);
       }
     });
-    this.onPeriodUpdate.emit({
-      items: this.selected_periods,
-      type: this.period_type,
-      starting_year: this.starting_year,
-      name: 'pe',
-      value: this.getPeriodsForAnalytics(this.selected_periods)
-    });
+    this.emitData();
   }
 
   deselectAllItems(){
     this.selected_periods = [];
+    this.emitData();
+  }
+
+  emitData(){
     this.onPeriodUpdate.emit({
       items: this.selected_periods,
       type: this.period_type,
@@ -188,28 +177,17 @@ export class PeriodFilterComponent implements OnInit {
   }
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-    this.selected_periods.splice(this.selected_periods.indexOf($event),1);
+    this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
     //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
-    this.onPeriodUpdate.emit({
-      items: this.selected_periods,
-      type: this.period_type,
-      starting_year: this.starting_year,
-      name: 'pe',
-      value: this.getPeriodsForAnalytics(this.selected_periods)});
-  };
+    this.emitData();
+  }
 
   // add item to array of selected items when item is selected
   activatePer($event) {
     if(!this.checkPeriodAvailabilty($event,this.selected_periods)){
       this.selected_periods.push($event);
       //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
-      this.onPeriodUpdate.emit({
-        items: this.selected_periods,
-        type: this.period_type,
-        starting_year: this.starting_year,
-        name: 'pe',
-        value: this.getPeriodsForAnalytics(this.selected_periods)
-      });
+      this.emitData();
     }
   };
 

@@ -59,13 +59,15 @@
           </ul>
         </div>
         <div class="col-sm-6 tree-area1">
-          <ul class="nav nav-pills nav-stacked">
-            <li *ngFor="let period of selected_periods"
+          <ul class="nav nav-pills nav-stacked"  dnd-sortable-container [sortableData]="selected_periods">
+            <li *ngFor="let period of selected_periods; let i = index"
                 class="period" (click)="deactivatePer(period)"
                 title="Click to deselect"
-                dnd-droppable (onDropSuccess)="transferDataSuccess($event,period)"
+                dnd-sortable [sortableIndex]="i"
+                dnd-droppable
+                (onDragEnd)="transferDataSuccess($event)"
             >
-              <div dnd-draggable [dragEnabled]="true" [dragData]="period">{{ period.name }}</div>
+              {{ period.name }}
             </li>
           </ul>
         </div>

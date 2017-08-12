@@ -71,14 +71,16 @@
 
         </td>
         <td width="50%">
-          <ul class="list-unstyled metadata-list scrollable">
-            <li *ngFor="let item of selectedItems | paginate:{id: 'selectedlist',itemsPerPage: 100, currentPage: k}"
+          <ul class="list-unstyled metadata-list scrollable" dnd-sortable-container [sortableData]="selectedItems">
+            <li *ngFor="let item of selectedItems | paginate:{id: 'selectedlist',itemsPerPage: 100, currentPage: k}; let i = index"
                 (click)="removeSelected(item)"
                 style="cursor: move"
-                dnd-droppable (onDropSuccess)="transferDataSuccess($event,item)"
                 title="click to unselect item"
+                dnd-sortable [sortableIndex]="i"
+                dnd-droppable
+                (onDragEnd)="transferDataSuccess($event)"
             >
-              <div dnd-draggable [dragEnabled]="true" [dragData]="item" class="{{item.hasOwnProperty('programType') ? 'auto-growing' : ''}}"> {{ item.name }} </div>
+              <div class="{{item.hasOwnProperty('programType') ? 'auto-growing' : ''}}"> {{ item.name }} </div>
             </li>
             <li *ngIf="selectedItems.length > 100">
               <pagination-controls id ='selectedlist' maxSize="0" (pageChange)="k = $event"></pagination-controls>
