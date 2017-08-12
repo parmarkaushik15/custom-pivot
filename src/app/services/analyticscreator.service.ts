@@ -205,13 +205,19 @@ export class AnalyticscreatorService {
 
   getAnalyticsparams( dimensions ){
     let url: string = "";
-    dimensions.forEach((item, index) => {
+    dimensions.dimensions.forEach((item, index) => {
       if(item && item.value ){
         url += index > 0 ? '&':'';
         url += 'dimension=' + item.name + ':' + item.value;
       }
     });
+    dimensions.data.need_functions.forEach((item) =>  {
+      url += item.id;
+    });
 
+    dimensions.data.auto_growing.forEach((item) =>  {
+      url += item.id;
+    });
     return url;
   }
 
