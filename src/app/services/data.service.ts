@@ -44,7 +44,7 @@ export class DataService {
   }
 
   getDataSets(): Observable<DataSet[]>{
-    return this.http.get("../../../api/dataSets.json?paging=false&fields=id,name")
+    return this.http.get("../../../api/dataSets.json?paging=false&fields=id,name,periodType")
       .map(res => res.json().dataSets || [])
   }
 
@@ -211,7 +211,7 @@ export class DataService {
                 dataStream$ = this.getDataElementGroups();
                 break;
               case PROGRAM_KEY:
-                dataStream$ = this.getPrograms()
+                dataStream$ = this.getPrograms();
                 break;
               default:
                 console.error("The key passed is not recognized");

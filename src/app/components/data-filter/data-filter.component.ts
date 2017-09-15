@@ -137,6 +137,7 @@ export class DataFilterComponent implements OnInit {
         this.loading = false;
         this.dataGroups = this.groupList();
         this.listItems = this.dataItemList();
+        console.log(this.metaData.dataSets)
       }
     )
   }
@@ -312,12 +313,20 @@ export class DataFilterComponent implements OnInit {
       if( group.id == 'ALL' ){
         this.metaData.dataSetGroups.forEach((group) => {
           currentList.push(...data.dt.map(datacv => {
-            return {id:datacv.id + group.id, name:group.name+' '+datacv.name}
+            const dataSet:any = {id:datacv.id + group.id, name:group.name+' '+datacv.name};
+            if(datacv.hasOwnProperty('periodType')){
+              dataSet.periodType = datacv.periodType;
+            }
+            return dataSet;
           }))
         });
       }else if( !group.hasOwnProperty('indicators') && !group.hasOwnProperty('dataElements') ){
         currentList.push(...data.dt.map(datacv => {
-          return {id:datacv.id + group.id, name:group.name+' '+datacv.name}
+          const dataSet:any = {id:datacv.id + group.id, name:group.name+' '+datacv.name};
+          if(datacv.hasOwnProperty('periodType')){
+            dataSet.periodType = datacv.periodType;
+          }
+          return dataSet;
         }));
       }
     }
@@ -525,6 +534,7 @@ export class DataFilterComponent implements OnInit {
   }
 
   emitData(){
+    console.log(this.selectedItems);
     this.onDataUpdate.emit({
       itemList: this.selectedItems,
       renamedDataElements:this.renamedDataElements,
@@ -606,6 +616,8 @@ export class DataFilterComponent implements OnInit {
         if(data_item.name.indexOf("WF01") !== -1 ){
           periods.push("Monthly");
         }
+      }if(data_item.hasOwnProperty("periodType")){
+        periods.push(data_item.periodType);
       }
     }
     if(this.selectedItems.length > 0){

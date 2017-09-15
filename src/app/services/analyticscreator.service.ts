@@ -132,6 +132,12 @@ export class AnalyticscreatorService {
 
   }
 
+  private _getArrayFromObject(object){
+    return _.map(object, function(value, prop) {
+      return { id: prop, value: value };
+    });
+  }
+
   replaceName(item, renamedDataElements){
     const keysArray = _.keys(renamedDataElements);
     if(_.includes(keysArray,item.id.replace('.','_'))){
@@ -181,11 +187,6 @@ export class AnalyticscreatorService {
     return newAnalytics;
   }
 
-  private _getArrayFromObject(object){
-    return _.map(object, function(value, prop) {
-      return { id: prop, value: value };
-    });
-  }
 
   // prepare analytics from a group of dimension object and specify weather to skip data or not
   private _constructAnalyticUrlForExternalSource(layout,sourceObject,showData) {
