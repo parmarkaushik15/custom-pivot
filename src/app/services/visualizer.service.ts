@@ -745,14 +745,14 @@ export class VisualizerService {
               'display': true
             });
           }
-          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
-            console.log(item.items);
-            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
-              table.rows.push(item);
-            }
-          } else {
+          // if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+          //   console.log(item.items);
+          //   if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+          //     table.rows.push(item);
+          //   }
+          // } else {
             table.rows.push(item);
-          }
+          // }
 
           counter++;
         }
@@ -773,14 +773,14 @@ export class VisualizerService {
               'display': true
             });
           }
-          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
-            console.log(item.items);
-            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
-              table.rows.push(item);
-            }
-          } else {
+          // if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+          //   console.log(item.items);
+          //   if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+          //     table.rows.push(item);
+          //   }
+          // } else {
             table.rows.push(item);
-          }
+          // }
       }
     }
     return table;
@@ -952,14 +952,14 @@ export class VisualizerService {
               'display': true
             });
           }
-          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
-            console.log(item.items);
-            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
-              table.rows.push(item);
-            }
-          } else {
+          // if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+          //   console.log(item.items);
+          //   if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+          //     table.rows.push(item);
+          //   }
+          // } else {
             table.rows.push(item);
-          }
+          // }
 
           counter++;
         }
@@ -980,14 +980,14 @@ export class VisualizerService {
               'display': true
             });
           }
-          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
-            console.log(item.items);
-            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
-              table.rows.push(item);
-            }
-          } else {
+          // if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+          //   console.log(item.items);
+          //   if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+          //     table.rows.push(item);
+          //   }
+          // } else {
             table.rows.push(item);
-          }
+          // }
       }
     }
     return table;
