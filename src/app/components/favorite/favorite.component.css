@@ -69,6 +69,24 @@
   margin-top: 2px;
 }
 
+.layout-block:hover{
+  overflow: auto;
+}
+.layout-block::-webkit-scrollbar {
+  width: 5px;
+}
+
+.layout-block::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.layout-block::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+
 .dimension-drops{
   height: 125px;
   width: 150px;
