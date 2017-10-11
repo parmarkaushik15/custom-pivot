@@ -7,12 +7,12 @@
   <div style="position: absolute">
     <div *ngIf="showLayout" class="layout-block" [ng2-draggable]="true" [ng2DraggableHandle]="elementreference">
       <h4>Data</h4>
-      <p>
+      <p *ngIf="!options.column_avg">
         <label>
           <input  type="checkbox" [(ngModel)]="options.column_totals"> Show row totals
         </label>
       </p>
-      <p>
+      <p  *ngIf="!options.row_avg">
         <label>
           <input type="checkbox" [(ngModel)]="options.row_totals"> Show column totals
         </label>
@@ -27,22 +27,22 @@
           <input type="checkbox" [(ngModel)]="options.row_sub_total"> Show column sub-totals
         </label>
       </p>
-      <p>
+      <p  *ngIf="!options.column_totals">
         <label>
-          <input type="checkbox" [(ngModel)]="options.column_avg"> Show column average
+          <input type="checkbox" [(ngModel)]="options.column_avg"> Show row average
         </label>
       </p>
-      <p>
+      <p *ngIf="!options.row_totals">
         <label>
-          <input type="checkbox" [(ngModel)]="options.row_avg"> Show row average
+          <input type="checkbox" [(ngModel)]="options.row_avg"> Show column average
         </label>
       </p>
-      <p>
+      <p *ngIf="!options.show_hierarchy">
         <label>
           <input type="checkbox" [(ngModel)]="options.dimension_labels"> Show dimension labels
         </label>
       </p>
-      <p>
+      <p *ngIf="tableLayout.rows.length == 1">
         <label>
           <input type="checkbox" [(ngModel)]="options.hide_empty_row"> Hide empty rows
         </label>
@@ -52,8 +52,8 @@
           <!--<input type="checkbox" [(ngModel)]="options.show_text_data"> Show Text Data-->
         <!--</label>-->
       <!--</p>-->
-      <h4>Organisation Units</h4>
-      <p>
+      <h4 *ngIf="!options.dimension_labels">Organisation Units</h4>
+      <p *ngIf="!options.dimension_labels">
         <label>
           <input type="checkbox" [(ngModel)]="options.show_hierarchy"> Show hierarchy
         </label>

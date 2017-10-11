@@ -20,6 +20,7 @@ export class OptionsComponent implements OnInit {
     show_hierarchy: false,
     table_title:""
   };
+  @Input() tableLayout:any;
 
   @Output() onOptionUpdate : EventEmitter<any> = new EventEmitter<any>();
   constructor() { }
