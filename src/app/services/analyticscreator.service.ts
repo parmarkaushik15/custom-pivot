@@ -403,7 +403,7 @@ export class AnalyticscreatorService {
   }
 
   //this will add a subtotal for rows for each groups
-  addRowSubtotal( tableObject ){
+  addRowSubtotal( tableObject, show_parent ){
     let data = _.cloneDeep(tableObject);
     if(data.columns.length > 1){
       let row_distance:any = data.rows[0].items[0].row_span;
@@ -412,6 +412,9 @@ export class AnalyticscreatorService {
       let sum_rows = [];
       data.rows.forEach( (row) => {
         let row_items = [];
+        if(show_parent) {
+          row_items.push({name:"",val:'',row_span:1,header:true})
+        }
         if( (counter % row_distance) == 0){
           some_rows.push(row);
           // adding totals to the sum array to be used in the created row
@@ -473,7 +476,7 @@ export class AnalyticscreatorService {
   }
 
   // This will add a total for each row
-  addRowTotal( tableObject ){
+  addRowTotal( tableObject, show_parent){
     let data = _.cloneDeep(tableObject);
     let row_distance:any = data.rows[0].items[0].row_span;
     let some_rows = [];
@@ -499,6 +502,9 @@ export class AnalyticscreatorService {
     });
     // creating a subtotal column
     let total_counter = 0;
+    if(show_parent) {
+      row_items.push({name:"",val:'',row_span:1,header:true})
+    }
     data.rows[0].items.forEach( (item) => {
       if(item.hasOwnProperty('header')){
         row_items.push({name:"",val:'',row_span:1,header:true})
@@ -579,8 +585,8 @@ export class AnalyticscreatorService {
     let counter = 1;
     let sum_rows = [];
     let row_items = [];
-      data.hasParentOu = true;
-      let parentsOrgunits = [];
+    data.hasParentOu = true;
+    let parentsOrgunits = [];
 
     if(data.columns[0] == "ou"){
       data.rows.forEach( (row) => {

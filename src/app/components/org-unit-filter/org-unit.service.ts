@@ -15,12 +15,12 @@ export class OrgUnitService {
 
   // Get current user information
   getUserInformation (priority=null) {
-    if(priority == false){
+    if(priority == 'report'){
       return this.http.get('../../../api/me.json?fields=dataViewOrganisationUnits[id,name,level],organisationUnits[id,name,level]')
         .map((response: Response) => response.json())
         .catch( this.handleError );
     }else{
-      return this.http.get('../../../api/me.json?fields=organisationUnits[id,name,level]')
+      return this.http.get('../../../api/me.json?fields=dataViewOrganisationUnits[id,name,level],organisationUnits[id,name,level]')
         .map((response: Response) => response.json())
         .catch( this.handleError );
     }

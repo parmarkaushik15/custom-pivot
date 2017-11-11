@@ -267,11 +267,11 @@ export class AppComponent implements OnInit{
   prepareTableObject(analyticsObject, tableStructure){
     let tableObject:any = this.visualization.drawTable(analyticsObject, tableStructure);
     this.showTable = true;
-    tableObject = (tableStructure.showRowTotal)?this.analyticsService.addRowTotal(tableObject):tableObject;
+    tableObject = (tableStructure.showRowTotal)?this.analyticsService.addRowTotal(tableObject, tableStructure.showHierarchy):tableObject;
     tableObject = (tableStructure.showRowAverage)?this.analyticsService.addRowAverage(tableObject):tableObject;
     tableObject = (tableStructure.showColumnAverage)?this.analyticsService.addColumnAverage(tableObject):tableObject;
     tableObject = (tableStructure.showColumnTotal)?this.analyticsService.addColumnTotal(tableObject):tableObject;
-    tableObject = (tableStructure.showRowSubtotal)?this.analyticsService.addRowSubtotal(tableObject):tableObject;
+    tableObject = (tableStructure.showRowSubtotal)?this.analyticsService.addRowSubtotal(tableObject, tableStructure.showHierarchy):tableObject;
     tableObject = (tableStructure.showColumnSubTotal)?this.analyticsService.addColumnSubTotal(tableObject):tableObject;
     tableObject = (tableStructure.showHierarchy)?this.analyticsService.addParentOu(tableObject):tableObject;
     this.store.dispatch( new SendNormalDataLoadingAction({loading:false, message:"Loading data, Please wait"}));
@@ -388,6 +388,7 @@ export class AppComponent implements OnInit{
   // The function that will handle the data updating
   allDimensionAvailable = false;
   updateTable() {
+    this.needForUpdate = !(this.lastAnalyticsParams === this.analyticsService.getAnalyticsparams(this.dimensions));
     this.loadedData = 0;
     this.totalDataRequired = 0;
     this.errorInNormalData = "";

@@ -237,17 +237,20 @@ export class DataFilterComponent implements OnInit {
       dataSetElements:dataElement.dataSetElements
     });
 
-    categoryCombo.categoryOptionCombos.forEach((option) => {
-      if (option.name != 'default') {
-        dataElements.push({
-          dataElementId: dataElement.id,
-          id: dataElement.id + "." + option.id,
-          name: dataElement.name + " " + option.name,
-          dataSetElements: dataElement.dataSetElements
-        })
-      }
+    if(categoryCombo){
+      categoryCombo.categoryOptionCombos.forEach((option) => {
+        if (option.name != 'default') {
+          dataElements.push({
+            dataElementId: dataElement.id,
+            id: dataElement.id + "." + option.id,
+            name: dataElement.name + " " + option.name,
+            dataSetElements: dataElement.dataSetElements
+          })
+        }
 
-    });
+      });
+    }
+
 
     return dataElements;
   }
