@@ -5,48 +5,49 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { StoreModule } from "@ngrx/store";
-import { EffectsModule } from "@ngrx/effects";
-import { TreeModule } from "angular-tree-component";
-import { OrgUnitService } from "./components/org-unit-filter/org-unit.service";
-import { DndModule } from "ng2-dnd";
-import { OrgUnitFilterComponent } from "./components/org-unit-filter/org-unit-filter.component";
-import { PeriodFilterComponent } from "./components/period-filter/period-filter.component";
-import { LocalStorageService } from "./services/local-storage.service";
-import { DataService } from "./services/data.service";
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { TreeModule } from 'angular-tree-component';
+import { OrgUnitService } from './components/org-unit-filter/org-unit.service';
+import { DndModule } from 'ng2-dnd';
+import { OrgUnitFilterComponent } from './components/org-unit-filter/org-unit-filter.component';
+import { PeriodFilterComponent } from './components/period-filter/period-filter.component';
+import { LocalStorageService } from './services/local-storage.service';
+import { DataService } from './services/data.service';
 import { DataAreaComponent } from './components/data-area/data-area.component';
-import { uiState } from "./store/reducers/uiStateReducer";
-import { storeData } from "./store/reducers/StoreDataReducer";
-import { LoadMetaDataService } from "./store/effects/load-meta-data.service";
-import { INITIAL_APPLICATION_STATE } from "./store/application.state";
-import { DataFilterComponent } from "./components/data-filter/data-filter.component";
-import { FilterByNamePipe } from "./shared/pipes/filter-by-name.pipe";
+import { uiState } from './store/reducers/uiStateReducer';
+import { storeData } from './store/reducers/StoreDataReducer';
+import { LoadMetaDataService } from './store/effects/load-meta-data.service';
+import { INITIAL_APPLICATION_STATE } from './store/application.state';
+import { DataFilterComponent } from './components/data-filter/data-filter.component';
+import { FilterByNamePipe } from './shared/pipes/filter-by-name.pipe';
 import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
-import { ClickOutsideDirective } from "./components/org-unit-filter/click-outside.directive";
-import { VisualizerService } from "./services/visualizer.service";
-import { LayoutComponent } from "./components/layout/layout.component";
-import { Draggable } from "./shared/draggable-directive.directive";
-import { TableComponent } from "./components/table/table.component";
-import { TableService } from "./services/table.service";
-import { Constants } from "./services/constants";
-import { VisualizationStore } from "./services/visualization-store";
-import { AnalyticsService } from "./services/analytics.service";
-import { NgxPaginationModule } from "ngx-pagination";
-import { AnalyticscreatorService } from "./services/analyticscreator.service";
-import { HttpClientService } from "./services/http-client.service";
-import { FuseSearchPipe } from "./shared/pipes/fuse-search.pipe";
+import { ClickOutsideDirective } from './components/org-unit-filter/click-outside.directive';
+import { VisualizerService } from './services/visualizer.service';
+import { LayoutComponent } from './components/layout/layout.component';
+import { Draggable } from './shared/draggable-directive.directive';
+import { TableComponent } from './components/table/table.component';
+import { TableService } from './services/table.service';
+import { Constants } from './services/constants';
+import { VisualizationStore } from './services/visualization-store';
+import { AnalyticsService } from './services/analytics.service';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { AnalyticscreatorService } from './services/analyticscreator.service';
+import { HttpClientService } from './services/http-client.service';
+import { FuseSearchPipe } from './shared/pipes/fuse-search.pipe';
 import { AutoGrowingComponent } from './components/auto-growing/auto-growing.component';
 import { RemoveNaNPipe } from './pipes/remove-na-n.pipe';
 import { OptionsComponent } from './components/options/options.component';
-import { ExcelDownloadService } from "./services/excel-download.service";
-import { PeriodService } from "./services/period.service";
-import { FilterLevelPipe } from "./shared/pipes/filter-level.pipe";
-import { SpecificPeriodService } from "./components/period-filter/period.service";
-import { OrderPipe } from "./pipes/order-by.pipe";
+import { ExcelDownloadService } from './services/excel-download.service';
+import { PeriodService } from './services/period.service';
+import { FilterLevelPipe } from './shared/pipes/filter-level.pipe';
+import { SpecificPeriodService } from './components/period-filter/period.service';
+import { OrderPipe } from './pipes/order-by.pipe';
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
-import {LoginRedirectService} from "./services/login-redirect.service";
-import {ThouthandSeparator} from "./pipes/thouthand-separator-pipe";
+import {LoginRedirectService} from './services/login-redirect.service';
+import {ThouthandSeparator} from './pipes/thouthand-separator-pipe';
+import {SharingComponent} from './components/sharing/sharing.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import {ThouthandSeparator} from "./pipes/thouthand-separator-pipe";
     FilterLevelPipe,
     FavoriteComponent,
     AddUnderscorePipe,
-    ThouthandSeparator
+    ThouthandSeparator,
+    SharingComponent
   ],
   imports: [
     BrowserModule,
@@ -79,7 +81,7 @@ import {ThouthandSeparator} from "./pipes/thouthand-separator-pipe";
     TreeModule,
     NgxPaginationModule,
     DndModule.forRoot(),
-    StoreModule.provideStore({ uiState: uiState, storeData: storeData },INITIAL_APPLICATION_STATE),
+    StoreModule.provideStore({ uiState: uiState, storeData: storeData }, INITIAL_APPLICATION_STATE),
     EffectsModule.run(LoadMetaDataService)
   ],
   providers: [

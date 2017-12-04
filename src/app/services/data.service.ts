@@ -292,6 +292,31 @@ export class DataService {
   }
 
 
+  getUser() {
+    return new Observable((observ) => {
+      this.http.get('../../../api/me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]]').map(res => res.json()).
+      subscribe((results) => {
+        observ.next(results);
+        observ.complete();
+      }, (error) => {
+        observ.error();
+      });
+    });
+
+  }
+
+  getUserGroups() {
+    return new Observable((observ) => {
+      this.http.get('../../../api/userGroups.json?fields=id,name&paging=false').map(res => res.json()).
+      subscribe((results) => {
+        observ.next(results);
+        observ.complete();
+      }, (error) => {
+        observ.error();
+      });
+    });
+
+  }
 
 
 }

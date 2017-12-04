@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FilterByNamePipe implements PipeTransform {
 
   transform(value:any[], name:any):any {
-    if (name !== undefined) {
+    if (name !== undefined && value) {
       // filter users, users which match and return true will be kept, false will be filtered out
       if (value.length !== 0 && name !== null) {
         let splitData = name;
