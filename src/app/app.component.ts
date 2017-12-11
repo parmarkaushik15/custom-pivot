@@ -170,7 +170,14 @@ export class AppComponent implements OnInit {
 
     // get a list of user groups
     this.dataService.getUserGroups().subscribe((val: any) => {
+
       this.userGroups = val.userGroups;
+      this.userGroups.unshift({
+        id: 'all',
+        name: 'All Users',
+        title: 'This will be accessible to everyone in the system accessing the favorite'
+      });
+
     });
 
     // get a list of data-elements to be hidden
@@ -452,11 +459,11 @@ export class AppComponent implements OnInit {
             const dhis2Evnts = {events: []};
             this.http.get(json).map(res => res.json()).subscribe((result) => {
               this.dimensions.data.itemList.forEach((itemToUpdate) => {
-                dhis2Evnts.events.push(this.updateAccessLogs(itemToUpdate, result.ip))
+                dhis2Evnts.events.push(this.updateAccessLogs(itemToUpdate, result.ip));
               });
               console.log('Events', dhis2Evnts)
               this.http.post('../../../api/events', dhis2Evnts).map(res => res.json()).subscribe((result1) => {
-                console.log(result1)
+                console.log(result1);
               });
               //
             });
@@ -533,7 +540,7 @@ export class AppComponent implements OnInit {
       dataValues: [
         {
           dataElement: 'tgyz9410LhM',
-          value: ''
+          value: data.name
         }, {
           dataElement: 'Fsn1VHHLO99',
           value: data.name
@@ -544,10 +551,10 @@ export class AppComponent implements OnInit {
           dataElement: 'atwoYgdxvgg',
           value: navigator.platform
         }, {
-          dataElement: 'mgtwnvohcow',// dutty post
+          dataElement: 'mgtwnvohcow', // dutty post
           value: ''
         }, {
-          dataElement: 'N6x8L5LAp6o',// ip Address
+          dataElement: 'N6x8L5LAp6o', // ip Address
           value: ipAddress
         }, {
           dataElement: 'UvEng3cCnhS',

@@ -121,7 +121,8 @@
             <app-favorite
               [dataDimensions]="dataDimensions$ | async"
               [layout]="layout" [options]="options"
-              [user]="user" [userGroups]="userGroups"
+              [user]="user"
+              [userGroups]="userGroups"
               [allDimensionAvailable]="allDimensionAvailable"
               (onFavoriteSelect)="openFavorite($event)"
             ></app-favorite>

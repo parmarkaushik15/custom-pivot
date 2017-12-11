@@ -285,17 +285,17 @@ export class DataFilterComponent implements OnInit {
     // check if data element is in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'de')){
       if( group.id == 'ALL' ){
-        currentList.push(...data.dx)
+        currentList.push(...data.dx);
       }else{
         if( group.hasOwnProperty('dataElements')){
           let newArray = _.filter(data.dx, (dataElement) => {
             return _.includes(_.map(group.dataElements,'id'), dataElement.dataElementId);
           });
-          currentList.push(...newArray)
+          currentList.push(...newArray);
         }
 
       }
-
+      currentList = _.map(currentList, (item: any) => { return {...item, type: 'Data Element'} })
     }
     // check if data indicators are in a selected group
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'in')){
@@ -309,6 +309,7 @@ export class DataFilterComponent implements OnInit {
           currentList.push(...newArray)
         }
       }
+      currentList = _.map(currentList, (item: any) => { return {...item, type: 'Indicator'} })
     }
 
     // check if data data sets are in a selected group
@@ -332,6 +333,7 @@ export class DataFilterComponent implements OnInit {
           return dataSet;
         }));
       }
+      currentList = _.map(currentList, (item: any) => { return {...item, type: 'Dataset'} })
     }
     // check if auto-growing
     if(_.includes(selectedOptions, 'ALL') || _.includes(selectedOptions,'at')){

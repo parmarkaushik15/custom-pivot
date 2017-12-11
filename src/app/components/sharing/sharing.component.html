@@ -1,4 +1,4 @@
-<div class="tree-input" title="Select groups that will be able to view or edit your scorecard" appClickOutside (clickOutside)="showShareTree = true">
+<div class="tree-input" title="Select groups that will be able to view or edit your favorite" appClickOutside (clickOutside)="showShareTree = true">
   <div>
     <div class="show_items" (click)="displayShareTree()">
             <span *ngIf="scorecard.data.user_groups.length > 3">
@@ -23,7 +23,7 @@
     <div class="tree-view" [ngClass]="{'hiddenTree':showShareTree}">
       <div class="search-area">
         <form *ngIf="!group_loading" style="border-bottom: solid 1px blanchedalmond;">
-          <input [(ngModel)]="share_filter" placeholder="Search" name="share_search_field"/>
+          <input [(ngModel)]="share_filter" placeholder="Search User Group" name="share_search_field"/>
         </form>
       </div>
       <div *ngIf="group_loading">Loading Groups</div>

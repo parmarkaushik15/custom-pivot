@@ -50,12 +50,64 @@ export class FavoriteComponent implements OnInit {
   loadFavorites() {
     this.getAllFavorite().subscribe((favs) => {
       this.favorites = favs;
-      this.favoritesList = this.favorites['favorites'];
+      this.favoritesList = this.getUserFavs();
       this.loadingFavorite = false;
     }, error => {
       console.log(error);
       this.loadingFavorite = false;
     });
+  }
+
+
+  getUserFavs() {
+    const favorites = [];
+    for (const favorite of this.favorites['favorites']) {
+      favorite.can_see = this.checkForUserGroupInScorecard(favorite, this.user).see;
+      favorite.can_edit = this.checkForUserGroupInScorecard(favorite, this.user).edit;
+      if (favorite.can_see) {
+        favorites.push(favorite);
+      }
+    }
+    return favorites;
+  }
+
+  checkForUserGroupInScorecard(favorite, user): any {
+    let checker_see = false;
+    let checker_edit = false;
+    if (favorite.hasOwnProperty('data')) {
+      if (user.id === favorite.data.user.id ) {
+        checker_see = true;
+        checker_edit = true;
+      }
+    }else {
+      checker_see = true;
+      checker_edit = true;
+    }
+    if (favorite.hasOwnProperty('data')) {
+      for ( const group of favorite.data.user_groups){
+        if ( group.id === 'all' ) {
+          if (group.see) {
+            checker_see = true;
+          }
+          if (group.edit) {
+            checker_see = true;
+            checker_edit = true;
+          }
+        }
+        for ( const user_group of user.userGroups){
+          if ( user_group.id === group.id ) {
+            if (group.see) {
+              checker_see = true;
+            }
+            if (group.edit) {
+              checker_see = true;
+              checker_edit = true;
+            }
+          }
+        }
+      }
+    }
+    return { see: checker_see, edit: checker_edit };
   }
 
   // opening a favorite
@@ -83,7 +135,7 @@ export class FavoriteComponent implements OnInit {
       this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {
         this.saving = false;
         this.savingSuccess = true;
-        this.favoritesList = this.favorites['favorites'];
+        this.favoritesList = this.getUserFavs();
         this.newFavoriteArea = false;
         this.newFavName = '';
         setTimeout(() => {
@@ -123,7 +175,7 @@ export class FavoriteComponent implements OnInit {
     this.favorites['favorites'].splice(favoriteIndex, 1);
     this.deleting[favorite.id] = true;
     this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {
-      this.favoritesList = this.favorites['favorites'];
+      this.favoritesList = this.getUserFavs();
       this.deleteSuccess[favorite.id] = true;
       // _.remove(this.favorites, {id: favorite.id});
       // this.favorites.splice(this.favorites.indexOf(favorite),1);
@@ -144,6 +196,7 @@ export class FavoriteComponent implements OnInit {
   editFavorite(favorite) {
     const favoriteIndex = _.findIndex(this.favorites['favorites'], (fav:any) => fav.id === favorite.id);
     this.favorites['favorites'][favoriteIndex] = {
+      ...this.favorites['favorites'][favoriteIndex],
       id: favorite.id,
       name: this.editText,
       dataDimensions: this.dataDimensions,
@@ -162,7 +215,7 @@ export class FavoriteComponent implements OnInit {
     favorite.name = this.editText;
     this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {
       this.editSuccess[favorite.id] = true;
-      this.favoritesList = this.favorites['favorites'];
+      this.favoritesList = this.getUserFavs();
       setTimeout(() => {
         this.editSuccess[favorite.id] = false;
       }, 2000);
