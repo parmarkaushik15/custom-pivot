@@ -44,9 +44,9 @@
             <span *ngIf="!showDelete[favorite.id] && !showEdit[favorite.id] && favorite.can_edit" (click)="enableEdit(favorite);$event.stopPropagation()" class="glyphicon glyphicon-pencil pull-right text-primary butn" style="cursor: pointer" title="Update favorite"></span>
 
             <span *ngIf="showSharing[favorite.id] && !showDelete[favorite.id] && !showEdit[favorite.id]" (click)="saveSharing(favorite);$event.stopPropagation()" class="glyphicon glyphicon-check pull-right text-success butn" style="cursor: pointer;padding-left: 5px;padding-right: 5px" title="Save Sharing Settings">Save</span>
-            <span *ngIf="!showSharing[favorite.id] && !showDelete[favorite.id] && !showEdit[favorite.id]" (click)="enableSharing(favorite);$event.stopPropagation()" class="glyphicon glyphicon-share-alt pull-right text-info butn" style="cursor: pointer;padding-left: 5px;padding-right: 5px" title="Sharing Settings"></span>
+            <span *ngIf="!showSharing[favorite.id] && !showDelete[favorite.id] && !showEdit[favorite.id] && favorite.can_edit" (click)="enableSharing(favorite);$event.stopPropagation()" class="glyphicon glyphicon-share-alt pull-right text-info butn" style="cursor: pointer;padding-left: 5px;padding-right: 5px" title="Sharing Settings"></span>
 
-            <span *ngIf="!showDelete[favorite.id] && !showEdit[favorite.id]" (click)="enableDelete(favorite);$event.stopPropagation()" class="glyphicon glyphicon-trash pull-right text-danger butn" style="cursor: pointer;padding-left: 5px;padding-right: 5px" title="Delete favorite"></span>
+            <span *ngIf="!showDelete[favorite.id] && !showEdit[favorite.id] && favorite.can_edit" (click)="enableDelete(favorite);$event.stopPropagation()" class="glyphicon glyphicon-trash pull-right text-danger butn" style="cursor: pointer;padding-left: 5px;padding-right: 5px" title="Delete favorite"></span>
             <!--deleteng favorite-->
             <div class="pull-right" *ngIf="showDelete[favorite.id]">
               <span class="text-success" *ngIf="deleteSuccess[favorite.id]">Favorite Deleted successful</span>

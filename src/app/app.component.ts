@@ -171,11 +171,16 @@ export class AppComponent implements OnInit {
     // get a list of user groups
     this.dataService.getUserGroups().subscribe((val: any) => {
 
-      this.userGroups = val.userGroups;
+      this.userGroups = val.userGroups.map((userGroup: any) => {
+        return {
+          ...userGroup,
+          title: `This will be accessible to User in a ${userGroup.name} group`
+        };
+      });
       this.userGroups.unshift({
         id: 'all',
         name: 'All Users',
-        title: 'This will be accessible to everyone in the system accessing the favorite'
+        title: 'This will be accessible to everyone in the system'
       });
 
     });

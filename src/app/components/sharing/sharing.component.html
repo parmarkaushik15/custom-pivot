@@ -30,8 +30,23 @@
       <div class="tree-area" *ngIf="!group_loading">
         <ul class="list-unstyled">
           <li *ngFor="let group of userGroups | filterByName:share_filter" style="padding: 5px" [title]="group.title || ''">
-            <button [ngClass]="{'btn-primary': getGroupActiveState('see',group),'btn-outline-dark': !getGroupActiveState('see',group)}" class="btn btn-sm" (click)="toogleGroup('see',group)"><i class="fa fa-eye"></i></button>
-            <button [ngClass]="{'btn-primary': getGroupActiveState('edit',group), 'btn-outline-dark': !getGroupActiveState('edit',group)}" class="btn btn-sm" (click)="toogleGroup('edit',group)"><i class="fa fa-pencil"></i></button>
+            <button
+              [ngClass]="{'btn-primary': getGroupActiveState('see',group),'btn-outline-dark': !getGroupActiveState('see',group)}"
+              class="btn btn-sm"
+              (click)="toogleGroup('see',group)"
+              title="Enable Viewing Only"
+            >
+              <i class="fa fa-eye"></i>
+            </button>
+            <button
+              [ngClass]="{'btn-primary': getGroupActiveState('edit',group), 'btn-outline-dark': !getGroupActiveState('edit',group)}"
+              class="btn btn-sm"
+              (click)="toogleGroup('edit',group)"
+              title="Enable Viewing and Editing"
+            >
+              <i class="fa fa-pencil">
+
+              </i></button>
             {{ group.name }}
           </li>
         </ul>
