@@ -74,13 +74,13 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   getSystemSettings() {
-    return this.http.get('../../../api/25/systemSettings')
-      .map(res => res.json() || {})
+    return this.http.get('../../../api/systemSettings')
+      .map(res => res.json() || {});
   }
 
   ngOnInit() {
     this.period_type_config = PERIOD_TYPE;
-    if (this.period_type != '') {
+    if (this.period_type !== '') {
       this.changePeriodType();
     }
     // this.getRelativePeriodText('LAST_5_YEARS');

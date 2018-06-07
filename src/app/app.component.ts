@@ -228,7 +228,9 @@ export class AppComponent implements OnInit {
           times++;
         });
       });
-      if (analytics) {this.loadedData++;}
+      if (analytics) {
+        this.loadedData++;
+      }
 
       this.totalDataRequired += dimensions.data.need_functions.length * times;
       dimensions.dimensions.forEach((dimesion) => {
@@ -280,6 +282,7 @@ export class AppComponent implements OnInit {
               };
               // If there is a function for a data find the function and run it.
               const use_function = _.find(this.functions, ['id', mapping.func]);
+              console.log('parameters', parameters);
               const execute = Function('parameters', use_function['function']);
               execute(parameters);
             });
@@ -436,8 +439,9 @@ export class AppComponent implements OnInit {
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
     if (this.allDimensionAvailable) {
       if (this.needForUpdate) {
-        this.http.get('../../../api/25/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:' + _.find(this.dimensions.dimensions, ['name', 'pe'])['value'] + '&dimension=ou:' + _.find(this.dimensions.dimensions, ['name', 'ou'])['value'] + '&displayProperty=NAME').map(res => res.json()).subscribe(
-          (dummyResult: any) => {
+        this.http.get('../../../api/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:' + _.find(this.dimensions.dimensions, ['name', 'pe'])['value'] + '&dimension=ou:' + _.find(this.dimensions.dimensions, ['name', 'ou'])['value'] + '&displayProperty=NAME').map(res => res.json()).subscribe(
+          (dummyResult1: any) => {
+            const dummyResult = this.analyticsService.sanitizeAnalytics(dummyResult1);
             if (this.dimensions.data.selectedData.value !== '') {
               this.totalDataRequired++;
             }
@@ -486,7 +490,7 @@ export class AppComponent implements OnInit {
 
   }
 
-  getTableStructre(){
+  getTableStructre() {
     return {
       showColumnTotal: this.options.column_totals,
       showColumnAverage: this.options.column_avg,

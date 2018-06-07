@@ -21,9 +21,9 @@ export interface Configuration {
 export class LayoutComponent implements OnInit {
 
   @Input() layout = {
-    rows: ['pe'],
-    columns: ['dx'],
-    filters: ['ou'],
+    rows: ['ou', 'dx'],
+    columns: ['pe'],
+    filters: [],
     excluded: []
   };
   @Input() visualizationType: string;

@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {Angular2Csv} from "angular2-csv";
-import * as _ from "lodash"
-import {ExcelDownloadService} from "../../services/excel-download.service";
+import {Angular2Csv} from 'angular2-csv';
+import * as _ from 'lodash';
+import {ExcelDownloadService} from '../../services/excel-download.service';
 
 @Component({
   selector: 'data-area',
@@ -10,111 +10,114 @@ import {ExcelDownloadService} from "../../services/excel-download.service";
 })
 export class DataAreaComponent implements OnInit {
 
-  @Input() showTable:boolean = false;
-  @Input() showAutoGrowingTable:boolean = false;
-  @Input() loadingAutogrowing:boolean = false;
-  @Input() needForUpdate:boolean = false;
-  @Input() tableObject:any = null;
-  @Input() dataItems:any = null;
-  @Input() autoGrowingData:any = null;
-  @Input() uiState:any = null;
-  @Input() loadingParcent:any = null;
-  @Input() allDimensionAvailable:boolean = false;
+  @Input() showTable: boolean = false;
+  @Input() showAutoGrowingTable: boolean = false;
+  @Input() loadingAutogrowing: boolean = false;
+  @Input() needForUpdate: boolean = false;
+  @Input() tableObject: any = null;
+  @Input() dataItems: any = null;
+  @Input() autoGrowingData: any = null;
+  @Input() uiState: any = null;
+  @Input() loadingParcent: any = null;
+  @Input() allDimensionAvailable: boolean = false;
   @Output() onTableUpdate: EventEmitter<any> = new EventEmitter<any>();
-  @Input() layoutItems:any = {
+  @Input() layoutItems: any = {
     rows: ['pe'],
     columns: ['dx'],
     filters: ['ou'],
-    excluded:['co']
+    excluded: ['co']
   };
-  @ViewChild('autogrowingTable') private autogrowingTable:ElementRef;
-  constructor(private excelDownloadService:ExcelDownloadService  ) { }
+  sort_direction: string[] = [];
+  current_sorting: boolean[] = [];
 
-  ngOnInit() {
-    console.log("data-area",this.autoGrowingData)
+  @ViewChild('autogrowingTable') private autogrowingTable: ElementRef;
+
+  constructor(private excelDownloadService: ExcelDownloadService) {
   }
 
-  getTitle(){
-    let title = [];
-    let prefix = "";
+  ngOnInit() {
+    console.log('data-area', this.autoGrowingData)
+  }
+
+  getTitle() {
+    const title = [];
+    let prefix = '';
     this.layoutItems.filters.forEach((val) => {
-      if(val == 'ou'){
-        if(this.dataItems.ou){
+      if (val === 'ou') {
+        if (this.dataItems.ou) {
           prefix = this.dataItems.ou.starting_name;
           this.dataItems.ou.items.forEach((ous) => {
             title.push(ous.name);
           });
         }
       }
-      if(val == 'pe'){
-        if(this.dataItems.period){
+      if (val === 'pe') {
+        if (this.dataItems.period) {
           this.dataItems.period.items.forEach((ous) => {
             title.push(ous.name);
           });
         }
       }
     });
-    return prefix + " " + title.join(", ");
+    return prefix + ' ' + title.join(', ');
   }
 
-  sort_direction:string[] =[];
-  current_sorting:boolean[]= [];
-  sortData(tableObject, n,isLastItem){
-    if(tableObject.columns.length == 1 && isLastItem){
+  sortData(tableObject, n, isLastItem) {
+    if (tableObject.columns.length === 1 && isLastItem) {
       this.current_sorting = [];
       this.current_sorting[n] = true;
       let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-      table = document.getElementById("myPivotTable");
+      table = document.getElementById('myPivotTable');
       switching = true;
-      //Set the sorting direction to ascending:
-      dir = "asc";
+      // Set the sorting direction to ascending:
+      dir = 'asc';
       /*Make a loop that will continue until
        no switching has been done:*/
       while (switching) {
-        //start by saying: no switching is done:
+        // start by saying: no switching is done:
         switching = false;
-        rows = table.getElementsByTagName("TR");
+        rows = table.getElementsByTagName('TR');
         /*Loop through all table rows (except the
          first, which contains table headers):*/
         for (i = 0; i < (rows.length - 1); i++) {
-          //start by saying there should be no switching:
+          // start by saying there should be no switching:
           shouldSwitch = false;
           /*Get the two elements you want to compare,
            one from current row and one from the next:*/
-          x = rows[i].getElementsByTagName("TD")[n];
-          y = rows[i + 1].getElementsByTagName("TD")[n];
+          x = rows[i].getElementsByTagName('TD')[n];
+          y = rows[i + 1].getElementsByTagName('TD')[n];
           /*check if the two rows should switch place,
            based on the direction, asc or desc:*/
-          if (dir == "asc") {
-            if(parseFloat(x.innerHTML)){
+          if (dir === 'asc') {
+            if (parseFloat(x.innerHTML)) {
               if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch= true;
+                // if so, mark as a switch and break the loop:
+                shouldSwitch = true;
                 break;
               }
-            }else{
+            } else {
               if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch= true;
+                // if so, mark as a switch and break the loop:
+                shouldSwitch = true;
                 break;
               }
             }
-            this.sort_direction[n] = "asc";
-          } else if (dir == "desc") {
-            if(parseFloat(x.innerHTML)){
+            this.sort_direction[n] = 'asc';
+          } else if (dir === 'desc') {
+            if (parseFloat(x.innerHTML)) {
               if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch= true;
+                // if so, mark as a switch and break the loop:
+                shouldSwitch = true;
                 break;
               }
-            }else{
+            } else {
               if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch= true;
+                // if so, mark as a switch and break the loop:
+                shouldSwitch = true;
                 break;
               }
             }
-            this.sort_direction[n] = "desc";
+            this.sort_direction[n] = 'desc';
           }
         }
         if (shouldSwitch) {
@@ -122,14 +125,14 @@ export class DataAreaComponent implements OnInit {
            and mark that a switch has been done:*/
           rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
           switching = true;
-          //Each time a switch is done, increase this count by 1:
-          switchcount ++;
+          // Each time a switch is done, increase this count by 1:
+          switchcount++;
         } else {
           /*If no switching has been done AND the direction is "asc",
            set the direction to "desc" and run the while loop again.*/
-          if (switchcount == 0 && dir == "asc") {
-            dir = "desc";
-            this.sort_direction[n] = "desc";
+          if (switchcount === 0 && dir === 'asc') {
+            dir = 'desc';
+            this.sort_direction[n] = 'desc';
             switching = true;
           }
         }
@@ -138,32 +141,34 @@ export class DataAreaComponent implements OnInit {
 
   }
 
-  updateTable(){
-    this.onTableUpdate.emit("")
+  updateTable() {
+    this.onTableUpdate.emit('');
   }
 
-  downloadExcel(){
-    this.excelDownloadService.download("My Report",this.autogrowingTable.nativeElement);
+  downloadExcel() {
+    this.excelDownloadService.download('My Report', this.autogrowingTable.nativeElement);
   }
 
-  downloadExcel1(){
+  downloadExcel1() {
     let headers = [];
     let newRows = _.cloneDeep(this.tableObject);
     console.log(JSON.stringify(newRows));
     this.tableObject.headers.forEach((header) => {
       let someItems = [];
       this.tableObject.columns.forEach((col) => {
-        if(col == "ou"){
-          someItems.push("Admin Unit")
-        }if(col == "dx"){
-          someItems.push("Data")
-        }if(col == "pe"){
-          someItems.push("Period")
+        if (col == 'ou') {
+          someItems.push('Admin Unit')
+        }
+        if (col == 'dx') {
+          someItems.push('Data')
+        }
+        if (col == 'pe') {
+          someItems.push('Period')
         }
 
       });
       header.items.forEach((item) => {
-        for( let i=0;i<item.span; i++){
+        for (let i = 0; i < item.span; i++) {
           someItems.push(item.name)
         }
       });
@@ -172,16 +177,16 @@ export class DataAreaComponent implements OnInit {
 
     let length = newRows.rows[0].items.length;
     newRows.rows.forEach((row) => {
-      for(let k=0; k < length-row.items.length; k++){
-        row.items.unshift({name:"",value:""})
+      for (let k = 0; k < length - row.items.length; k++) {
+        row.items.unshift({name: '', value: ''})
       }
     });
     let csvHeaders = [];
     headers.forEach((header) => {
       header.forEach((singleHeader, index) => {
-        if(csvHeaders[index]){
-          csvHeaders[index] += " "+singleHeader;
-        }else{
+        if (csvHeaders[index]) {
+          csvHeaders[index] += ' ' + singleHeader;
+        } else {
           csvHeaders[index] = singleHeader;
         }
       });
@@ -190,8 +195,8 @@ export class DataAreaComponent implements OnInit {
     let dataValues = [];
     newRows.rows.forEach((row) => {
       let dataObject = {};
-      csvHeaders.forEach((header,index) => {
-        dataObject[header] = (row.items[index].val)?row.items[index].val:"";
+      csvHeaders.forEach((header, index) => {
+        dataObject[header] = (row.items[index].val) ? row.items[index].val : '';
       });
       dataValues.push(dataObject);
     });
@@ -202,18 +207,19 @@ export class DataAreaComponent implements OnInit {
       showLabels: true,
       showTitle: false
     };
-    new Angular2Csv(dataValues, 'My Report',options);
+    new Angular2Csv(dataValues, 'My Report', options);
     return {
       headers: csvHeaders,
       data: dataValues
     }
   }
 
-  getClasses(item){
+  getClasses(item) {
     const classes = [];
-    if(item.name != ''){
+    if (item.name != '') {
       classes.push('header-column')
-    }if(!isNaN(item.val)){
+    }
+    if (!isNaN(item.val)) {
       classes.push('header-item')
     }
     return classes;

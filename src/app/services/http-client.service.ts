@@ -3,15 +3,17 @@ import {Http, Headers} from '@angular/http';
 
 @Injectable()
 export class HttpClientService {
-  public APIURL = "../../../api/25/";
+  public APIURL = "../../../api/";
   constructor(private http: Http) {
     this.http = http;
   }
 
-  createAuthorizationHeader(headers:Headers,options?) {
-    if(options){
-      for(let key in options){
-        headers.append(key, options[key]);
+  createAuthorizationHeader(headers: Headers, options?) {
+    if (options) {
+      for (const key in options) {
+        if ( options.hasOwnProperty(key)) {
+          headers.append(key, options[key]);
+        }
       }
     }
   }

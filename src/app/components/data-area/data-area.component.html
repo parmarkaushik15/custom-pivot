@@ -19,7 +19,7 @@
 </div>
 <small *ngIf="needForUpdate && showTable && allDimensionAvailable">There are a changes in selections hit update to see the latest changes.
   <button class="btn btn-default btn-xs" (click)="needForUpdate = false">Hide</button>
-  <button class="btn btn-default btn-xs" (click)="updateTable()">Update</button>
+  <button class="btn btn-default btn-xs" (click)="updateTable()" [disabled]="uiState.loadingData">Update</button>
   <!--<button class="btn btn-default btn-xs" (click)="update()">Update</button>-->
 </small>
 

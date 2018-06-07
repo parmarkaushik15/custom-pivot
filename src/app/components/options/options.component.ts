@@ -1,5 +1,4 @@
 import {Component, OnInit, Input, EventEmitter, Output} from '@angular/core';
-import {OuterSubscriber} from "rxjs/OuterSubscriber";
 
 @Component({
   selector: 'app-options',
@@ -7,8 +6,8 @@ import {OuterSubscriber} from "rxjs/OuterSubscriber";
   styleUrls: ['./options.component.css']
 })
 export class OptionsComponent implements OnInit {
-  showLayout:boolean = false;
-  @Input() options:any = {
+  showLayout: boolean = false;
+  @Input() options: any = {
     column_totals: false,
     row_totals: false,
     column_sub_total: false,
@@ -17,18 +16,20 @@ export class OptionsComponent implements OnInit {
     column_avg: false,
     dimension_labels: false,
     hide_empty_row: false,
-    show_hierarchy: false,
-    table_title:""
+    show_hierarchy: true,
+    table_title: ''
   };
-  @Input() tableLayout:any;
+  @Input() tableLayout: any;
 
-  @Output() onOptionUpdate : EventEmitter<any> = new EventEmitter<any>();
-  constructor() { }
+  @Output() onOptionUpdate: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor() {
+  }
 
   ngOnInit() {
   }
 
-  updateOption(){
+  updateOption() {
     this.onOptionUpdate.emit(this.options);
     this.showLayout = false;
   }

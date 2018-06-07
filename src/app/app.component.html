@@ -100,10 +100,10 @@
               </div>
             </div>
             <!--update button-->
-            <a class="btn btn-sm btn-default" (click)="updateTable()">
+            <button class="btn btn-sm btn-default" (click)="updateTable()" [disabled]="uiState.loadingData">
               <img src="assets/img/update.png" height="15"/>
               Update
-            </a>
+            </button>
             <!--layout option-->
             <app-layout
               [layout]="currentLayout"
