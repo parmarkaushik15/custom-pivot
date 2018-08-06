@@ -4,6 +4,7 @@ import {
 import {Http} from '@angular/http';
 
 import * as _ from 'lodash'
+import {HttpClientService} from '../../services/http-client.service';
 
 const PERIOD_TYPE: Array<any> = [
   {value: 'Monthly', name: 'Monthly', shown: true},
@@ -36,7 +37,7 @@ export class PeriodFilterComponent implements OnInit {
     loading: false,
     loading_message: 'Loading Periods...',
     multiple: false,
-    multiple_key: 'none', //can be control or shift
+    multiple_key: 'none', // can be control or shift
     starting_periods: [],
     starting_year: null,
     placeholder: 'Select period'
@@ -55,12 +56,12 @@ export class PeriodFilterComponent implements OnInit {
   year: number = new Date().getFullYear();
   period_type_config: Array<any>;
 
-  constructor(private http: Http) {
-    let date = new Date();
+  constructor(private http: HttpClientService) {
+    const date = new Date();
     date.setDate(0);
     this.period_tree_config.starting_year = date.getFullYear();
     this.year = (this.period_tree_config.starting_year) ? this.period_tree_config.starting_year : date.getFullYear();
-    let datestring = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
+    const datestring = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
     this.period_tree_config.starting_periods = [datestring];
     if (!this.period_tree_config.hasOwnProperty('multiple_key')) {
       this.period_tree_config.multiple_key = 'none';
@@ -74,8 +75,7 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   getSystemSettings() {
-    return this.http.get('../../../api/systemSettings')
-      .map(res => res.json() || {});
+    return this.http.get('../../../api/systemSettings');
   }
 
   ngOnInit() {
@@ -165,11 +165,13 @@ export class PeriodFilterComponent implements OnInit {
 
   getSelectedItemsToRemove() {
     let count = 0;
-    this.selected_periods.forEach(period => {
-      if (_.includes(_.map(this.periods, 'id'), period.id)) {
-        count++;
-      }
-    })
+    if (this.selected_periods) {
+      this.selected_periods.forEach(period => {
+        if (_.includes(_.map(this.periods, 'id'), period.id)) {
+          count++;
+        }
+      })
+    }
     return count;
 
   }
@@ -177,7 +179,7 @@ export class PeriodFilterComponent implements OnInit {
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer($event) {
     this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
-    //TODO FIND BEST WAY TO EMIT SELECTED PERIOD
+    // TODO FIND BEST WAY TO EMIT SELECTED PERIOD
     this.emitData();
   }
 
@@ -202,7 +204,7 @@ export class PeriodFilterComponent implements OnInit {
   // check if orgunit already exist in the orgunit display list
   checkPeriodAvailabilty(period, array): boolean {
     let checker = false;
-    for (let per of array) {
+    for (const per of array) {
       if (per.id === period.id) {
         checker = true;
       }
@@ -211,9 +213,9 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   resetSelection(hideMonth, hideQuarter) {
-    if (!hideMonth && !hideQuarter && this.period_type != 'Quarterly' && this.period_type != 'FinancialJuly' && this.period_type != 'Yearly') {
+    if (!hideMonth && !hideQuarter && this.period_type !== 'Quarterly' && this.period_type !== 'FinancialJuly' && this.period_type !== 'Yearly') {
       this.period_type = 'Monthly';
-    } else if (hideMonth && !hideQuarter && this.period_type != 'FinancialJuly' && this.period_type != 'Yearly') {
+    } else if (hideMonth && !hideQuarter && this.period_type !== 'FinancialJuly' && this.period_type !== 'Yearly') {
       this.period_type = 'Quarterly';
     } else {
       this.period_type = 'FinancialJuly';
@@ -224,7 +226,7 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   getPeriodArray(type, year) {
-    let periods = [];
+    const periods = [];
     if (type === 'Weekly') {
       periods.push({id: '', name: ''})
     } else if (type === 'Monthly') {
@@ -267,7 +269,7 @@ export class PeriodFilterComponent implements OnInit {
         name: 'July - December ' + year
       })
     } else if (type === 'SixMonthlyApril') {
-      let useYear = parseInt(year) + 1;
+      const useYear = parseInt(year, 10) + 1;
       periods.push({
         id: year + 'AprilS2',
         name: 'October ' + year + ' - March ' + useYear,
@@ -275,26 +277,26 @@ export class PeriodFilterComponent implements OnInit {
       }, {id: year + 'AprilS1', name: 'April - September ' + year})
     } else if (type === 'FinancialOct') {
       for (let i = 0; i <= 10; i++) {
-        let useYear = parseInt(year) - i;
-        let currentYear = useYear + 1;
+        const useYear = parseInt(year, 10) - i;
+        const currentYear = useYear + 1;
         periods.push({id: useYear + 'Oct', name: 'October ' + useYear + ' - September ' + currentYear})
       }
     } else if (type === 'Yearly') {
       for (let i = 0; i <= 10; i++) {
-        let useYear = parseInt(year) - i;
+        const useYear = parseInt(year, 10) - i;
         periods.push({id: useYear, name: useYear})
 
       }
     } else if (type === 'FinancialJuly') {
       for (let i = 0; i <= 10; i++) {
-        let useYear = parseInt(year) - i;
-        let currentYear = useYear + 1;
+        const useYear = parseInt(year, 10) - i;
+        const currentYear = useYear + 1;
         periods.push({id: useYear + 'July', name: 'July ' + useYear + ' - June ' + currentYear})
       }
     } else if (type === 'FinancialApril') {
       for (let i = 0; i <= 10; i++) {
-        let useYear = parseInt(year) - i;
-        let currentYear = useYear + 1;
+        const useYear = parseInt(year, 10) - i;
+        const currentYear = useYear + 1;
         periods.push({id: useYear + 'April', name: 'April ' + useYear + ' - March ' + currentYear})
       }
     } else if (type === 'Relative Weeks') {
@@ -354,8 +356,8 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   getFinencialPeriodArray(type, year) {
-    let periods = [];
-    let last_yaer = parseInt(year) - 1;
+    const periods = [];
+    const last_yaer = parseInt(year, 10) - 1;
     if (type === 'Monthly') {
       periods.push(
         {id: last_yaer + '07', name: 'July ' + last_yaer},
@@ -380,8 +382,8 @@ export class PeriodFilterComponent implements OnInit {
       )
     } else if (type === 'FinancialJuly') {
       for (let i = 0; i <= 10; i++) {
-        let useYear = parseInt(year) - i;
-        let currentYear = useYear + 1;
+        const useYear = parseInt(year, 10) - i;
+        const currentYear = useYear + 1;
         periods.push({id: useYear + 'July', name: 'July ' + useYear + ' - June ' + currentYear})
       }
     } else if (type === 'RelativeMonth') {
@@ -429,10 +431,9 @@ export class PeriodFilterComponent implements OnInit {
   getLastPeriod(period: any, period_type: string = 'Quarterly'): any {
     if (period_type === 'Weekly') {
 
-    }
-    else if (period_type === 'Monthly') {
-      let year = period.substring(0, 4);
-      let month = period.substring(4, 6);
+    } else if (period_type === 'Monthly') {
+      const year = period.substring(0, 4);
+      const month = period.substring(4, 6);
       let time = '';
       if (month === '02') {
         time = year + '01';
@@ -457,14 +458,13 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '12') {
         time = year + '11';
       } else if (month === '01') {
-        let yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + '12';
       }
       return time;
-    }
-    else if (period_type === 'BiMonthly') {
-      let year = period.substring(0, 4);
-      let month = period.substring(4, 6);
+    } else if (period_type === 'BiMonthly') {
+      const year = period.substring(0, 4);
+      const month = period.substring(4, 6);
       let time = '';
       if (month === '02') {
         time = year + '01B';
@@ -477,14 +477,13 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '06') {
         time = year + '05B';
       } else if (month === '01') {
-        let yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + '06B';
       }
       return time;
-    }
-    else if (period_type === 'Quarterly') {
-      let year = period.substring(0, 4);
-      let quater = period.substring(4, 6);
+    } else if (period_type === 'Quarterly') {
+      const year = period.substring(0, 4);
+      const quater = period.substring(4, 6);
       let time = '';
       if (quater === 'Q4') {
         time = year + 'Q3';
@@ -493,51 +492,45 @@ export class PeriodFilterComponent implements OnInit {
       } else if (quater === 'Q2') {
         time = year + 'Q1';
       } else if (quater === 'Q1') {
-        let yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + 'Q4';
       }
       return time;
-    }
-    else if (period_type === 'SixMonthly') {
-      let year = period.substring(0, 4);
-      let six_month = period.substring(4, 6);
+    } else if (period_type === 'SixMonthly') {
+      const year = period.substring(0, 4);
+      const six_month = period.substring(4, 6);
       let time = '';
       if (six_month === 'S1') {
-        let yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + 'S2';
       } else if (six_month === 'S2') {
         time = year + 'S1'
       }
       return time;
-    }
-    else if (period_type === 'SixMonthlyApril') {
-      let year = period.substring(0, 4);
-      let six_month = period.substring(4, 12);
+    } else if (period_type === 'SixMonthlyApril') {
+      const year = period.substring(0, 4);
+      const six_month = period.substring(4, 12);
       let time = '';
       if (six_month === 'AprilS2') {
         time = year + 'AprilS1'
       } else if (six_month === 'AprilS1') {
-        let yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + 'AprilS2';
       }
       return time;
-    }
-    else if (period_type === 'FinancialOct') {
-      let year = period.substring(0, 4);
-      let last_year = parseInt(year) - 1;
+    } else if (period_type === 'FinancialOct') {
+      const year = period.substring(0, 4);
+      const last_year = parseInt(year, 10) - 1;
       return last_year + 'Oct'
-    }
-    else if (period_type === 'Yearly') {
-      return parseInt(period) - 1;
-    }
-    else if (period_type === 'FinancialJuly') {
-      let year = period.substring(0, 4);
-      let last_year = parseInt(year) - 1;
+    } else if (period_type === 'Yearly') {
+      return parseInt(period, 10) - 1;
+    } else if (period_type === 'FinancialJuly') {
+      const year = period.substring(0, 4);
+      const last_year = parseInt(year, 10) - 1;
       return last_year + 'July'
-    }
-    else if (period_type === 'FinancialApril') {
-      let year = period.substring(0, 4);
-      let last_year = parseInt(year) - 1;
+    } else if (period_type === 'FinancialApril') {
+      const year = period.substring(0, 4);
+      const last_year = parseInt(year, 10) - 1;
       return last_year + 'April'
     }
 
@@ -547,10 +540,9 @@ export class PeriodFilterComponent implements OnInit {
   getNextPeriod(period: any, period_type: string = 'Quarterly'): any {
     if (period_type === 'Weekly') {
 
-    }
-    else if (period_type === 'Monthly') {
-      let year = period.substring(0, 4);
-      let month = period.substring(4, 6);
+    } else if (period_type === 'Monthly') {
+      const year = period.substring(0, 4);
+      const month = period.substring(4, 6);
       let time = '';
       if (month === '02') {
         time = year + '03';
@@ -573,16 +565,15 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '11') {
         time = year + '12';
       } else if (month === '12') {
-        let yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + '01';
       } else if (month === '01') {
         time = year + '02';
       }
       return time;
-    }
-    else if (period_type === 'BiMonthly') {
-      let year = period.substring(0, 4);
-      let month = period.substring(4, 6);
+    } else if (period_type === 'BiMonthly') {
+      const year = period.substring(0, 4);
+      const month = period.substring(4, 6);
       let time = '';
       if (month === '02') {
         time = year + '03B';
@@ -593,16 +584,15 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '05') {
         time = year + '06B';
       } else if (month === '06') {
-        let yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + '01B';
       } else if (month === '01') {
         time = year + '02B';
       }
       return time;
-    }
-    else if (period_type === 'Quarterly') {
-      let year = period.substring(0, 4);
-      let quater = period.substring(4, 6);
+    } else if (period_type === 'Quarterly') {
+      const year = period.substring(0, 4);
+      const quater = period.substring(4, 6);
       let time = '';
       if (quater === 'Q1') {
         time = year + 'Q2';
@@ -611,51 +601,45 @@ export class PeriodFilterComponent implements OnInit {
       } else if (quater === 'Q2') {
         time = year + 'Q3';
       } else if (quater === 'Q4') {
-        let yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + 'Q1';
       }
       return time;
-    }
-    else if (period_type === 'SixMonthly') {
-      let year = period.substring(0, 4);
-      let six_month = period.substring(4, 6);
+    } else if (period_type === 'SixMonthly') {
+      const year = period.substring(0, 4);
+      const six_month = period.substring(4, 6);
       let time = '';
       if (six_month === 'S2') {
-        let yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + 'S1';
       } else if (six_month === 'S1') {
         time = year + 'S2'
       }
       return time;
-    }
-    else if (period_type === 'SixMonthlyApril') {
-      let year = period.substring(0, 4);
-      let six_month = period.substring(4, 12);
+    } else if (period_type === 'SixMonthlyApril') {
+      const year = period.substring(0, 4);
+      const six_month = period.substring(4, 12);
       let time = '';
       if (six_month === 'AprilS2') {
-        let yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + 'AprilS1';
       } else if (six_month === 'AprilS1') {
         time = year + 'AprilS2'
       }
       return time;
-    }
-    else if (period_type === 'FinancialOct') {
-      let year = period.substring(0, 4);
-      let last_year = parseInt(year) + 1;
+    } else if (period_type === 'FinancialOct') {
+      const year = period.substring(0, 4);
+      const last_year = parseInt(year, 10) + 1;
       return last_year + 'Oct'
-    }
-    else if (period_type === 'Yearly') {
-      return parseInt(period) + 1;
-    }
-    else if (period_type === 'FinancialJuly') {
-      let year = period.substring(0, 4);
-      let last_year = parseInt(year) + 1;
+    } else if (period_type === 'Yearly') {
+      return parseInt(period, 10) + 1;
+    } else if (period_type === 'FinancialJuly') {
+      const year = period.substring(0, 4);
+      const last_year = parseInt(year, 10) + 1;
       return last_year + 'July'
-    }
-    else if (period_type === 'FinancialApril') {
-      let year = period.substring(0, 4);
-      let last_year = parseInt(year) + 1;
+    } else if (period_type === 'FinancialApril') {
+      const year = period.substring(0, 4);
+      const last_year = parseInt(year, 10) + 1;
       return last_year + 'April'
     }
   }

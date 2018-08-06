@@ -1,9 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { Angular2CsvModule } from 'angular2-csv';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -48,6 +47,11 @@ import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
 import {LoginRedirectService} from './services/login-redirect.service';
 import {ThouthandSeparator} from './pipes/thouthand-separator-pipe';
 import {SharingComponent} from './components/sharing/sharing.component';
+import {HttpClientModule} from '@angular/common/http';
+import {metaReducers, reducers} from './store';
+import {environment} from '../environments/environment';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {AppEffects} from './store/app.effects';
 
 @NgModule({
   declarations: [
@@ -75,14 +79,16 @@ import {SharingComponent} from './components/sharing/sharing.component';
   ],
   imports: [
     BrowserModule,
+    Angular2CsvModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     TreeModule,
     NgxPaginationModule,
     DndModule.forRoot(),
-    StoreModule.provideStore({ uiState: uiState, storeData: storeData }, INITIAL_APPLICATION_STATE),
-    EffectsModule.run(LoadMetaDataService)
+    StoreModule.forRoot(reducers, { }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    EffectsModule.forRoot([AppEffects])
   ],
   providers: [
     OrgUnitService,

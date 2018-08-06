@@ -1,12 +1,12 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {isArray} from "rxjs/util/isArray";
+import {isArray} from 'util';
 
 export interface Header {
   name: string;
-  column:string;
-  type?:string;
-  hidden?:boolean;
-  meta?:boolean;
+  column: string;
+  type?: string;
+  hidden?: boolean;
+  meta?: boolean;
 }
 
 export interface Configuration {
@@ -30,7 +30,6 @@ export class LayoutComponent implements OnInit {
   @Output() onLayoutUpdate = new EventEmitter();
   showLayout: boolean = false;
   isOpen = false;
-  constructor() { }
 
   names = {
     dx: 'Data',
@@ -38,9 +37,9 @@ export class LayoutComponent implements OnInit {
     pe: 'Period'
   };
   icons = {
-    dx:"glyphicon glyphicon-oil",
-    ou:"glyphicon glyphicon-home",
-    pe:"glyphicon glyphicon-calendar"
+    dx: 'glyphicon glyphicon-oil',
+    ou: 'glyphicon glyphicon-home',
+    pe: 'glyphicon glyphicon-calendar'
   };
 
   dimensions = {
@@ -50,20 +49,23 @@ export class LayoutComponent implements OnInit {
   };
   layoutType: string;
 
+  @Output('drop') drop = new EventEmitter();
+
+  constructor() { }
+
   ngOnInit() {
     this.changeVisualisation(this.visualizationType);
   }
-  @Output('drop') drop = new EventEmitter();
 
   onDrop(event, dimension) {
-    if(isArray(this.layout[event.dragData.dimension])) {
-      this.layout[event.dragData.dimension].splice(this.layout[event.dragData.dimension].indexOf(event.dragData.data),1);
+    if (isArray(this.layout[event.dragData.dimension])) {
+      this.layout[event.dragData.dimension].splice(this.layout[event.dragData.dimension].indexOf(event.dragData.data), 1);
     }
 
-    if(dimension == 'category' || dimension == 'series') {
-      if(this.layout[dimension] != "") {
-        //first send target value to the dropper
-        if(isArray(this.layout[event.dragData.dimension])) {
+    if (dimension === 'category' || dimension === 'series') {
+      if (this.layout[dimension] !== '') {
+        // first send target value to the dropper
+        if (isArray(this.layout[event.dragData.dimension])) {
           this.layout[event.dragData.dimension].push(this.layout[dimension])
         } else {
           this.layout[event.dragData.dimension] = this.layout[dimension];
@@ -71,8 +73,8 @@ export class LayoutComponent implements OnInit {
       }
       this.layout[dimension] = event.dragData.data;
     } else {
-      if(event.dragData.dimension == 'category' || event.dragData.dimension == 'series') {
-        this.layout[event.dragData.dimension] = "";
+      if (event.dragData.dimension === 'category' || event.dragData.dimension === 'series') {
+        this.layout[event.dragData.dimension] = '';
       }
       this.layout[dimension].push(event.dragData.data)
     }
@@ -81,10 +83,10 @@ export class LayoutComponent implements OnInit {
   }
 
   changeVisualisation(visualizationType, headers = []) {
-    if((visualizationType == 'CHART') || (visualizationType == 'EVENT_CHART')) {
-      this.layoutType ='chart';
+    if ((visualizationType === 'CHART') || (visualizationType === 'EVENT_CHART')) {
+      this.layoutType = 'chart';
     } else {
-      this.layoutType ='table';
+      this.layoutType = 'table';
     }
   }
 
@@ -94,22 +96,23 @@ export class LayoutComponent implements OnInit {
       columnDimension: [],
       rowDimension: []
     };
-    headers.forEach((header,index)=>{
-      if(header.name != "value"){
-        if(this.dimensions.columnDimension.length == 0){
+    headers.forEach((header, index) => {
+      if (header.name !== 'value') {
+        if (this.dimensions.columnDimension.length === 0) {
           this.dimensions.columnDimension.push(header.name);
-        }else if(this.dimensions.rowDimension.length == 0){
+        } else if (this.dimensions.rowDimension.length === 0) {
           this.dimensions.rowDimension.push(header.name);
-        }else{
+        } else {
           this.dimensions.filterDimension.push(header.name);
         }
-        this.names[header.name] = {name:header.column,icon:"fa-database"};
-        if(this.icons[header.name]){
+        this.names[header.name] = {name: header.column, icon: 'fa-database'};
+        if (this.icons[header.name]) {
           this.names[header.name].icon = this.icons[header.name];
         }
       }
     });
   }
+
   updateLayout() {
     this.showLayout = false;
     this.onLayoutUpdate.emit(this.layout);

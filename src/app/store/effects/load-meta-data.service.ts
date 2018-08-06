@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
-import {Actions, Effect} from "@ngrx/effects";
-import {Observable} from "rxjs";
-import {Action} from "@ngrx/store";
-import {DataService} from "../../services/data.service";
+import {Injectable} from '@angular/core';
+import {Actions, Effect} from '@ngrx/effects';
+import {Observable} from 'rxjs';
+import {Action} from '@ngrx/store';
+import {DataService} from '../../services/data.service';
 
 import {
   DATAELEMENT_KEY, INDICATOR_KEY, INDICATOR_GROUP_KEY,
   DATAELEMENT_GROUP_KEY, CATEGORY_COMBOS_KEY, ORGANISATION_UNIT_KEY, DATASET_KEY
-} from "../../services/local-storage.service";
+} from '../../services/local-storage.service';
 import {
   ADD_DATA_ANALYITICS, ADD_EMPTY_ANALYITICS
-} from "../actions";
-import {AnalyticscreatorService} from "../../services/analyticscreator.service";
+} from '../actions';
+import {AnalyticscreatorService} from '../../services/analyticscreator.service';
 
 @Injectable()
 export class LoadMetaDataService {

@@ -1,5 +1,4 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef} from '@angular/core';
-import {Angular2Csv} from 'angular2-csv';
 import * as _ from 'lodash';
 import {ExcelDownloadService} from '../../services/excel-download.service';
 
@@ -150,19 +149,19 @@ export class DataAreaComponent implements OnInit {
   }
 
   downloadExcel1() {
-    let headers = [];
-    let newRows = _.cloneDeep(this.tableObject);
+    const headers = [];
+    const newRows = _.cloneDeep(this.tableObject);
     console.log(JSON.stringify(newRows));
     this.tableObject.headers.forEach((header) => {
-      let someItems = [];
+      const someItems = [];
       this.tableObject.columns.forEach((col) => {
-        if (col == 'ou') {
+        if (col === 'ou') {
           someItems.push('Admin Unit')
         }
-        if (col == 'dx') {
+        if (col === 'dx') {
           someItems.push('Data')
         }
-        if (col == 'pe') {
+        if (col === 'pe') {
           someItems.push('Period')
         }
 
@@ -175,7 +174,7 @@ export class DataAreaComponent implements OnInit {
       headers.push(someItems)
     });
 
-    let length = newRows.rows[0].items.length;
+    const length = newRows.rows[0].items.length;
     newRows.rows.forEach((row) => {
       for (let k = 0; k < length - row.items.length; k++) {
         row.items.unshift({name: '', value: ''})
@@ -192,22 +191,21 @@ export class DataAreaComponent implements OnInit {
       });
     });
     csvHeaders = newRows.titles.rows.concat(csvHeaders);
-    let dataValues = [];
+    const dataValues = [];
     newRows.rows.forEach((row) => {
-      let dataObject = {};
+      const dataObject = {};
       csvHeaders.forEach((header, index) => {
         dataObject[header] = (row.items[index].val) ? row.items[index].val : '';
       });
       dataValues.push(dataObject);
     });
-    let options = {
+    const options = {
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalseparator: '.',
       showLabels: true,
       showTitle: false
     };
-    new Angular2Csv(dataValues, 'My Report', options);
     return {
       headers: csvHeaders,
       data: dataValues
@@ -216,7 +214,7 @@ export class DataAreaComponent implements OnInit {
 
   getClasses(item) {
     const classes = [];
-    if (item.name != '') {
+    if (item.name !== '') {
       classes.push('header-column')
     }
     if (!isNaN(item.val)) {

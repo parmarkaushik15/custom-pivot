@@ -1,10 +1,10 @@
 
 export interface UiState {
-    loadingOrganisationUnit:boolean;
+    loadingOrganisationUnit: boolean;
     loadingData: boolean;
     loadingDataMessage: string;
-    loadingDataElements:boolean;
-    layoutOpened:boolean;
+    loadingDataElements: boolean;
+    layoutOpened: boolean;
     currentError?: string;
     dataAreaOpen: boolean;
     dataAreaOpenState: string;
@@ -14,8 +14,9 @@ export interface UiState {
 export const INITIAL_UI_STATE: UiState = {
   loadingOrganisationUnit: false,
   loadingData: false,
-  loadingDataMessage: "",
+  loadingDataMessage: '',
   loadingDataElements: false,
+  currentError: '',
   layoutOpened: false,
   dataAreaOpen: true,
   dataAreaOpenState: 'active'

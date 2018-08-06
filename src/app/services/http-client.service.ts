@@ -1,61 +1,56 @@
 import { Injectable } from '@angular/core';
-import {Http, Headers} from '@angular/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable()
 export class HttpClientService {
-  public APIURL = "../../../api/";
-  constructor(private http: Http) {
-    this.http = http;
-  }
+  public APIURL = '../../../api/';
+  constructor(private http: HttpClient) { }
 
-  createAuthorizationHeader(headers: Headers, options?) {
+  createAuthorizationHeader(headers: HttpHeaders, options?) {
     if (options) {
-      for (const key in options) {
-        if ( options.hasOwnProperty(key)) {
-          headers.append(key, options[key]);
-        }
-      }
+      options.forEach((key, values) => {
+        headers.append(key, options[key]);
+      });
     }
   }
 
   get(url) {
-    let headers = new Headers();
+    const headers = new HttpHeaders();
     this.createAuthorizationHeader(headers);
-    return this.http.get(this.APIURL + url, {
+    return this.http.get<any>(this.APIURL + url, {
       headers: headers
-    }).map(this.responseHandler());
+    });
   }
 
-  post(url, data,options?) {
-    let headers = new Headers();
-    this.createAuthorizationHeader(headers,options);
-    return this.http.post(this.APIURL + url, data, {
+  get_from_base(url) {
+    const headers = new HttpHeaders();
+    this.createAuthorizationHeader(headers);
+    return this.http.get<any>( url, {
       headers: headers
-    }).map(this.responseHandler());
+    });
   }
-  put(url, data,options?) {
-    let headers = new Headers();
-    this.createAuthorizationHeader(headers,options);
-    return this.http.put(this.APIURL + url, data, {
+
+  post(url, data, options?) {
+    const headers = new HttpHeaders();
+    this.createAuthorizationHeader(headers, options);
+    return this.http.post<any>(this.APIURL + url, data, {
       headers: headers
-    }).map(this.responseHandler());
+    });
   }
-  delete(url,options?) {
-    let headers = new Headers();
-    this.createAuthorizationHeader(headers,options);
+  put(url, data, options?) {
+    const headers = new HttpHeaders();
+    this.createAuthorizationHeader(headers, options);
+    return this.http.put<any>(this.APIURL + url, data, {
+      headers: headers
+    });
+  }
+
+  delete(url, options?) {
+    const headers = new HttpHeaders();
+    this.createAuthorizationHeader(headers, options);
     return this.http.delete(this.APIURL + url, {
       headers: headers
-    }).map(this.responseHandler());
+    });
   }
-  responseHandler(){
-    return (res)=>{
-      try{
-        let returnJSON = res.json();
-        return returnJSON;
-      }catch(e){
-        location.reload();
-        return null;
-      }
-    }
-  }
+
 }

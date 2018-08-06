@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Constants} from './constants';
-import {Http} from '@angular/http';
 import {Observable} from 'rxjs';
 import * as _ from 'lodash';
 import {SpecificPeriodService} from '../components/period-filter/period.service';
 import {LocalStorageService, ORGANISATION_UNIT_KEY} from './local-storage.service';
+import {HttpClientService} from './http-client.service';
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class AnalyticscreatorService {
   public analytics_lists = [];
 
   constructor(private constant: Constants,
-              private http: Http,
+              private http: HttpClientService,
               private periodService: SpecificPeriodService,
               private localStorageService: LocalStorageService
   ) {
@@ -27,8 +27,7 @@ export class AnalyticscreatorService {
       })
     } else {
       if (this._checkIfAllDimensionExists(dimensions)) {
-        return this.http.get(this._constructAnalyticUrlForExternalSource(layout, dimensions, 'skipData=false'))
-          .map(res => res.json() || null);
+        return this.http.get(this._constructAnalyticUrlForExternalSource(layout, dimensions, 'skipData=false'));
       } else {
         return Observable.create(observor => {
           observor.next(null);
@@ -43,8 +42,7 @@ export class AnalyticscreatorService {
   // a function that will return analytics without data for data drawing.
   prepareEmptyAnalytics(dimensions: any) {
     if (this._checkIfAllDimensionExists(dimensions)) {
-      return this.http.get(this._constructAnalyticUrlForExternalSource('', dimensions, 'skipData=true'))
-        .map(res => res.json() || null);
+      return this.http.get(this._constructAnalyticUrlForExternalSource('', dimensions, 'skipData=true'));
     } else {
       return Observable.create(observor => {
         observor.next(null);
@@ -55,7 +53,7 @@ export class AnalyticscreatorService {
 
   // merge analytics calls
   mergeAnalyticsCalls(analytics: any[], showHirach: boolean, dimensions: any, renamedDataElements: any) {
-    let combined_analytics: any = {
+    const combined_analytics: any = {
       headers: [],
       metaData: {
         names: {},
@@ -72,7 +70,7 @@ export class AnalyticscreatorService {
     analytics.forEach((analytic1) => {
       const analytic = this.sanitizeAnalytics(analytic1);
       combined_analytics.headers = analytic.headers;
-      let namesArray = this._getArrayFromObject(analytic.metaData.names);
+      const namesArray = this._getArrayFromObject(analytic.metaData.names);
       namesArray.forEach((name) => {
         if (!combined_analytics.metaData.names[name.id]) {
           combined_analytics.metaData.names[name.id] = this.replaceName({id: name.id, name: name.value}, renamedDataElements);
@@ -102,7 +100,7 @@ export class AnalyticscreatorService {
           }
         })
       }
-      let newDxOrder = [];
+      const newDxOrder = [];
       dimensions.data.itemList.forEach((listItem) => {
         if (!listItem.hasOwnProperty('programType')) {
           newDxOrder.push(listItem.id)
@@ -110,7 +108,7 @@ export class AnalyticscreatorService {
       });
       combined_analytics.metaData.dx = newDxOrder;
       dimensions.dimensions.forEach((dimesion) => {
-        if (dimesion.name == 'pe') {
+        if (dimesion.name === 'pe') {
           combined_analytics.metaData.pe = dimesion.value.split(';');
           combined_analytics.metaData.pe.forEach((val) => {
             combined_analytics.metaData.names[val] = this.periodService.getPeriodName(val);
@@ -169,7 +167,7 @@ export class AnalyticscreatorService {
   // this function will help to format the analytics returned to incorporate the parent organisation units
   sortAnalyticsUsingParent(ou: any[]) {
     return new Observable((observ) => {
-      let ous = [];
+      const ous = [];
       ou.forEach((orgUnit) => {
         this.localStorageService.getByKey(ORGANISATION_UNIT_KEY, orgUnit).subscribe(orgunit => {
           let parentId = null;
@@ -180,7 +178,7 @@ export class AnalyticscreatorService {
             ous.push(
               {id: orgUnit, parent: parent.name}
             );
-            if (ous.length == ou.length) {
+            if (ous.length === ou.length) {
               observ.next(_.map(_.sortBy(ous, 'parent'), 'id'));
               observ.complete();
             }
@@ -188,7 +186,7 @@ export class AnalyticscreatorService {
             ous.push(
               {id: orgUnit, parent: ''}
             );
-            if (ous.length == ou.length) {
+            if (ous.length === ou.length) {
               observ.next(_.map(_.sortBy(ous, 'parent'), 'id'));
               observ.complete();
             }
@@ -200,7 +198,7 @@ export class AnalyticscreatorService {
   }
 
   duplicateAnalytics(analytics, data, oldDataId) {
-    let newAnalytics = _.cloneDeep(analytics);
+    const newAnalytics = _.cloneDeep(analytics);
     newAnalytics.metaData.dx = [data.id];
     delete newAnalytics.metaData.names[oldDataId];
     newAnalytics.metaData.names[data.id] = data.name;
@@ -213,8 +211,8 @@ export class AnalyticscreatorService {
     let url: string = this.constant.api + 'analytics.json?';
 
     sourceObject.forEach((item, index) => {
-      // let textToUse = (layout.filters.indexOf(item.name) == -1)?"dimension=":"filter=";
-      let textToUse = 'dimension=';
+      // let textToUse = (layout.filters.indexOf(item.name) === -1)?"dimension=":"filter=";
+      const textToUse = 'dimension=';
       if (item && item.value) {
         url += index > 0 ? '&' : '';
         url += textToUse + item.name + ':' + item.value;
@@ -226,7 +224,7 @@ export class AnalyticscreatorService {
 
   getAnalyticsparams(dimensions) {
     let url: string = '';
-    let arr = [];
+    const arr = [];
     dimensions.dimensions.forEach((item, index) => {
       if (item && item.value) {
         url += index > 0 ? '&' : '';
@@ -262,22 +260,22 @@ export class AnalyticscreatorService {
 
   // a function to add sub-column in table object
   addColumnSubTotal(tableObject) {
-    let data = _.cloneDeep(tableObject);
+    const data = _.cloneDeep(tableObject);
     if (data.headers && data.headers.length > 1) {
-      let span_distance = data.headers[0].items[0].span;
-      let some_header = [];
-      let some_rows = [];
+      const span_distance = data.headers[0].items[0].span;
+      const some_header = [];
+      const some_rows = [];
       // Processing headers
       data.headers.forEach((header) => {
-        let some_items = [];
-        let current_distance = header.items[0].span;
-        let limit = (span_distance - current_distance) + 1;
+        const some_items = [];
+        const current_distance = header.items[0].span;
+        const limit = (span_distance - current_distance) + 1;
         let check_counter = 1;
         header.items.forEach((item, index) => {
-          if (item.name == 'total' || item.name == 'avg') {
+          if (item.name === 'total' || item.name === 'avg') {
             some_items.push(item)
           } else {
-            if ((check_counter % limit) == 0) {
+            if ((check_counter % limit) === 0) {
               some_items.push(item);
               some_items.push({name: 'total', span: 1})
             } else {
@@ -293,14 +291,14 @@ export class AnalyticscreatorService {
       // Processing rows
       data.rows.forEach((row) => {
         let counter = 1;
-        let some_row_item = [];
+        const some_row_item = [];
         let sum = 0;
         row.items.forEach((item) => {
           if (item.hasOwnProperty('header')) {
             some_row_item.push(item)
           } else {
-            let item_value = parseFloat(item.val);
-            if ((counter % span_distance) == 0) {
+            const item_value = parseFloat(item.val);
+            if ((counter % span_distance) === 0) {
               some_row_item.push(item);
               sum += (item_value) ? item.val : 0;
               some_row_item.push({name: 'total', val: +sum.toFixed(2), row_span: 1, subtotal_column: true})
@@ -328,12 +326,12 @@ export class AnalyticscreatorService {
 
   // This function will add a totals for all columns
   addColumnTotal(tableObject) {
-    let data = _.cloneDeep(tableObject);
-    let some_header = [];
-    let some_rows = [];
+    const data = _.cloneDeep(tableObject);
+    const some_header = [];
+    const some_rows = [];
     // Adding title to the rows
     data.headers.forEach((header) => {
-      let some_items = [];
+      const some_items = [];
       header.items.forEach((item) => {
         some_items.push(item);
       });
@@ -344,16 +342,15 @@ export class AnalyticscreatorService {
 
     // Processing rows
     data.rows.forEach((row) => {
-      let some_row_item = [];
+      const some_row_item = [];
       let sum = 0;
       row.items.forEach((item) => {
         if (item.hasOwnProperty('header')) {
           some_row_item.push(item)
         } else {
-          let item_value = parseFloat(item.val);
+          const item_value = parseFloat(item.val);
           if (item.hasOwnProperty('subtotal_column')) {
-          }
-          else {
+          } else {
             sum += (item_value) ? item.val : 0;
             some_row_item.push(item);
           }
@@ -375,12 +372,12 @@ export class AnalyticscreatorService {
 
   // This will add an average for all columns
   addColumnAverage(tableObject) {
-    let data = _.cloneDeep(tableObject);
-    let some_header = [];
-    let some_rows = [];
+    const data = _.cloneDeep(tableObject);
+    const some_header = [];
+    const some_rows = [];
     // Adding title to the rows
     data.headers.forEach((header) => {
-      let some_items = [];
+      const some_items = [];
       header.items.forEach((item) => {
         some_items.push(item);
       });
@@ -392,24 +389,23 @@ export class AnalyticscreatorService {
     // Processing row
     let sum_counter = 0;
     data.rows.forEach((row) => {
-      let some_row_item = [];
+      const some_row_item = [];
       let sum = 0;
       sum_counter = 0;
       row.items.forEach((item) => {
         if (item.hasOwnProperty('header')) {
           some_row_item.push(item)
         } else {
-          let item_value = parseFloat(item.val);
+          const item_value = parseFloat(item.val);
           if (item.hasOwnProperty('subtotal_column')) {
-          }
-          else {
+          } else {
             sum_counter++;
             sum += (item_value) ? item.val : 0;
             some_row_item.push(item);
           }
         }
       });
-      let avg = sum / sum_counter;
+      const avg = sum / sum_counter;
       some_row_item.push({name: 'avg', val: +avg.toFixed(2), row_span: 1, column_total: true, sub_total: true});
       some_rows.push({items: some_row_item, headers: row.headers});
     });
@@ -424,27 +420,26 @@ export class AnalyticscreatorService {
 
   }
 
-  //this will add a subtotal for rows for each groups
+  // this will add a subtotal for rows for each groups
   addRowSubtotal(tableObject, show_parent) {
-    let data = _.cloneDeep(tableObject);
+    const data = _.cloneDeep(tableObject);
     if (data.columns.length > 1) {
-      let row_distance: any = data.rows[0].items[0].row_span;
-      let some_rows = [];
+      const row_distance: any = data.rows[0].items[0].row_span;
+      const some_rows = [];
       let counter = 1;
       let sum_rows = [];
       data.rows.forEach((row) => {
-        let row_items = [];
+        const row_items = [];
         if (show_parent) {
           row_items.push({name: '', val: '', row_span: 1, header: true})
         }
-        if ((counter % row_distance) == 0) {
+        if ((counter % row_distance) === 0) {
           some_rows.push(row);
           // adding totals to the sum array to be used in the created row
           let sum_counter = 0;
           row.items.forEach((item) => {
             if (item.hasOwnProperty('header')) {
-            }
-            else {
+            } else {
               if (sum_rows[sum_counter]) {
                 sum_rows[sum_counter] += (parseFloat(item.val)) ? parseFloat(item.val) : 0;
               } else {
@@ -472,8 +467,7 @@ export class AnalyticscreatorService {
           let sum_counter = 0;
           row.items.forEach((item) => {
             if (item.hasOwnProperty('header')) {
-            }
-            else {
+            } else {
               if (sum_rows[sum_counter]) {
                 sum_rows[sum_counter] += (parseFloat(item.val)) ? parseFloat(item.val) : 0;
               } else {
@@ -501,20 +495,19 @@ export class AnalyticscreatorService {
 
   // This will add a total for each row
   addRowTotal(tableObject, show_parent) {
-    let data = _.cloneDeep(tableObject);
-    let row_distance: any = data.rows[0].items[0].row_span;
-    let some_rows = [];
+    const data = _.cloneDeep(tableObject);
+    const row_distance: any = data.rows[0].items[0].row_span;
+    const some_rows = [];
     let counter = 1;
-    let sum_rows = [];
-    let row_items = [];
+    const sum_rows = [];
+    const row_items = [];
     data.rows.forEach((row) => {
       some_rows.push(row);
       // adding totals to the sum array to be used in the created row
       let sum_counter = 0;
       row.items.forEach((item) => {
         if (item.hasOwnProperty('header')) {
-        }
-        else {
+        } else {
           if (sum_rows[sum_counter]) {
             sum_rows[sum_counter] += (parseFloat(item.val)) ? parseFloat(item.val) : 0;
           } else {
@@ -551,12 +544,12 @@ export class AnalyticscreatorService {
 
   // this will add average in rows
   addRowAverage(tableObject) {
-    let data = _.cloneDeep(tableObject);
-    let row_distance: any = data.rows[0].items[0].row_span;
-    let some_rows = [];
+    const data = _.cloneDeep(tableObject);
+    const row_distance: any = data.rows[0].items[0].row_span;
+    const some_rows = [];
     let counter = 1;
-    let sum_rows = [];
-    let row_items = [];
+    const sum_rows = [];
+    const row_items = [];
     let avg_counter = 0;
     data.rows.forEach((row) => {
       some_rows.push(row);
@@ -564,8 +557,7 @@ export class AnalyticscreatorService {
       let sum_counter = 0;
       row.items.forEach((item) => {
         if (item.hasOwnProperty('header')) {
-        }
-        else {
+        } else {
           if (sum_rows[sum_counter]) {
             sum_rows[sum_counter] += (parseFloat(item.val)) ? parseFloat(item.val) : 0;
           } else {
@@ -588,7 +580,7 @@ export class AnalyticscreatorService {
       if (item.hasOwnProperty('header')) {
         row_items.push({name: '', val: '', row_span: 1, header: true})
       } else {
-        let avg = sum_rows[total_counter] / avg_counter;
+        const avg = sum_rows[total_counter] / avg_counter;
         row_items.push({name: '', val: +avg.toFixed(2), row_span: 1, row_total: true, sub_total: true});
         total_counter++;
       }
@@ -658,20 +650,19 @@ export class AnalyticscreatorService {
 
         some_rows.push(row);
       });
-    }
-    else {
+    } else {
       data.rows.forEach((row) => {
 
         row.items.forEach((item, index) => {
-          if (item.type == 'ou') {
+          if (item.type === 'ou') {
             this.localStorageService.getByKey(ORGANISATION_UNIT_KEY, item.name).subscribe(orgunit => {
               if (orgunit && orgunit.hasOwnProperty('parent')) {
                 this.localStorageService.getByKey(ORGANISATION_UNIT_KEY, orgunit.parent.id).subscribe(parent => {
                   // row.items[index].val = parent.name+" > "+row.items[index].val;
-                  if (row.items[0].type != 'ou') {
+                  if (row.items[0].type !== 'ou') {
                     parentsOrgunits = [];
                   }
-                  if (parentsOrgunits.indexOf(parent.id) == -1) {
+                  if (parentsOrgunits.indexOf(parent.id) === -1) {
                     row.items.splice(index, 0, {
                       'type': '',
                       'name': 'drHchnPFUa9',
@@ -699,12 +690,12 @@ export class AnalyticscreatorService {
       });
       some_rows = data.rows;
     }
-    if (data.columns.indexOf('ou') == -1) {
+    if (data.columns.indexOf('ou') === -1) {
       data.hasParentOu = false;
     }
     data.headers.forEach((header) => {
       header.items.forEach((item) => {
-        if (item.type == 'ou') {
+        if (item.type === 'ou') {
           this.localStorageService.getByKey(ORGANISATION_UNIT_KEY, item.id).subscribe(orgunit => {
             if (orgunit && orgunit.hasOwnProperty('parent')) {
               this.localStorageService.getByKey(ORGANISATION_UNIT_KEY, orgunit.parent.id).subscribe(parent => {

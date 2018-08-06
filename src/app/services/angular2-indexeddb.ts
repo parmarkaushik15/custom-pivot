@@ -1,29 +1,24 @@
-'use strict';
-
-import {Injectable} from '@angular/core';
-
-@Injectable()
 export class AngularIndexedDB {
-  private utils:Utils;
-  private dbWrapper:DbWrapper;
+  private utils: Utils;
+  private dbWrapper: DbWrapper;
 
-  constructor(dbName:string, version:number) {
+  constructor(dbName: string, version: number) {
     this.utils = new Utils();
     this.dbWrapper = new DbWrapper(dbName, version);
   }
 
-  createStore(version:number, upgradeCallback:Function) {
-    let self = this,
-      promise = new Promise<any>((resolve, reject)=> {
+  createStore(version: number, upgradeCallback: Function) {
+    const self = this,
+      promise = new Promise<any>((resolve, reject) => {
         this.dbWrapper.dbVersion = version;
-        let request = this.utils.indexedDB.open(this.dbWrapper.dbName, version);
+        const request = this.utils.indexedDB.open(this.dbWrapper.dbName, version);
         request.onsuccess = function (e) {
           self.dbWrapper.db = request.result;
           resolve();
         };
 
         request.onerror = function (e) {
-          reject("IndexedDB error: " + (<any>e.target).errorCode);
+          reject('IndexedDB error: ' + (<any>e.target).errorCode);
         };
 
         request.onupgradeneeded = function (e) {
@@ -34,25 +29,23 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  getByKey(storeName:string, key:any) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  getByKey(storeName: string, key: any) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readOnly,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
           }
         }),
         objectStore = transaction.objectStore(storeName),
-        request:IDBRequest;
-
-      request = objectStore.get(key);
-      request.onsuccess = function (event:Event) {
+        request: IDBRequest = objectStore.get(key);
+      request.onsuccess = function (event: Event) {
         resolve((<any>event.target).result);
       }
     });
@@ -60,46 +53,46 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  getByKeys(storeName:string, keys:Array<any>) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  getByKeys(storeName: string, keys: Array<any>) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readOnly,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
           }
         }),
         objectStore = transaction.objectStore(storeName);
-      var keyStatus = {}
-      keys.forEach((key)=>{
+      const keyStatus = {};
+      keys.forEach((key) => {
         keyStatus[key] = false;
-      })
-      var items = [];
-      keys.forEach(this.fetchKey(objectStore,(result,key)=>{
+      });
+      const items = [];
+      keys.forEach(this.fetchKey(objectStore, (result, key) => {
         keyStatus[key] = true;
         items.push(result);
-        var finished = true;
-        keys.forEach((key)=>{
-          if(!keyStatus[key]){
+        let finished = true;
+        keys.forEach((key1) => {
+          if (!keyStatus[key1]) {
             finished = false;
-          };
-        })
-        if(finished){
+          }
+        });
+        if (finished) {
           resolve(items);
         }
-      }))
-      var finished = true;
-      keys.forEach((key)=>{
-        if(!keyStatus[key]){
-          finished = false;
-        };
-      })
-      if(finished){
+      }));
+      let finished1 = true;
+      keys.forEach((key) => {
+        if (!keyStatus[key]) {
+          finished1 = false;
+        }
+      });
+      if (finished1) {
         resolve(items);
       }
     });
@@ -107,37 +100,37 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  fetchKey(objectStore,callback ){
-    return (key)=>{
-      var request = objectStore.get(key);
-      request.onsuccess = function (event:Event) {
-        callback((<any>event.target).result,key);
+  fetchKey(objectStore, callback) {
+    return (key) => {
+      const request = objectStore.get(key);
+      request.onsuccess = function (event: Event) {
+        callback((<any>event.target).result, key);
       }
     }
   }
-  getAll(storeName:string, keyRange?:IDBKeyRange, indexDetails?:IndexDetails) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+
+  getAll(storeName: string, keyRange?: IDBKeyRange, indexDetails?: IndexDetails) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readOnly,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
           }
         }),
-        objectStore = transaction.objectStore(storeName),
-        result:Array<any> = [],
-        request:IDBRequest;
+        objectStore = transaction.objectStore(storeName);
+        const result: Array<any> = [];
+        let request: IDBRequest;
       if (indexDetails) {
-        let index = objectStore.index(indexDetails.indexName),
+        const index = objectStore.index(indexDetails.indexName),
           order = (indexDetails.order === 'desc') ? 'prev' : 'next';
         request = index.openCursor(keyRange, order);
-      }
-      else {
+      } else {
         request = objectStore.openCursor(keyRange);
       }
 
@@ -145,11 +138,11 @@ export class AngularIndexedDB {
         reject(e);
       };
 
-      request.onsuccess = function (evt:Event) {
-        let cursor = (<IDBOpenDBRequest>evt.target).result;
+      request.onsuccess = function (evt: Event) {
+        const cursor = (<IDBOpenDBRequest>evt.target).result;
         if (cursor) {
           result.push(cursor.value);
-          cursor["continue"]();
+          cursor['continue']();
         } else {
           resolve(result);
         }
@@ -159,18 +152,18 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  add(storeName:string, value:any, key?:any) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  add(storeName: string, value: any, key?: any) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readWrite,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
             resolve({key: key, value: value});
           }
         }),
@@ -182,21 +175,21 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  update(storeName:string, value:any, key?:any) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  update(storeName: string, value: any, key?: any) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readWrite,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
             resolve(value);
           },
-          abort: (e:Event) => {
+          abort: (e: Event) => {
             reject(e);
           }
         }),
@@ -208,54 +201,54 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  delete(storeName:string, key:any) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  delete(storeName: string, key: any) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readWrite,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
             resolve();
           },
-          abort: (e:Event) => {
+          abort: (e: Event) => {
             reject(e);
           }
         }),
         objectStore = transaction.objectStore(storeName);
 
-      objectStore["delete"](key);
+      objectStore['delete'](key);
     });
 
     return promise;
   }
 
-  openCursor(storeName:string, cursorCallback:(evt:Event) => void, keyRange?:IDBKeyRange) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  openCursor(storeName: string, cursorCallback: (evt: Event) => void, keyRange?: IDBKeyRange) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readOnly,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
             resolve();
           },
-          abort: (e:Event) => {
+          abort: (e: Event) => {
             reject(e);
           }
         }),
         objectStore = transaction.objectStore(storeName),
         request = objectStore.openCursor(keyRange);
 
-      request.onsuccess = (evt:Event) => {
+      request.onsuccess = (evt: Event) => {
         cursorCallback(evt);
         resolve();
       };
@@ -264,21 +257,21 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  clear(storeName:string) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  clear(storeName: string) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readWrite,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
             resolve();
           },
-          abort: (e:Event) => {
+          abort: (e: Event) => {
             reject(e);
           }
         }),
@@ -290,21 +283,21 @@ export class AngularIndexedDB {
     return promise;
   }
 
-  getByIndex(storeName:string, indexName:string, key:any) {
-    let self = this;
-    let promise = new Promise<any>((resolve, reject)=> {
+  getByIndex(storeName: string, indexName: string, key: any) {
+    const self = this;
+    const promise = new Promise<any>((resolve, reject) => {
       self.dbWrapper.validateBeforeTransaction(storeName, reject);
 
-      let transaction = self.dbWrapper.createTransaction({
+      const transaction = self.dbWrapper.createTransaction({
           storeName: storeName,
           dbMode: self.utils.dbMode.readOnly,
-          error: (e:Event) => {
+          error: (e: Event) => {
             reject(e);
           },
-          abort: (e:Event) => {
+          abort: (e: Event) => {
             reject(e);
           },
-          complete: (e:Event) => {
+          complete: (e: Event) => {
           }
         }),
         objectStore = transaction.objectStore(storeName),
@@ -321,14 +314,14 @@ export class AngularIndexedDB {
 }
 
 class Utils {
-  dbMode:DbMode;
-  indexedDB:IDBFactory;
+  dbMode: DbMode;
+  indexedDB: IDBFactory;
 
   constructor() {
     this.indexedDB = window.indexedDB || (<any>window).mozIndexedDB || (<any>window).webkitIndexedDB || (<any>window).msIndexedDB;
     this.dbMode = {
-      readOnly: "readonly",
-      readWrite: "readwrite"
+      readOnly: 'readonly',
+      readWrite: 'readwrite'
     };
   }
 }
@@ -344,21 +337,21 @@ interface DbMode {
 }
 
 class DbWrapper {
-  dbName:string;
-  dbVersion:number;
-  db:IDBDatabase;
+  dbName: string;
+  dbVersion: number;
+  db: IDBDatabase;
 
-  constructor(dbName:string, version:number) {
+  constructor(dbName: string, version: number) {
     this.dbName = dbName;
     this.dbVersion = version || 1;
     this.db = null;
   }
 
-  validateStoreName(storeName:string) {
+  validateStoreName(storeName: string) {
     return this.db.objectStoreNames.contains(storeName);
   };
 
-  validateBeforeTransaction(storeName:string, reject:Function) {
+  validateBeforeTransaction(storeName: string, reject: Function) {
     if (!this.db) {
       reject('You need to use the createStore function to create a database before you query it!');
     }
@@ -367,8 +360,8 @@ class DbWrapper {
     }
   }
 
-  createTransaction(options:{ storeName: string, dbMode: string, error: (e:Event) => any, complete: (e:Event) => any, abort?: (e:Event) => any }):IDBTransaction {
-    let trans:IDBTransaction = this.db.transaction(options.storeName, options.dbMode);
+  createTransaction(options: { storeName: string, dbMode: any, error: (e: Event) => any, complete: (e: Event) => any, abort?: (e: Event) => any }): IDBTransaction {
+    const trans: IDBTransaction = this.db.transaction(options.storeName, options.dbMode);
     trans.onerror = options.error;
     trans.oncomplete = options.complete;
     trans.onabort = options.abort;

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import {Observable} from 'rxjs';
 import {HttpClientService} from '../../services/http-client.service';
 import * as _ from 'lodash';
 
@@ -38,7 +38,7 @@ export class FavoriteComponent implements OnInit {
   saving = false;
   savingSuccess = false;
   savingFalure = false;
-  editText= '';
+  editText = '';
 
   constructor(private http: HttpClientService) {
   }
@@ -75,17 +75,17 @@ export class FavoriteComponent implements OnInit {
     let checker_see = false;
     let checker_edit = false;
     if (favorite.hasOwnProperty('data')) {
-      if (user.id === favorite.data.user.id ) {
+      if (user.id === favorite.data.user.id) {
         checker_see = true;
         checker_edit = true;
       }
-    }else {
+    } else {
       checker_see = true;
       checker_edit = true;
     }
     if (favorite.hasOwnProperty('data')) {
-      for ( const group of favorite.data.user_groups){
-        if ( group.id === 'all' ) {
+      for (const group of favorite.data.user_groups) {
+        if (group.id === 'all') {
           if (group.see) {
             checker_see = true;
           }
@@ -94,8 +94,8 @@ export class FavoriteComponent implements OnInit {
             checker_edit = true;
           }
         }
-        for ( const user_group of user.userGroups){
-          if ( user_group.id === group.id ) {
+        for (const user_group of user.userGroups) {
+          if (user_group.id === group.id) {
             if (group.see) {
               checker_see = true;
             }
@@ -107,7 +107,7 @@ export class FavoriteComponent implements OnInit {
         }
       }
     }
-    return { see: checker_see, edit: checker_edit };
+    return {see: checker_see, edit: checker_edit};
   }
 
   // opening a favorite
@@ -119,35 +119,35 @@ export class FavoriteComponent implements OnInit {
 
   addFavorite() {
     // this.http.delete('dataStore/favorites/all').subscribe(() => {
-      const favorite: any = {
-        id: this.makeid(),
-        name: this.newFavName,
-        dataDimensions: this.dataDimensions,
-        options: this.options,
-        layout: this.layout,
-        data: {
-          user_groups: [],
-          user: this.user
-        }
-      };
-      this.saving = true;
-      this.favorites['favorites'].push(favorite);
-      this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {
-        this.saving = false;
-        this.savingSuccess = true;
-        this.favoritesList = this.getUserFavs();
-        this.newFavoriteArea = false;
-        this.newFavName = '';
-        setTimeout(() => {
-          this.savingSuccess = false;
-        }, 2000);
-      }, error => {
-        this.savingFalure = true;
-        this.saving = false;
-        setTimeout(() => {
-          this.savingFalure = false;
-        }, 3000);
-      });
+    const favorite: any = {
+      id: this.makeid(),
+      name: this.newFavName,
+      dataDimensions: this.dataDimensions,
+      options: this.options,
+      layout: this.layout,
+      data: {
+        user_groups: [],
+        user: this.user
+      }
+    };
+    this.saving = true;
+    this.favorites['favorites'].push(favorite);
+    this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {
+      this.saving = false;
+      this.savingSuccess = true;
+      this.favoritesList = this.getUserFavs();
+      this.newFavoriteArea = false;
+      this.newFavName = '';
+      setTimeout(() => {
+        this.savingSuccess = false;
+      }, 2000);
+    }, error => {
+      this.savingFalure = true;
+      this.saving = false;
+      setTimeout(() => {
+        this.savingFalure = false;
+      }, 3000);
+    });
     // });
   }
 
@@ -194,7 +194,7 @@ export class FavoriteComponent implements OnInit {
 
   // Updating a favorite
   editFavorite(favorite) {
-    const favoriteIndex = _.findIndex(this.favorites['favorites'], (fav:any) => fav.id === favorite.id);
+    const favoriteIndex = _.findIndex(this.favorites['favorites'], (fav: any) => fav.id === favorite.id);
     this.favorites['favorites'][favoriteIndex] = {
       ...this.favorites['favorites'][favoriteIndex],
       id: favorite.id,
@@ -205,7 +205,7 @@ export class FavoriteComponent implements OnInit {
     };
     if (this.favorites['favorites'][favoriteIndex].hasOwnProperty('data')) {
       this.favorites['favorites'][favoriteIndex].data = favorite.data;
-    }else {
+    } else {
       this.favorites['favorites'][favoriteIndex].data = {
         user_groups: [],
         user: this.user
@@ -238,7 +238,8 @@ export class FavoriteComponent implements OnInit {
   saveSharing(favorite) {
     const favoriteIndex = _.findIndex(this.favorites['favorites'], (fav: any) => fav.id === favorite.id);
     this.favorites['favorites'][favoriteIndex] = favorite;
-    this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {});
+    this.saveMapping(favorite.id, this.favorites).subscribe((fav) => {
+    });
     this.showSharing = [];
   }
 
@@ -276,7 +277,7 @@ export class FavoriteComponent implements OnInit {
           console.log('something went wrong while adding mapping');
           observable.error('something went wrong while adding mapping');
         });
-      }else {
+      } else {
         this.http.put('dataStore/favorites/all', favorite).subscribe((results) => {
           observable.next(favorite);
           observable.complete();
@@ -310,10 +311,9 @@ export class FavoriteComponent implements OnInit {
   }
 
 
-  enableSharing( favorite ) {
+  enableSharing(favorite) {
     this.showSharing = [];
-    if (!favorite.hasOwnProperty('data'))
-    {
+    if (!favorite.hasOwnProperty('data')) {
       favorite.data = {
         user_groups: [],
         user: this.user

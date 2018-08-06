@@ -42,6 +42,7 @@ import {
 import {DataFilterComponent} from './components/data-filter/data-filter.component';
 import {Http} from '@angular/http';
 import {LoginRedirectService} from './services/login-redirect.service';
+import {HttpClientService} from './services/http-client.service';
 
 @Component({
   selector: 'app-root',
@@ -122,12 +123,18 @@ export class AppComponent implements OnInit {
   // The function that will handle the data updating
   allDimensionAvailable = false;
 
+  // updating metadata with new version available from server
+  updatingStore: boolean = false;
+  updatingParcentage: number = 0;
+  updatedStores: number = 0;
+  updatingMetadataMessage: string = 'Updating Metadata';
+
   constructor(private store: Store<ApplicationState>,
               private analyticsService: AnalyticscreatorService,
               private dataService: DataService,
               private localDbService: LocalStorageService,
               private visualization: VisualizerService,
-              private http: Http,
+              private http: HttpClientService,
               private loginRedirectService: LoginRedirectService) {
 
     this.visualizationObject$ = store.select(visualizationObjectSelector);
@@ -144,7 +151,7 @@ export class AppComponent implements OnInit {
     store.select(optionsSelector).subscribe(options => this.options = options);
     store.select(layoutSelector).subscribe(layout => this.layout = layout);
     store.select(mappingSelector).subscribe(mappings => this.mappings = mappings);
-    store.select(state => state.uiState).subscribe(uiState => this.uiState = _.cloneDeep(uiState));
+    store.select(uistate => uistate.uiState).subscribe(uiState => this.uiState = _.cloneDeep(uiState));
     store.select(dataDimensionSelector).subscribe(dimension => this.dimensions = dimension);
     store.select(dataItemAnalyticsSelector).subscribe(dimension => this.analyticsItems = dimension);
   }
@@ -338,7 +345,7 @@ export class AppComponent implements OnInit {
     }
     dimensions.data.auto_growing.forEach((value) => {
       _.find(dimensions.dimensions, ['name', 'ou'])['arrayed_org_units'].forEach((orgUnits) => {
-        var orgUnitIds = '';
+        let orgUnitIds = '';
         orgUnits.forEach((ou, index) => {
           if (index > 0) {
             orgUnitIds += ';';
@@ -439,7 +446,8 @@ export class AppComponent implements OnInit {
     this.allDimensionAvailable = this.allAvailable(this.dimensions);
     if (this.allDimensionAvailable) {
       if (this.needForUpdate) {
-        this.http.get('../../../api/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:' + _.find(this.dimensions.dimensions, ['name', 'pe'])['value'] + '&dimension=ou:' + _.find(this.dimensions.dimensions, ['name', 'ou'])['value'] + '&displayProperty=NAME').map(res => res.json()).subscribe(
+        this.http.get('../../../api/analytics.json?dimension=dx:urkOCKdF6IR&dimension=pe:' + _.find(this.dimensions.dimensions, ['name', 'pe'])['value'] + '&dimension=ou:' + _.find(this.dimensions.dimensions, ['name', 'ou'])['value'] + '&displayProperty=NAME')
+          .subscribe(
           (dummyResult1: any) => {
             const dummyResult = this.analyticsService.sanitizeAnalytics(dummyResult1);
             if (this.dimensions.data.selectedData.value !== '') {
@@ -466,12 +474,11 @@ export class AppComponent implements OnInit {
             // update the system for data usage
             const json = 'https://ipv4.myexternalip.com/json';
             const dhis2Evnts = {events: []};
-            this.http.get(json).map(res => res.json()).subscribe((result) => {
+            this.http.get(json).subscribe((result) => {
               this.dimensions.data.itemList.forEach((itemToUpdate) => {
                 dhis2Evnts.events.push(this.updateAccessLogs(itemToUpdate, result.ip));
               });
-              console.log('Events', dhis2Evnts)
-              this.http.post('../../../api/events', dhis2Evnts).map(res => res.json()).subscribe((result1) => {
+              this.http.post('../../../api/events', dhis2Evnts).subscribe((result1) => {
                 console.log(result1);
               });
               //
@@ -590,45 +597,34 @@ export class AppComponent implements OnInit {
     let browserName = navig.appName;
     let fullVersion = '' + parseFloat(navig.appVersion);
     const majorVersion = parseInt(navig.appVersion, 10);
-    let nameOffset, verOffset, ix;
+    let nameOffset, verOffset; const ix = null;
 
     // In Opera 15+, the true version is after 'OPR/'
     if ((verOffset = nAgt.indexOf('OPR/')) !== -1) {
       browserName = 'Opera';
       fullVersion = nAgt.substring(verOffset + 4);
-    }
-    // In older Opera, the true version is after 'Opera' or after 'Version'
-    else if ((verOffset = nAgt.indexOf('Opera')) !== -1) {
+    } else if ((verOffset = nAgt.indexOf('Opera')) !== -1) { // In older Opera, the true version is after 'Opera' or after 'Version'
       browserName = 'Opera';
       fullVersion = nAgt.substring(verOffset + 6);
-      if ((verOffset = nAgt.indexOf('Version')) !== -1)
+      if ((verOffset = nAgt.indexOf('Version')) !== -1) {
         fullVersion = nAgt.substring(verOffset + 8);
-    }
-    // In MSIE, the true version is after 'MSIE' in userAgent
-    else if ((verOffset = nAgt.indexOf('MSIE')) !== -1) {
+      }
+    } else if ((verOffset = nAgt.indexOf('MSIE')) !== -1) { // In MSIE, the true version is after 'MSIE' in userAgent
       browserName = 'Microsoft Internet Explorer';
       fullVersion = nAgt.substring(verOffset + 5);
-    }
-    // In Chrome, the true version is after 'Chrome'
-    else if ((verOffset = nAgt.indexOf('Chrome')) !== -1) {
+    } else if ((verOffset = nAgt.indexOf('Chrome')) !== -1) { // In Chrome, the true version is after 'Chrome'
       browserName = 'Chrome';
       fullVersion = nAgt.substring(verOffset + 7);
-    }
-    // In Safari, the true version is after 'Safari' or after 'Version'
-    else if ((verOffset = nAgt.indexOf('Safari')) != -1) {
+    } else if ((verOffset = nAgt.indexOf('Safari')) !== -1) { // In Safari, the true version is after 'Safari' or after 'Version'
       browserName = 'Safari';
       fullVersion = nAgt.substring(verOffset + 7);
-      if ((verOffset = nAgt.indexOf('Version')) !== -1)
+      if ((verOffset = nAgt.indexOf('Version')) !== -1) {
         fullVersion = nAgt.substring(verOffset + 8);
-    }
-    // In Firefox, the true version is after 'Firefox'
-    else if ((verOffset = nAgt.indexOf('Firefox')) !== -1) {
+      }
+    } else if ((verOffset = nAgt.indexOf('Firefox')) !== -1) { // In Firefox, the true version is after 'Firefox'
       browserName = 'Firefox';
       fullVersion = nAgt.substring(verOffset + 8);
-    }
-    // In most other browsers, 'name/version' is at the end of userAgent
-    else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
-      (verOffset = nAgt.lastIndexOf('/'))) {
+    } else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) < (verOffset = nAgt.lastIndexOf('/'))) { // In most other browsers, 'name/version' is at the end of userAgent
       browserName = nAgt.substring(nameOffset, verOffset);
       fullVersion = nAgt.substring(verOffset + 1);
       if (browserName.toLowerCase() === browserName.toUpperCase()) {
@@ -638,12 +634,6 @@ export class AppComponent implements OnInit {
 
     return browserName + ' ( ' + fullVersion + ' )';
   }
-
-  // updating metadata with new version available from server
-  updatingStore: boolean = false;
-  updatingParcentage: number = 0;
-  updatedStores: number = 0;
-  updatingMetadataMessage: string = 'Updating Metadata';
 
   updateStore() {
     this.updatedStores = 0;
