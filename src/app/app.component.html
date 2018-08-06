@@ -18,31 +18,31 @@
           <!--data-->
           <div class="panel panel-default data-component-area">
             <div class="panel-body" style="padding: 3px">
-              <!--<app-data-filter-->
-                <!--#datafilter-->
-                <!--*ngIf="uiState.dataAreaOpen"-->
-                <!--(onDataUpdate)="setSelectedData($event)"-->
-                <!--[selectedItems]="selectedData$ | async"-->
-                <!--[functionMappings]="mappings"-->
-                <!--[hiddenDataElements]="hiddenDataElements"-->
-              <!--&gt;</app-data-filter>-->
+              <app-data-filter
+                #datafilter
+                *ngIf="uiState.dataAreaOpen"
+                (onDataUpdate)="setSelectedData($event)"
+                [selectedItems]="selectedData$ | async"
+                [functionMappings]="mappings"
+                [hiddenDataElements]="hiddenDataElements"
+              ></app-data-filter>
             </div>
           </div>
 
           <!--period-->
-          <!--<div app-period-filter #periodComponent *ngIf="uiState.dataAreaOpen"-->
-               <!--[hideMonth]="hideMonth"-->
-               <!--[hideQuarter]="hideQuarter"-->
-               <!--(onPeriodUpdate)="setSelectedPeriod($event)"-->
-               <!--[selected_periods]="selectedPeriod$ | async"-->
-               <!--[period_type]="selectedPeriodType$ | async"-->
-          <!--&gt;</div>-->
+          <div app-period-filter #periodComponent *ngIf="uiState.dataAreaOpen"
+               [hideMonth]="hideMonth"
+               [hideQuarter]="hideQuarter"
+               (onPeriodUpdate)="setSelectedPeriod($event)"
+               [selected_periods]="selectedPeriod$ | async"
+               [period_type]="selectedPeriodType$ | async"
+          ></div>
 
           <!--organisation unit-->
-          <!--<div app-org-unit-filter-->
-               <!--(onOrgUnitUpdate)="setSelectedOrgunit($event)"-->
-               <!--(onOrgUnitModelUpdate)="setOrgunitModel($event)"-->
-          <!--&gt;</div>-->
+          <div app-org-unit-filter
+               (onOrgUnitUpdate)="setSelectedOrgunit($event)"
+               (onOrgUnitModelUpdate)="setOrgunitModel($event)"
+          ></div>
         </div>
       </div>
     </div>

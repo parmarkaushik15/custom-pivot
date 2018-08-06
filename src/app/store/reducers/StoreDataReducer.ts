@@ -1,4 +1,4 @@
-import {StoreData} from '../store-data';
+import {INITIAL_STORE_DATA, StoreData} from '../store-data';
 import {Action} from '@ngrx/store';
 import * as _ from 'lodash';
 import {
@@ -10,7 +10,7 @@ import {
 } from '../actions';
 
 
-export function storeData(state: StoreData, action: BaseActions): StoreData {
+export function storeData(state: StoreData = INITIAL_STORE_DATA, action: BaseActions): StoreData {
   switch (action.type) {
 
     case ADD_DATA_ANALYITICS:

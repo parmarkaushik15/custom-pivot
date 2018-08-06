@@ -1,53 +1,52 @@
-import {UiState, INITIAL_UI_STATE} from "../ui-state";
-import {Action} from "@ngrx/store";
+import {UiState, INITIAL_UI_STATE} from '../ui-state';
+import {Action} from '@ngrx/store';
 import {
   TOGGLE_DATA_AREA_ACTION, SEND_NORMAL_DATA_LOADING_MESSAGE,
   REMOVE_NORMAL_DATA_LOADING_MESSAGE
-} from "../actions";
-import * as _ from "lodash"
+} from '../actions';
+import * as _ from 'lodash'
 
 
-export function uiState(state: UiState = INITIAL_UI_STATE, action: Action) : UiState {
+export function uiState(state: UiState = INITIAL_UI_STATE, action: Action): UiState {
 
-    switch (action.type)  {
+  switch (action.type) {
 
-      case TOGGLE_DATA_AREA_ACTION:
-        return handleDataAreaToggleAction(state);
+    case TOGGLE_DATA_AREA_ACTION:
+      return handleDataAreaToggleAction(state);
 
-      case SEND_NORMAL_DATA_LOADING_MESSAGE:
-        return handleAddingLoadingAction(state,action);
+    case SEND_NORMAL_DATA_LOADING_MESSAGE:
+      return handleAddingLoadingAction(state, action);
 
-      case REMOVE_NORMAL_DATA_LOADING_MESSAGE:
-        return handleRemoveLoadingAction(state,action);
+    case REMOVE_NORMAL_DATA_LOADING_MESSAGE:
+      return handleRemoveLoadingAction(state, action);
 
-        default:
-            return state;
-    }
+    default:
+      return state;
+  }
 
 }
 
-
-function handleDataAreaToggleAction(state: UiState ): UiState {
-  let newStore = _.cloneDeep( state );
+function handleDataAreaToggleAction(state: UiState): UiState {
+  const newStore = _.cloneDeep(state);
   newStore.dataAreaOpen = !newStore.dataAreaOpen;
-  if(newStore.dataAreaOpen){
+  if (newStore.dataAreaOpen) {
     newStore.dataAreaOpenState = 'active';
-  }else{
+  } else {
     newStore.dataAreaOpenState = 'inactive';
   }
   return newStore;
 
 }
 
-function handleAddingLoadingAction(state: UiState, action ): UiState {
-  let newStore = _.cloneDeep( state );
+function handleAddingLoadingAction(state: UiState, action): UiState {
+  const newStore = _.cloneDeep(state);
   newStore.loadingData = action.payload.loading;
   newStore.loadingDataMessage = action.payload.message;
   return newStore;
 }
 
-function handleRemoveLoadingAction(state: UiState, action ): UiState {
-  let newStore = _.cloneDeep( state );
+function handleRemoveLoadingAction(state: UiState, action): UiState {
+  const newStore = _.cloneDeep(state);
   newStore.loadingData = false;
   return newStore;
 
