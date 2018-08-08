@@ -44,14 +44,15 @@ import { SpecificPeriodService } from './components/period-filter/period.service
 import { OrderPipe } from './pipes/order-by.pipe';
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { AddUnderscorePipe } from './shared/pipes/add-underscore.pipe';
-import {LoginRedirectService} from './services/login-redirect.service';
-import {ThouthandSeparator} from './pipes/thouthand-separator-pipe';
-import {SharingComponent} from './components/sharing/sharing.component';
-import {HttpClientModule} from '@angular/common/http';
-import {metaReducers, reducers} from './store';
-import {environment} from '../environments/environment';
-import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {AppEffects} from './store/app.effects';
+import { LoginRedirectService } from './services/login-redirect.service';
+import { ThouthandSeparator } from './pipes/thouthand-separator-pipe';
+import { SharingComponent } from './components/sharing/sharing.component';
+import { HttpClientModule } from '@angular/common/http';
+import { metaReducers, reducers } from './store';
+import { environment } from '../environments/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AppEffects } from './store/app.effects';
+import { MapModule } from './modules/map/map.module';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import {AppEffects} from './store/app.effects';
     TreeModule,
     NgxPaginationModule,
     DndModule.forRoot(),
-    StoreModule.forRoot(reducers, { }),
+    MapModule,
+    StoreModule.forRoot(reducers, {}),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([AppEffects])
   ],
@@ -106,8 +108,6 @@ import {AppEffects} from './store/app.effects';
     SpecificPeriodService,
     LoginRedirectService
   ],
-  bootstrap: [
-    AppComponent,
-  ]
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
